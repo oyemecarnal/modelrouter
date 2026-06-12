@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.2.0] — 2026-06-12 (iteration 4.2)
+
+### Added
+- `make core-apis` — regenerates gitignored `data/CORE_APIS.md` (masked live API status)
+- `modelrouter/core_api_list.py`, `scripts/update-core-api-list.sh`
+
+### Changed
+- `config/api_catalog.yaml` — gateway project keys, Anthropic pricing ref
+- `docs/API_INVENTORY.md` — points to private core list
+
 ## [3.1.0] — 2026-06-12 (iteration 4.1 — Phase 1 start)
 
 ### Added

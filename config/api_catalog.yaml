@@ -21,9 +21,10 @@ families:
       - env: ANTHROPIC_API_KEY
         label: Anthropic
         signup: https://console.anthropic.com
-        pricing_ref: anthropic/claude-3.5-sonnet
+        pricing_ref: anthropic/claude-sonnet-4-20250514
         static_input_per_m: 3.00
         static_output_per_m: 15.00
+        notes: Gateway wired — empty on laptop; add on kc-mini for hermes-smart
       - env: GOOGLE_API_KEY
         label: Google AI
         signup: https://aistudio.google.com/apikey
@@ -187,16 +188,31 @@ families:
 
   - id: gateway
     label: ModelRouter gateway
-    purpose: Client auth to your LiteLLM proxy
+    purpose: Client auth to your LiteLLM proxy (not provider keys)
     weight: 1.0
-    repo_fit: [smalshi-hermes, kalshi-bot, coinbot, cursor-dev]
+    repo_fit: [smalshi-hermes, kalshi-bot, coinbot, cursor-dev, modelrouter-agents]
     keys:
       - env: MODELROUTER_MASTER_KEY
         label: ModelRouter master
-        notes: Clients use this; not a provider key
+        notes: Gateway bearer — laptop Cursor uses same value; keep in sync
       - env: LITELLM_SALT_KEY
         label: LiteLLM salt
-        notes: DB encryption for virtual keys
+        notes: DB encryption; rotate with make rotate-salt-key
+      - env: MODELROUTER_KEY_HERMES
+        label: Project key (Hermes)
+        notes: Native mode copies master; labels smalshi-hermes
+      - env: MODELROUTER_KEY_KALSHI
+        label: Project key (Kalshi)
+        hidden: true
+      - env: MODELROUTER_KEY_COINBOT
+        label: Project key (coinbot)
+        hidden: true
+      - env: MODELROUTER_KEY_CURSOR
+        label: Project key (Cursor)
+        hidden: true
+      - env: MODELROUTER_KEY_AGENTS
+        label: Project key (agents)
+        hidden: true
 
   - id: market_data
     label: Market data

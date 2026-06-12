@@ -37,3 +37,4 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | Version | Focus | Doc |
 |---------|--------|-----|
 | 4.1 | `models_catalog.yaml` + salt rotate → **v3.1.0** | [4.1.md](4.1.md) |
+| 4.2 | `make core-apis` private live API list → **v3.2.0** | [4.2.md](4.2.md) |
