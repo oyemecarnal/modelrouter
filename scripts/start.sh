@@ -16,6 +16,7 @@ modelrouter_activate
 
 # ── Secrets (1Password + .env) ───────────────────────────────────────
 python3 "$ROOT/scripts/load_secrets.py"
+"$ROOT/scripts/check-master-key.sh"
 set -a
 # shellcheck disable=SC1091
 [[ -f "$ROOT/.env" ]] && source "$ROOT/.env"

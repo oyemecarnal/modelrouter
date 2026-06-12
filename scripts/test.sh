@@ -18,6 +18,10 @@ for p in ['config/modelrouter.minimal.yaml', 'config/projects.yaml', 'config/hos
 
 echo "── Route policy"
 PYTHONPATH="$ROOT" .venv/bin/python -m modelrouter.route_policy --project smalshi-hermes >/dev/null
+PYTHONPATH="$ROOT" .venv/bin/python -m modelrouter.route_policy --all >/dev/null
+
+echo "── Policy presets SSOT"
+.venv/bin/python scripts/check_presets.py
 
 echo "── Health (optional)"
 if ./scripts/healthcheck.sh &>/dev/null; then

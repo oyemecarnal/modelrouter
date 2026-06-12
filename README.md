@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v1.5.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
+**v2.5.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
 
 Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://kc-mini-lan:3000`) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
 

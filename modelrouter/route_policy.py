@@ -62,6 +62,7 @@ def recommend(
     *,
     complex_task: bool = False,
     offline_ok: bool = False,
+    write_hints: bool = True,
 ) -> RouteRecommendation:
     import yaml
 
@@ -106,8 +107,9 @@ def recommend(
         pressure=pressure,
         updated_at=int(time.time() * 1000),
     )
-    HINTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    HINTS_PATH.write_text(json.dumps(rec.to_dict(), indent=2) + "\n")
+    if write_hints:
+        HINTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        HINTS_PATH.write_text(json.dumps(rec.to_dict(), indent=2) + "\n")
     return rec
 
 
@@ -117,7 +119,7 @@ def all_project_hints(*, complex_task: bool = False) -> dict[str, dict[str, Any]
     projects = (yaml.safe_load(PROJECTS_PATH.read_text()) or {}).get("projects") or {}
     out: dict[str, dict[str, Any]] = {}
     for name in projects:
-        rec = recommend(name, complex_task=complex_task)
+        rec = recommend(name, complex_task=complex_task, write_hints=False)
         out[name] = {k: v for k, v in rec.to_dict().items()}
     HINTS_PATH.parent.mkdir(parents=True, exist_ok=True)
     HINTS_PATH.write_text(json.dumps(out, indent=2) + "\n")

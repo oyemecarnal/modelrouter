@@ -2,6 +2,7 @@
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini keys-widget-install keys-widget keys-widget-fetch
 .PHONY: route-hints project-keys rotate-master-key mcp-install smoke test lint cost-review homelab-status
+.PHONY: check-presets consolidate-keys
 
 install:
 	./scripts/install.sh
@@ -117,3 +118,9 @@ homelab-status:
 
 cost-review:
 	./scripts/cost-review.sh
+
+check-presets:
+	.venv/bin/python scripts/check_presets.py
+
+consolidate-keys:
+	./scripts/consolidate-keys.sh

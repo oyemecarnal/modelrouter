@@ -6,6 +6,7 @@ from __future__ import annotations
 import faulthandler
 import json
 import signal
+import uuid
 import subprocess
 import sys
 import threading
@@ -19,7 +20,9 @@ from log_util import install_excepthook, log_event, setup_logging
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS = ROOT / "scripts"
 WIDGET_DIR = Path(__file__).resolve().parent
-SNAPSHOT = Path.home() / "Library/Application Support/TokenWidget/snapshot.json"
+SUPPORT = Path.home() / "Library/Application Support/TokenWidget"
+SNAPSHOT = SUPPORT / "snapshot.json"
+WIDGET_TOKEN_PATH = SUPPORT / "widget_token"
 FETCHER = SCRIPTS / "fetch_usage.py"
 if str(SCRIPTS) not in sys.path:
     sys.path.insert(0, str(SCRIPTS))
@@ -31,6 +34,19 @@ PORT = 8765
 logger = setup_logging()
 install_excepthook(logger)
 faulthandler.enable()
+
+
+def widget_token() -> str:
+    SUPPORT.mkdir(parents=True, exist_ok=True)
+    if WIDGET_TOKEN_PATH.exists():
+        return WIDGET_TOKEN_PATH.read_text().strip()
+    token = uuid.uuid4().hex
+    WIDGET_TOKEN_PATH.write_text(token)
+    try:
+        WIDGET_TOKEN_PATH.chmod(0o600)
+    except OSError:
+        pass
+    return token
 
 
 def load_widget_config() -> dict:
@@ -75,6 +91,7 @@ class Handler(BaseHTTPRequestHandler):
                     {
                         "appName": cfg.get("app_name", "ModelRouter Keys"),
                         "editFile": str(ROOT / cfg.get("edit_file", ".env.local")),
+                        "widgetToken": Handler.widget_token,
                     }
                 )
                 self.send_response(200)
@@ -103,6 +120,10 @@ class Handler(BaseHTTPRequestHandler):
             raise
 
     def do_POST(self) -> None:
+        if not _authorized(self):
+            self.send_response(403)
+            self.end_headers()
+            return
         if self.path == "/refresh":
             if Handler.panel_fetch_enabled:
                 run_fetch(reason="ui_refresh")
@@ -146,6 +167,11 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     panel_fetch_enabled = False
+    widget_token: str = ""
+
+
+def _authorized(handler: BaseHTTPRequestHandler) -> bool:
+    return handler.headers.get("X-Widget-Token") == Handler.widget_token
 
 
 def _read_post_json(handler: BaseHTTPRequestHandler) -> dict:
@@ -352,6 +378,7 @@ def main() -> None:
     log_event("widget_start", pid=__import__("os").getpid())
     logger.info("widget starting")
 
+    Handler.widget_token = widget_token()
     cfg = load_widget_config()
     refresh_s = int(cfg.get("refresh_interval_seconds") or 120)
     on_top = bool(cfg.get("widget_on_top", False))

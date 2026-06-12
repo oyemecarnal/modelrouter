@@ -10,4 +10,14 @@ Five quick iterations per cycle. Each version: small change → test → doc.
 | 1.4 | Lint harness | [1.4.md](1.4.md) |
 | 1.5 | `make homelab-status` + integration | [1.5.md](1.5.md) |
 
+## Cycle 2 (Phase 0 completion)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 2.1 | Clean wires: fail-closed, client.env, key refresh | [2.1.md](2.1.md) |
+| 2.2 | Daemon throttle + deploy remote-health | [2.2.md](2.2.md) |
+| 2.3 | Preset SSOT check in test | [2.3.md](2.3.md) |
+| 2.4 | `make consolidate-keys` | [2.4.md](2.4.md) |
+| 2.5 | Committee bug fixes + widget auth → **v2.5.0** | [2.5.md](2.5.md) |
+
 After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).

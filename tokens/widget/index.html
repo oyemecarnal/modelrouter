@@ -323,6 +323,25 @@
 
     const openWalletTx = new Set();
     let lastSnapshot = null;
+    let widgetToken = '';
+
+    function authHeaders(extra = {}) {
+      const h = { ...extra };
+      if (widgetToken) h['X-Widget-Token'] = widgetToken;
+      return h;
+    }
+
+    function postJson(url, body) {
+      return fetch(url, {
+        method: 'POST',
+        headers: authHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(body),
+      });
+    }
+
+    function postEmpty(url) {
+      return fetch(url, { method: 'POST', headers: authHeaders() });
+    }
 
     function renderCompare(compare) {
       if (!compare || !compare.families || !compare.families.length) return '';
@@ -444,7 +463,7 @@
           e.stopPropagation();
           const id = btn.getAttribute('data-id');
           if (!id || !confirm('Remove this wallet from tracking?')) return;
-          await fetch('/wallets/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+          await postJson('/wallets/remove', { id });
           openWalletTx.delete(id);
           await loadSnapshot();
         });
@@ -563,7 +582,7 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spin">↻</span>';
       try {
-        await fetch('/refresh', { method: 'POST' });
+        await postEmpty('/refresh');
         await new Promise(r => setTimeout(r, 800));
         await loadSnapshot();
       } catch (e) {
@@ -576,7 +595,7 @@
 
     async function openEdit() {
       try {
-        await fetch('/edit', { method: 'POST' });
+        await postEmpty('/edit');
       } catch (e) {
         document.getElementById('updated').textContent = 'Edit failed';
       }
@@ -604,11 +623,7 @@
         address: document.getElementById('w-address').value.trim(),
       };
       try {
-        const res = await fetch('/wallets/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
+        const res = await postJson('/wallets/add', body);
         const data = await res.json();
         if (!data.ok) {
           wError.textContent = data.error || 'Save failed';
@@ -647,11 +662,7 @@
         return;
       }
       try {
-        const res = await fetch('/keys/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        });
+        const res = await postJson('/keys/add', body);
         const data = await res.json();
         if (!data.ok) {
           kError.textContent = data.error || 'Save failed';
@@ -673,7 +684,7 @@
       const body = document.getElementById('assess-body');
       body.textContent = 'Running assessment via ModelRouter…';
       try {
-        const res = await fetch('/api-assess', { method: 'POST' });
+        const res = await postEmpty('/api-assess');
         const data = await res.json();
         if (!data.ok) {
           body.textContent = data.error || 'Assessment failed';
@@ -705,6 +716,7 @@
 
     fetch('/meta.json').then(r => r.json()).then(m => {
       if (m.appName) document.getElementById('app-title').textContent = m.appName;
+      if (m.widgetToken) widgetToken = m.widgetToken;
     }).catch(() => {});
 
     loadSnapshot();

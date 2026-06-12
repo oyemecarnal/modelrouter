@@ -40,7 +40,11 @@ def _repo_context(cfg: dict[str, Any]) -> dict[str, Any]:
         presets_path = root / "config" / "includes" / "policy_presets.yaml"
         if presets_path.exists():
             pdata = yaml.safe_load(presets_path.read_text()) or {}
-            ctx["presets"] = list((pdata.get("preset_models") or {}).keys())[:12]
+            preset_names: list[str] = []
+            for entry in pdata.get("preset_models") or []:
+                if isinstance(entry, dict) and entry.get("model_name"):
+                    preset_names.append(entry["model_name"])
+            ctx["presets"] = sorted(set(preset_names))[:12]
         cost_path = root / "config" / "cost_alternatives.yaml"
         if cost_path.exists():
             cdata = yaml.safe_load(cost_path.read_text()) or {}
@@ -171,8 +175,10 @@ def rule_based_summary(payload: dict[str, Any]) -> str:
     )
     for row in payload.get("comparison") or []:
         if row.get("savings_pct"):
+            missing = row.get("missing_cheapest") or []
+            pick = missing[0] if missing else "?"
             lines.append(
-                f"- **{row['family']}:** consider {row.get('missing_cheapest', ['?'])[0]} "
+                f"- **{row['family']}:** consider {pick} "
                 f"(~{row['savings_pct']}% cheaper than your current pick)"
             )
     for gap in payload.get("repo_gaps") or []:

@@ -58,7 +58,7 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
     local_brokers = [b.lower() for b in (base.get("local_brokers") or [])]
     remote_brokers = [b.lower() for b in (base.get("remote_brokers") or brokers)]
 
-    if prefer_remote and remote_host:
+    if prefer_remote and remote_host and not force_live:
         status = _fetch_status_remote(remote_host, instance_id)
         if status:
             return status

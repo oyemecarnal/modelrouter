@@ -1,5 +1,28 @@
 # Changelog
 
+## [2.5.0] — 2026-06-12 (iteration cycle 2)
+
+### Added
+- `scripts/check-master-key.sh` — fail-closed startup on placeholder keys
+- `scripts/check_presets.py` + `make check-presets` — preset SSOT drift check
+- `scripts/consolidate-keys.sh` + `make consolidate-keys`
+- Widget session token (`X-Widget-Token`) on mutating routes
+- Iteration docs 2.1–2.5, committee review doc
+
+### Fixed
+- `rotate-master-key` refreshes `MODELROUTER_KEY_*` via `--refresh`
+- `route_policy` — `--all` no longer overwritten by single-project recommend
+- `fetch_equity` — live fetch when `force_live` (skip paper status.json)
+- `equity_remote_runner` — equity total includes more than 6 assets
+- `api_assess` — preset context from YAML list; offline summary IndexError
+- MCP `list_models` — error JSON when gateway down
+- Wallet snapshot redacts full on-chain addresses
+- `client.env.example` — dotenv-safe tower template
+
+### Changed
+- `deploy-to-mini.sh` runs `remote-health` after install
+- launchd plist `ThrottleInterval` 30s
+
 ## [1.5.0] — 2026-06-12 (iteration cycle 1)
 
 ### Added

@@ -250,7 +250,6 @@ def fetch_wallet_balance(wallet: dict[str, Any], cfg: dict[str, Any]) -> dict[st
         "id": wallet_id,
         "label": wallet.get("label"),
         "chain": chain,
-        "address": address,
         "address_masked": mask_address(address),
         "kind": kind,
         "mode": "live" if kind == "hot" else "last_seen",

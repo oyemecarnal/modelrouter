@@ -116,23 +116,24 @@ async def _broker_equity(broker: str, force_live: bool, timeout_sec: float) -> d
         assets: list[dict[str, Any]] = []
         total_usd = 0.0
         priced = 0
+        max_price_quotes = 10
         for asset, amount in rows:
             if asset.upper() in STABLE_USD_ASSETS or asset.upper() == quote:
                 price = 1.0
-            elif priced >= 6:
-                continue
-            else:
+            elif priced < max_price_quotes:
                 try:
                     price, _ = await asyncio.wait_for(
                         price_asset_usd(exchange, asset, quote),
-                        timeout=8.0,
+                        timeout=5.0,
                     )
                 except Exception:
                     price = 0.0
                 priced += 1
+            else:
+                price = 0.0
             value = amount * price
             total_usd += value
-            if value >= 0.01 or asset.upper() in STABLE_USD_ASSETS:
+            if len(assets) < 8 and (value >= 0.01 or asset.upper() in STABLE_USD_ASSETS):
                 assets.append(
                     {
                         "asset": asset,

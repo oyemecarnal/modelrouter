@@ -33,3 +33,10 @@ EOF
 
 echo "[deploy] Done. ModelRouter on ${REMOTE_HOST}:${REMOTE_DIR}"
 echo "[deploy] Enable auto-start: ssh ${REMOTE_HOST} 'cd ${REMOTE_DIR} && make daemon-enable'"
+
+echo "[deploy] Remote health check..."
+if "$ROOT/scripts/remote-health.sh"; then
+  echo "[deploy] Remote health OK"
+else
+  echo "[deploy] WARNING: remote health check failed — run: make doctor" >&2
+fi

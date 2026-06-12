@@ -53,7 +53,10 @@ def create_app():
     @mcp.tool()
     def list_models() -> str:
         """List available model aliases including policy presets."""
-        data = _get("/v1/models")
+        try:
+            data = _get("/v1/models")
+        except Exception as exc:
+            return json.dumps({"error": str(exc), "presets": [], "total": 0}, indent=2)
         ids = sorted(m["id"] for m in data.get("data", []))
         presets = [i for i in ids if i in {
             "smart", "fast", "cheap", "code", "review", "local", "offline",
