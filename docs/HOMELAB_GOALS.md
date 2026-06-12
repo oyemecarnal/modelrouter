@@ -30,7 +30,9 @@ Versions `1.1` → `1.5` per cycle. See `docs/iterations/`.
 
 ## Human backlog
 
-- [ ] `make rotate-master-key` + update Cursor
-- [ ] `ANTHROPIC_API_KEY` when available
-- [ ] Rotate Groq key (chat exposure)
-- [ ] Confirm `kc-tower` SSH alias in `config/hosts.yaml`
+- [ ] Confirm Cursor uses ModelRouter base URL + `MODELROUTER_MASTER_KEY` *(not direct OpenAI)*
+- [ ] `ANTHROPIC_API_KEY` on kc-mini when available
+- [ ] Rotate Groq key (prior chat exposure)
+- [x] `kc-tower` SSH aliases in `~/.ssh/config` + `config/hosts.yaml`
+- [ ] `make push-client-env-tower` when tower is online
+- [ ] `LITELLM_SALT_KEY` — set distinct salt before Docker/Postgres (`make rotate-master-key` rotates master too)

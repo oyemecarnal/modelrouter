@@ -27,3 +27,7 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | Version | Focus | Doc |
 |---------|--------|-----|
 | 3.1 | Daemon pid, health bind, salt warn, doc URL sync | [3.1.md](3.1.md) |
+| 3.2 | `stop.sh` port cleanup; doctor no crash when down | [3.2.md](3.2.md) |
+| 3.3 | `deploy-mini` — mini on 3.x | [3.3.md](3.3.md) |
+| 3.4 | Committee checkpoint + clean-wires docs | [3.4.md](3.4.md) |
+| 3.5 | Cycle capstone → **v3.0.0** | [3.5.md](3.5.md) |

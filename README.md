@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v2.5.1** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
+**v3.0.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
 
 Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://Kevins-Mac-mini.local:3000` on LAN; `kc-mini-lan` is SSH-only) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
 
@@ -134,7 +134,7 @@ Includes Postgres (virtual keys, spend tracking) and Redis (shared cache).
 ## Hardening checklist
 
 - [x] Master key auth (`MODELROUTER_MASTER_KEY`, must start with `sk-`)
-- [x] Bind to localhost only (`127.0.0.1`)
+- [x] Bind to localhost on laptop (`127.0.0.1`); mini LAN uses `0.0.0.0` + mDNS URL
 - [x] Rate limits per model (`rpm` in config)
 - [x] Circuit breaker (`allowed_fails`, `cooldown_time`)
 - [x] Model fallbacks

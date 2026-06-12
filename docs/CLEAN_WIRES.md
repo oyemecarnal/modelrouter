@@ -48,10 +48,11 @@ You cannot calibrate spend or context until traffic flows through **one meter**.
 
 ## Migration checklist (homelab)
 
-- [ ] Cursor: base URL → ModelRouter; API key → `MODELROUTER_MASTER_KEY` only
-- [ ] Hermes/tower: `OPENAI_BASE_URL=http://Kevins-Mac-mini.local:3000/v1`, model = preset name
-- [ ] Remove provider keys from tower `.env` files (keep Polygon etc. where data APIs run)
-- [ ] Stop new keys in `~/.zshrc` — mini `modelrouter/.env` + 1Password
+- [ ] Cursor: base URL → ModelRouter; API key → `MODELROUTER_MASTER_KEY` only *(human — verify in Cursor settings)*
+- [x] Tower template: `config/client.env.example` + `make push-client-env-tower`
+- [ ] Hermes/tower: deploy `client.env` when kc-tower SSH is up *(human — tower was offline)*
+- [ ] Remove provider keys from tower `.env` files *(human — after tower online)*
+- [ ] Stop new keys in `~/.zshrc` — mini `modelrouter/.env` + 1Password *(human habit)*
 - [ ] `make keys-audit` monthly; `make cost-review` each cycle
 - [ ] Document exceptions in `config/projects.yaml` if something must bypass gateway
 

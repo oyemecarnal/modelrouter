@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.0.0] — 2026-06-12 (iteration cycle 3)
+
+### Added
+- `make push-client-env-tower` — tower gateway client env (no provider keys)
+- Iteration docs 3.1–3.5; Cycle 2–3 committee checkpoint
+
+### Fixed
+- `stop.sh` frees port 3000 when pidfile is stale or orphaned
+- `doctor.sh` — no JSON traceback when gateway down; preset check degrades gracefully
+
+### Changed
+- Phase 0 marked ~complete in `PRODUCT_VISION.md` (human wiring items flagged)
+- `CLEAN_WIRES.md` / `HOMELAB_GOALS.md` — accurate human vs automated checklist
+- README hardening note: laptop `127.0.0.1`, mini LAN `0.0.0.0` + mDNS
+
 ## [2.5.1] — 2026-06-12 (iteration 3.1)
 
 ### Fixed

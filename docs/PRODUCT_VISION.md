@@ -92,12 +92,13 @@ Avoid a single god-mode connector until security model is designed (Business tie
 
 ## Phased roadmap (don’t skip phases)
 
-### Phase 0 — Clean wires (now → 2.x)
+### Phase 0 — Clean wires (now → 3.0)
 
-- [ ] Master key rotated; Cursor + tower on gateway only
-- [ ] `config/client.env.example` for tower (no provider keys)
-- [ ] `docs/CLEAN_WIRES.md` migration complete
-- [ ] Daemon reliable enough to trust metering
+- [x] Fail-closed startup; project key refresh on rotate
+- [x] `config/client.env.example` for tower (no provider keys)
+- [x] `docs/CLEAN_WIRES.md` migration guide (human items flagged)
+- [x] Daemon reliable enough to trust metering (pid + stop + health bind)
+- [ ] All clients on gateway only *(human: Cursor verify, tower deploy)*
 
 ### Phase 1 — Catalog & calibration (2.x → 3.x)
 

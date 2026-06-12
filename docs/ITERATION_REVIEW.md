@@ -1,3 +1,46 @@
+# Iteration cycle 3 review (v3.1 → v3.5)
+
+**Date:** 2026-06-12  
+**Ship:** **v3.0.0** (`main`)  
+**Tests:** `make test` ✓ · `make lint` ✓ · `make doctor` ✓ (when running) · `deploy-mini` ✓ · `remote-health` laptop+mini ✓
+
+---
+
+## What cycle 3 delivered
+
+| Ver | Focus | Status |
+|-----|--------|--------|
+| 3.1 | Daemon pid, 0.0.0.0 health bind, salt warn, LAN URL docs | Done → v2.5.1 |
+| 3.2 | `stop.sh` port cleanup; doctor safe when gateway down | Done |
+| 3.3 | `deploy-mini` — kc-mini on 3.x tree | Done |
+| 3.4 | Committee checkpoint, CLEAN_WIRES/HOMELAB human split | Done |
+| 3.5 | Cycle capstone docs → **v3.0.0** | Done |
+
+**Phase 0:** ~85% — gateway ops trustworthy; calibration prep unlocked. Console still deferred.
+
+---
+
+## Human actions (before Phase 1)
+
+| Action | Why |
+|--------|-----|
+| Verify Cursor → ModelRouter URL + master key | Clean wires metering |
+| `make push-client-env-tower` when tower online | Hermes/bots on gateway |
+| Add `ANTHROPIC_API_KEY` on mini | `hermes-smart` / `review` |
+| Rotate Groq key | Prior exposure |
+| Decide: keep `crsr_*` master vs `sk-mr-*` rotate | Namespace purity vs Cursor friction |
+
+---
+
+## Next cycle 4 proposal (Phase 1 start)
+
+1. `config/models_catalog.yaml` — context, cost tier, free/paid  
+2. Console MVP spec (`docs/CONSOLE_SPEC.md`) — static grid only  
+3. Per-preset max tokens in YAML  
+4. Tower online + client.env deploy  
+
+---
+
 # Iteration cycle 1 review (v1.1 → v1.5)
 
 **Date:** 2026-06-12  

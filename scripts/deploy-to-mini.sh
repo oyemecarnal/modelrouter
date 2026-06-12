@@ -26,6 +26,8 @@ cd "$REMOTE_DIR"
 chmod +x scripts/*.sh
 ./scripts/install.sh
 ./scripts/stop.sh 2>/dev/null || true
+sleep 2
+./scripts/stop.sh 2>/dev/null || true
 MODELROUTER_WORKERS=1 ./scripts/start-daemon.sh
 ./scripts/issue-project-keys.sh 2>/dev/null || true
 ./scripts/healthcheck.sh || echo "[deploy] Health check failed — check logs on mini"

@@ -73,11 +73,12 @@ fi
 
 echo ""
 echo "── Policy presets"
-if curl -sf "http://${CURL_HOST}:${PORT}/v1/models" -H "Authorization: Bearer ${KEY}" 2>/dev/null | \
-   python3 -c "import sys,json; ids=[m['id'] for m in json.load(sys.stdin).get('data',[])]; need=['hermes-fast','hermes-smart','cheap','code','offline']; missing=[n for n in need if n not in ids]; print('missing:'+','.join(missing) if missing else 'ok')" | grep -q ok; then
+MODELS_JSON="$(curl -sf "http://${CURL_HOST}:${PORT}/v1/models" -H "Authorization: Bearer ${KEY}" 2>/dev/null || true)"
+if [[ -n "$MODELS_JSON" ]] && echo "$MODELS_JSON" | \
+   python3 -c "import sys,json; d=json.load(sys.stdin); ids=[m['id'] for m in d.get('data',[])]; need=['hermes-fast','hermes-smart','cheap','code','offline']; missing=[n for n in need if n not in ids]; print('missing:'+','.join(missing) if missing else 'ok')" 2>/dev/null | grep -q ok; then
   ok "Presets registered (hermes-fast, hermes-smart, cheap, code, offline)"
 else
-  warn "Some policy presets missing from /v1/models — restart after config change"
+  warn "Policy presets not verified (gateway down or missing from /v1/models)"
 fi
 
 echo ""

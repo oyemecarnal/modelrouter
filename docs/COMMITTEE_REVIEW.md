@@ -96,3 +96,29 @@
 - Architecture: `PRODUCT_VISION.md`, `HOMELAB_GOALS.md`, `CLEAN_WIRES.md`, `ITERATION_REVIEW.md`
 
 Next committee checkpoint: end of cycle 2.5 → update this doc + `ITERATION_REVIEW.md`.
+
+---
+
+## Cycle 2–3 checkpoint (2026-06-12)
+
+**Commits:** `9dec9b1` (v2.5.0) · `2a44976` (homelab ops) · `ce513e1` (v2.5.1) · cycle 3 → **v3.0.0**
+
+| P0 item | Status |
+|---------|--------|
+| Fail-closed master key | **Fixed** — `check-master-key.sh` |
+| Widget POST auth | **Fixed** — `X-Widget-Token` |
+| Project keys after rotate | **Fixed** — `--refresh` |
+| route_hints schema clash | **Fixed** |
+| Equity / api_assess / MCP bugs | **Fixed** |
+| Gateway down / daemon pid | **Improved** — `start.sh`, `stop.sh`, health bind |
+| Tower client.env | **Script ready** — tower SSH offline (human) |
+
+| Dimension | Was | Now |
+|-----------|-----|-----|
+| Homelab wiring | C+ | **B** — mini deployed, LAN URL documented |
+| Security | Yellow | **Yellow→Green-ish** — widget auth + fail-closed; LAN bearer unchanged |
+| Product readiness | Phase 0 ~40% | **Phase 0 ~85%** — metering trustworthy enough for calibration prep |
+
+**Still human:** Cursor key confirmation, Anthropic key, Groq rotation, tower online, optional dedicated `sk-mr-*` master key.
+
+**Next phase:** Phase 1 catalog (`models_catalog.yaml`) — not Console yet.
