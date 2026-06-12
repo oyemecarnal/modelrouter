@@ -1,5 +1,7 @@
 # AI Committee Review — v1.5.0 (full project)
 
+> **Historical baseline** (2026-06-12). Cycle 2–3 resolutions are in the checkpoint at the bottom of this file.
+
 **Date:** 2026-06-12  
 **Commit:** `7576096` on `main`  
 **Panels:** Bugbot (code) · Security Review · Architecture/Product  
