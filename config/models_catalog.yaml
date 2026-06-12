@@ -1,0 +1,130 @@
+# Models & presets catalog — Phase 1 SSOT for Console MVP, widget, and cost discipline.
+# See docs/PRODUCT_VISION.md Phase 1. Gateway routing still uses policy_presets.yaml.
+
+catalog_version: 1
+
+# Cost tiers: free_low | low | mid | high | local
+# Billing: free_tier | pay_per_token | self_hosted
+
+presets:
+  cheap:
+    label: Cheap
+    description: Lowest cost; simple Q&A and short tasks
+    cost_tier: free_low
+    max_tokens_default: 4096
+    clients: [kalshi-bot, coinbot, cursor-dev]
+
+  code:
+    label: Code
+    description: Coding and refactoring
+    cost_tier: low
+    max_tokens_default: 8192
+    clients: [cursor-dev, modelrouter-agents]
+
+  review:
+    label: Review
+    description: Careful quality pass
+    cost_tier: high
+    max_tokens_default: 8192
+    clients: [modelrouter-agents]
+
+  hermes-fast:
+    label: Hermes fast
+    description: smalshi Hermes routine loops on kc-tower
+    cost_tier: free_low
+    max_tokens_default: 4096
+    clients: [smalshi-hermes]
+
+  hermes-smart:
+    label: Hermes smart
+    description: Hermes complex reasoning and high-stakes decisions
+    cost_tier: mid
+    max_tokens_default: 16384
+    clients: [smalshi-hermes]
+
+  offline:
+    label: Offline
+    description: Local Ollama first; minimal cloud fallback
+    cost_tier: local
+    max_tokens_default: 4096
+    clients: []
+
+  smart:
+    label: Smart
+    description: Legacy alias — capable multi-provider tier
+    cost_tier: high
+    max_tokens_default: 8192
+    clients: [cursor-dev]
+
+  fast:
+    label: Fast
+    description: Legacy alias — fast/cheap general work
+    cost_tier: low
+    max_tokens_default: 4096
+    clients: [cursor-dev]
+
+  local:
+    label: Local
+    description: Ollama on LAN
+    cost_tier: local
+    max_tokens_default: 4096
+    clients: []
+
+models:
+  groq/llama-3.1-8b-instant:
+    provider: groq
+    context_window: 131072
+    cost_tier: free_low
+    billing: free_tier
+    notes: Groq free tier; primary cheap path
+
+  groq/llama-3.3-70b-versatile:
+    provider: groq
+    context_window: 131072
+    cost_tier: low
+    billing: free_tier
+    notes: Strong open model on Groq
+
+  mistral/mistral-small-latest:
+    provider: mistral
+    context_window: 32000
+    cost_tier: low
+    billing: pay_per_token
+
+  mistral/mistral-large-latest:
+    provider: mistral
+    context_window: 128000
+    cost_tier: mid
+    billing: pay_per_token
+
+  openai/gpt-4o:
+    provider: openai
+    context_window: 128000
+    cost_tier: high
+    billing: pay_per_token
+
+  openai/gpt-4o-mini:
+    provider: openai
+    context_window: 128000
+    cost_tier: low
+    billing: pay_per_token
+
+  anthropic/claude-sonnet-4-20250514:
+    provider: anthropic
+    context_window: 200000
+    cost_tier: high
+    billing: pay_per_token
+    requires_env: ANTHROPIC_API_KEY
+
+  ollama/llama3.2:
+    provider: ollama
+    context_window: 128000
+    cost_tier: local
+    billing: self_hosted
+
+  openai/text-embedding-3-small:
+    provider: openai
+    context_window: 8191
+    cost_tier: low
+    billing: pay_per_token
+    mode: embedding

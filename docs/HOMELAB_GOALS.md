@@ -30,7 +30,9 @@ Versions `1.1` → `1.5` per cycle. See `docs/iterations/`.
 
 ## Human backlog
 
-- [ ] Confirm Cursor uses ModelRouter base URL + `MODELROUTER_MASTER_KEY` *(not direct OpenAI)*
+- [x] Master key — keep `crsr_*` as `MODELROUTER_MASTER_KEY` (Cursor-compatible gateway bearer)
+- [x] `LITELLM_SALT_KEY` — rotate with `make rotate-salt-key` (does not change master)
+- [ ] Confirm Cursor base URL → ModelRouter (not direct OpenAI)
 - [ ] `ANTHROPIC_API_KEY` on kc-mini when available
 - [ ] Rotate Groq key (prior chat exposure)
 - [x] `kc-tower` SSH aliases in `~/.ssh/config` + `config/hosts.yaml`

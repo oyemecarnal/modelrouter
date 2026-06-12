@@ -23,6 +23,9 @@ PYTHONPATH="$ROOT" .venv/bin/python -m modelrouter.route_policy --all >/dev/null
 echo "── Policy presets SSOT"
 .venv/bin/python scripts/check_presets.py
 
+echo "── Models catalog SSOT"
+.venv/bin/python scripts/check_catalog.py
+
 echo "── Health (optional)"
 if ./scripts/healthcheck.sh &>/dev/null; then
   echo "  ok gateway"

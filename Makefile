@@ -2,7 +2,7 @@
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
 .PHONY: route-hints project-keys rotate-master-key mcp-install smoke test lint cost-review homelab-status
-.PHONY: check-presets consolidate-keys
+.PHONY: check-presets consolidate-keys check-catalog
 
 install:
 	./scripts/install.sh
@@ -100,6 +100,9 @@ project-keys:
 rotate-master-key:
 	./scripts/rotate-master-key.sh
 
+rotate-salt-key:
+	./scripts/rotate-salt-key.sh
+
 mcp-install:
 	.venv/bin/pip install -q -r requirements-mcp.txt
 
@@ -124,6 +127,9 @@ cost-review:
 
 check-presets:
 	.venv/bin/python scripts/check_presets.py
+
+check-catalog:
+	.venv/bin/python scripts/check_catalog.py
 
 consolidate-keys:
 	./scripts/consolidate-keys.sh

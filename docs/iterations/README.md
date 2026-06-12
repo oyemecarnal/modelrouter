@@ -31,3 +31,9 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 3.3 | `deploy-mini` — mini on 3.x | [3.3.md](3.3.md) |
 | 3.4 | Committee checkpoint + clean-wires docs | [3.4.md](3.4.md) |
 | 3.5 | Cycle capstone → **v3.0.0** | [3.5.md](3.5.md) |
+
+## Cycle 4 (Phase 1 — catalog & calibration)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 4.1 | `models_catalog.yaml` + salt rotate → **v3.1.0** | [4.1.md](4.1.md) |

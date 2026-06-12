@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.1.0] — 2026-06-12 (iteration 4.1 — Phase 1 start)
+
+### Added
+- `config/models_catalog.yaml` — preset/model catalog (cost tier, context, max tokens)
+- `scripts/check_catalog.py`, `make check-catalog`, `modelrouter/models_catalog.py`
+- `scripts/rotate-salt-key.sh`, `make rotate-salt-key` — salt only; master key unchanged
+
+### Changed
+- Master key policy documented: keep `crsr_*` gateway bearer for Cursor compatibility
+- `PRODUCT_VISION.md` Phase 1 catalog items marked started
+
 ## [3.0.0] — 2026-06-12 (iteration cycle 3)
 
 ### Added

@@ -100,11 +100,12 @@ Avoid a single god-mode connector until security model is designed (Business tie
 - [x] Daemon reliable enough to trust metering (pid + stop + health bind)
 - [ ] All clients on gateway only *(human: Cursor verify, tower deploy)*
 
-### Phase 1 — Catalog & calibration (2.x → 3.x)
+### Phase 1 — Catalog & calibration (3.1 → 4.x)
 
-- [ ] `config/models_catalog.yaml` — context window, $ tier, free/paid per model
+- [x] `config/models_catalog.yaml` — context window, cost tier, presets (Phase 1 SSOT)
+- [x] `make check-catalog` / `scripts/check_catalog.py` — drift check in `make test`
 - [ ] Console MVP: static grid reading catalog + `/v1/models` + widget snapshot
-- [ ] Per-preset max tokens in config (LiteLLM params)
+- [ ] Per-preset max tokens enforced in LiteLLM config
 
 ### Phase 2 — Connector MVP (3.x)
 
