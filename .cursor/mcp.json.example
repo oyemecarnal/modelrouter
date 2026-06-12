@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "modelrouter": {
+      "comment": "Point OpenAI-compatible MCP tools at your local gateway",
+      "url": "http://127.0.0.1:3000/v1",
+      "headers": {
+        "Authorization": "Bearer ${MODELROUTER_MASTER_KEY}"
+      }
+    }
+  }
+}

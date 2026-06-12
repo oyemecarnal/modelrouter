@@ -1,0 +1,23 @@
+{
+  "app_name": "ModelRouter Keys",
+  "providers": {
+    "openai-codex": true,
+    "cursor": true,
+    "anthropic": true,
+    "gemini": true,
+    "openrouter": true,
+    "github-copilot": true,
+    "groq": true,
+    "mistral": true
+  },
+  "show_configured_keys": true,
+  "dev_root": "/Users/kevinreed/dev",
+  "modelrouter_root": "/Users/kevinreed/dev/modelrouter",
+  "widget_on_top": false,
+  "widget_size": 420,
+  "refresh_interval_seconds": 120,
+  "session_cache_days": 30,
+  "widget_fetch_in_panel": true,
+  "watchdog_enabled": true,
+  "edit_file": ".env.local"
+}

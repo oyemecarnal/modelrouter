@@ -1,0 +1,32 @@
+---
+description: ModelRouter project context — LiteLLM-based self-hosted OpenRouter gateway
+globs: "**/*"
+alwaysApply: true
+---
+
+# ModelRouter
+
+Self-hosted LLM gateway powered by LiteLLM. OpenAI-compatible API at `http://127.0.0.1:3000/v1`.
+
+## Key paths
+
+- `config/modelrouter.yaml` — full config (Redis, fallbacks, all providers)
+- `config/modelrouter.minimal.yaml` — dev config without Redis
+- `scripts/start.sh` / `scripts/load_secrets.py` — startup + 1Password
+- `modelrouter/logging_callback.py` — structured JSON request logs
+- `agents/` — curated agency-agents prompts for development (SRE, DevOps, MCP builder)
+- `deploy/com.modelrouter.plist` — launchd for always-on Mac
+
+## Conventions
+
+- Provider keys via env or 1Password `op://` refs — never commit secrets
+- Logical model aliases: `smart`, `fast`, `local`
+- Extend via LiteLLM callbacks in `modelrouter/` package
+- Always-on target: `kc-mini` (`/Users/kevinreed/dev/modelrouter`)
+
+## Commands
+
+```bash
+make install && make daemon && make health
+./scripts/deploy-to-mini.sh
+```

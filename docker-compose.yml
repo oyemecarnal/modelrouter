@@ -1,0 +1,87 @@
+# ModelRouter production stack: LiteLLM + Postgres + Redis
+# Usage: docker compose up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: modelrouter
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-modelrouter}
+      POSTGRES_DB: modelrouter
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U modelrouter"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - modelrouter
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-modelrouter}
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-modelrouter}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - modelrouter
+
+  modelrouter:
+    image: ghcr.io/berriai/litellm-database:main-stable
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${MODELROUTER_PORT:-3000}:4000"
+    volumes:
+      - ./config/modelrouter.yaml:/app/config.yaml:ro
+      - ./modelrouter:/app/modelrouter:ro
+    environment:
+      MODELROUTER_MASTER_KEY: ${MODELROUTER_MASTER_KEY:-sk-modelrouter-change-me}
+      LITELLM_SALT_KEY: ${LITELLM_SALT_KEY:-sk-modelrouter-salt-change-me}
+      DATABASE_URL: postgresql://modelrouter:${POSTGRES_PASSWORD:-modelrouter}@postgres:5432/modelrouter
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-modelrouter}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      OLLAMA_API_BASE: ${OLLAMA_API_BASE:-http://host.docker.internal:11434}
+      PYTHONPATH: /app
+    command:
+      - "--config"
+      - "/app/config.yaml"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "4000"
+      - "--num_workers"
+      - "4"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health/liveliness"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - modelrouter
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  modelrouter:
+    driver: bridge
