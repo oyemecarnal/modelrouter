@@ -118,6 +118,12 @@ model_list:
       model: groq/*
       api_key: os.environ/GROQ_API_KEY
 
+  # Clients (e.g. Cursor) may request Azure-style ministral IDs — map to supported Mistral small
+  - model_name: ministral-3-3b-2512
+    litellm_params:
+      model: mistral/mistral-small-latest
+      api_key: os.environ/MISTRAL_API_KEY
+
   - model_name: mistral/*
     litellm_params:
       model: mistral/*

@@ -17,19 +17,60 @@ check_url() {
   return 1
 }
 
+# kc-mini-lan is an SSH alias; try mDNS / Tailscale fallbacks from ~/.ssh/config.
+mini_gateway_urls() {
+  local port="${MODELROUTER_PORT:-3000}"
+  local candidates=(
+    "http://kc-mini-lan:${port}"
+    "http://Kevins-Mac-mini.local:${port}"
+    "http://100.85.245.23:${port}"
+  )
+  if [[ -n "${MODELROUTER_MINI_URL:-}" ]]; then
+    candidates=("$MODELROUTER_MINI_URL")
+  fi
+  printf '%s\n' "${candidates[@]}"
+}
+
+check_mini_gateway() {
+  local url
+  while IFS= read -r url; do
+    if check_url "kc-mini" "$url"; then
+      MINI_GATEWAY_URL="$url"
+      return 0
+    fi
+  done < <(mini_gateway_urls)
+  return 1
+}
+
+tower_ssh_host() {
+  if [[ -n "${KC_TOWER_SSH:-}" ]]; then
+    echo "$KC_TOWER_SSH"
+    return 0
+  fi
+  local candidate
+  for candidate in kc-tower-lan kc-tower; do
+    if ssh -o ConnectTimeout=3 -o BatchMode=yes "$candidate" 'true' 2>/dev/null; then
+      echo "$candidate"
+      return 0
+    fi
+  done
+  return 1
+}
+
 echo "==> Remote health"
 fail=0
+MINI_GATEWAY_URL=""
 
 check_url "laptop" "http://127.0.0.1:${MODELROUTER_PORT:-3000}" || fail=1
-check_url "kc-mini" "http://kc-mini-lan:${MODELROUTER_PORT:-3000}" || fail=1
+check_mini_gateway || fail=1
 
-TOWER_SSH="${KC_TOWER_SSH:-kc-tower-lan}"
-if ssh -o ConnectTimeout=3 -o BatchMode=yes "$TOWER_SSH" 'true' 2>/dev/null; then
-  echo "  ok  kc-tower  ssh $TOWER_SSH"
-  ssh -o ConnectTimeout=5 "$TOWER_SSH" \
-    "curl -sf --max-time 4 http://kc-mini-lan:${MODELROUTER_PORT:-3000}/health/liveliness && echo '  ok  tower→mini gateway' || echo '  down tower→mini gateway'" || true
+if host="$(tower_ssh_host)"; then
+  echo "  ok  kc-tower  ssh $host"
+  gw="${MINI_GATEWAY_URL:-http://Kevins-Mac-mini.local:${MODELROUTER_PORT:-3000}}"
+  ssh -o ConnectTimeout=5 "$host" \
+    "curl -sf --max-time 4 ${gw}/health/liveliness && echo '  ok  tower→mini gateway' || echo '  down tower→mini gateway'" || true
 else
-  echo "  skip kc-tower  (ssh $TOWER_SSH unreachable — set KC_TOWER_SSH)"
+  echo "  skip kc-tower  (ssh unreachable — set KC_TOWER_SSH)"
 fi
 
 exit "$fail"

@@ -2,7 +2,8 @@
 # Override via env: MODELROUTER_REMOTE_HOST, KC_TOWER_SSH
 
 gateway:
-  url: http://kc-mini-lan:3000
+  url: http://Kevins-Mac-mini.local:3000
+  url_ssh_alias: http://kc-mini-lan:3000  # SSH Host alias only — use url for HTTP
   url_local: http://127.0.0.1:3000
   master_key_env: MODELROUTER_MASTER_KEY
 
@@ -18,13 +19,13 @@ hosts:
     description: Always-on gateway, key store, smalshi compose
     ssh: kc-mini-lan
     modelrouter_path: /Users/kevinreed/dev/modelrouter
-    modelrouter_url: http://kc-mini-lan:3000
+    modelrouter_url: http://Kevins-Mac-mini.local:3000
     roles: [gateway, deploy-target, keys, tokens]
 
   kc-tower:
     description: Agent/bot runtime (Hermes, Kalshi, coinbot)
     ssh: kc-tower-lan  # override at runtime: KC_TOWER_SSH env in remote-health.sh
-    modelrouter_url: http://kc-mini-lan:3000
+    modelrouter_url: http://Kevins-Mac-mini.local:3000
     roles: [runtime, hermes, kalshi, coinbot]
     note: Does not host ModelRouter — calls kc-mini gateway on LAN
 

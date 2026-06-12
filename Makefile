@@ -1,6 +1,6 @@
 .PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
-.PHONY: keys-sync-remote groq-setup push-env-mini keys-widget-install keys-widget keys-widget-fetch
+.PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
 .PHONY: route-hints project-keys rotate-master-key mcp-install smoke test lint cost-review homelab-status
 .PHONY: check-presets consolidate-keys
 
@@ -78,6 +78,9 @@ groq-setup:
 
 push-env-mini:
 	./scripts/push-env-to-mini.sh MISTRAL_API_KEY GROQ_API_KEY OPENAI_API_KEY GOOGLE_API_KEY GEMINI_API_KEY OPENROUTER_API_KEY POLYGON_API_KEY MODELROUTER_MASTER_KEY LITELLM_SALT_KEY
+
+push-client-env-tower:
+	./scripts/push-client-env-to-tower.sh
 
 keys-widget-install:
 	cd tokens && ./scripts/install.sh
