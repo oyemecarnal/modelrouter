@@ -51,4 +51,4 @@ exec litellm \
   --host "$HOST" \
   --port "$PORT" \
   --num_workers "$WORKERS" \
-  2>&1 | tee -a "$LOGFILE"
+  >> "$LOGFILE" 2>&1

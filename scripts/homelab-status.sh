@@ -3,12 +3,13 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VER="$(cat "$ROOT/VERSION" 2>/dev/null || echo dev)"
+GW_URL="$(awk '/^gateway:/{f=1} f && /^  url:/{print $2; exit}' "$ROOT/config/hosts.yaml" 2>/dev/null || echo "http://Kevins-Mac-mini.local:3000")"
 
 echo "╔══════════════════════════════════════╗"
 echo "║  ModelRouter homelab  v${VER}        ║"
 echo "╚══════════════════════════════════════╝"
 echo ""
-echo "Gateway (LAN): http://kc-mini-lan:3000"
+echo "Gateway (LAN): ${GW_URL}  (SSH: kc-mini-lan)"
 echo "Docs: docs/HOMELAB_GOALS.md"
 echo ""
 

@@ -10,6 +10,8 @@ modelrouter_load_env
 HOST="${MODELROUTER_HOST:-127.0.0.1}"
 PORT="${MODELROUTER_PORT:-3000}"
 KEY="${MODELROUTER_MASTER_KEY:-}"
+CURL_HOST="${HOST}"
+[[ "$CURL_HOST" == "0.0.0.0" || "$CURL_HOST" == "::" ]] && CURL_HOST="127.0.0.1"
 
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 warn() { printf "  \033[33m!\033[0m %s\n" "$1"; }
@@ -21,13 +23,17 @@ echo "    Root: $ROOT"
 echo ""
 
 echo "── Process"
+LISTEN_PID="$(lsof -ti :"$PORT" 2>/dev/null | head -1 || true)"
 if [[ -f "$ROOT/.pids/modelrouter.pid" ]] && kill -0 "$(cat "$ROOT/.pids/modelrouter.pid")" 2>/dev/null; then
   ok "Daemon PID $(cat "$ROOT/.pids/modelrouter.pid")"
+elif [[ -n "$LISTEN_PID" ]]; then
+  echo "$LISTEN_PID" > "$ROOT/.pids/modelrouter.pid"
+  warn "Pidfile reconciled from port $PORT (PID $LISTEN_PID)"
 else
   fail "Daemon not running (stale or missing pidfile)"
 fi
-if lsof -ti :"$PORT" &>/dev/null; then
-  ok "Port $PORT in use"
+if [[ -n "$LISTEN_PID" ]]; then
+  ok "Port $PORT in use (PID $LISTEN_PID)"
 else
   fail "Nothing listening on $PORT"
 fi
@@ -49,6 +55,8 @@ else
 fi
 if [[ "${LITELLM_SALT_KEY:-}" == "${MODELROUTER_MASTER_KEY:-}" ]]; then
   warn "LITELLM_SALT_KEY equals master key — use a distinct salt for Docker/Postgres"
+elif [[ -z "${LITELLM_SALT_KEY:-}" || "${LITELLM_SALT_KEY}" == *change-me* ]]; then
+  warn "LITELLM_SALT_KEY is placeholder — required before Docker/Postgres deploy"
 fi
 
 echo ""
@@ -65,7 +73,7 @@ fi
 
 echo ""
 echo "── Policy presets"
-if curl -sf "http://${HOST}:${PORT}/v1/models" -H "Authorization: Bearer ${KEY}" 2>/dev/null | \
+if curl -sf "http://${CURL_HOST}:${PORT}/v1/models" -H "Authorization: Bearer ${KEY}" 2>/dev/null | \
    python3 -c "import sys,json; ids=[m['id'] for m in json.load(sys.stdin).get('data',[])]; need=['hermes-fast','hermes-smart','cheap','code','offline']; missing=[n for n in need if n not in ids]; print('missing:'+','.join(missing) if missing else 'ok')" | grep -q ok; then
   ok "Presets registered (hermes-fast, hermes-smart, cheap, code, offline)"
 else
@@ -93,7 +101,8 @@ fi
 
 echo ""
 echo "── Next steps"
-echo "  make restart          # if unhealthy"
-echo "  make route-hints      # refresh widget → routing hints"
-echo "  make rotate-master-key  # if master key placeholder"
-echo "  make deploy-mini      # sync this tree to kc-mini"
+echo "  make restart              # if unhealthy"
+echo "  make route-hints          # refresh widget → routing hints"
+echo "  make push-client-env-tower  # when tower SSH is up"
+echo "  make rotate-master-key    # if master key placeholder"
+echo "  make deploy-mini          # sync this tree to kc-mini"

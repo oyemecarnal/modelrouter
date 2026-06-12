@@ -1,8 +1,8 @@
 # ModelRouter
 
-**v2.5.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
+**v2.5.1** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
 
-Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://kc-mini-lan:3000`) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
+Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://Kevins-Mac-mini.local:3000` on LAN; `kc-mini-lan` is SSH-only) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
 
 Drop-in replacement for OpenRouter on your LAN (OpenRouter itself is stubbed — optional later).
 
@@ -21,7 +21,7 @@ make homelab-status   # laptop + mini + doctor
 make test && make lint
 ```
 
-**Tower / Hermes:** base URL `http://kc-mini-lan:3000`, models `hermes-fast` / `hermes-smart` — see `config/hosts.yaml`.
+**Tower / Hermes:** base URL `http://Kevins-Mac-mini.local:3000`, models `hermes-fast` / `hermes-smart` — see `config/hosts.yaml`.
 
 Test:
 
@@ -111,6 +111,10 @@ make restart          # stop + daemon
 make health           # health check
 make logs             # tail logs
 make status           # health + PID
+make homelab-status   # doctor + remote-health + cost-review
+make deploy-mini      # rsync + restart on kc-mini
+make push-env-mini    # sync selected secrets to mini
+make push-client-env-tower  # tower client.env (gateway key only)
 
 # Auto-start at login (macOS launchd)
 make daemon-enable

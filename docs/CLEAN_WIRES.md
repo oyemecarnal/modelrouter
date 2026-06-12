@@ -49,7 +49,7 @@ You cannot calibrate spend or context until traffic flows through **one meter**.
 ## Migration checklist (homelab)
 
 - [ ] Cursor: base URL → ModelRouter; API key → `MODELROUTER_MASTER_KEY` only
-- [ ] Hermes/tower: `OPENAI_BASE_URL=http://kc-mini-lan:3000/v1`, model = preset name
+- [ ] Hermes/tower: `OPENAI_BASE_URL=http://Kevins-Mac-mini.local:3000/v1`, model = preset name
 - [ ] Remove provider keys from tower `.env` files (keep Polygon etc. where data APIs run)
 - [ ] Stop new keys in `~/.zshrc` — mini `modelrouter/.env` + 1Password
 - [ ] `make keys-audit` monthly; `make cost-review` each cycle

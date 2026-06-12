@@ -48,7 +48,7 @@ PY
 echo "[rotate-master-key] Updated $ENV_FILE + refreshed MODELROUTER_KEY_*"
 echo "[rotate-master-key] HUMAN ACTION REQUIRED:"
 echo "  1. Cursor → Settings → Models → API key = new MODELROUTER_MASTER_KEY"
-echo "  2. Base URL stays http://127.0.0.1:3000 (or kc-mini-lan:3000)"
+echo "  2. Base URL stays http://127.0.0.1:3000 (laptop) or http://Kevins-Mac-mini.local:3000 (LAN)"
 echo "  3. make push-env-mini  # sync to mini if needed"
 echo "  4. make restart"
 mask="${MASTER:0:10}…${MASTER: -4}"

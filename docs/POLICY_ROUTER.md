@@ -52,7 +52,7 @@ Run `make project-keys` to add `MODELROUTER_KEY_*` vars to `.env`.
 - **Good fit:** anything that already uses an OpenAI-style API (agents, bots, Cursor).
 - **Keep direct:** ultra-low-latency paths, or tools that need one vendor’s special feature.
 
-**Tower vs mini:** Polygon and some secrets may live on the **mini** while bots run on **tower**. ModelRouter on the mini is the **single front door**; tower clients use `http://kc-mini-lan:3000` (or Tailscale). Keys stay on the mini — tower doesn’t duplicate `.env` files.
+**Tower vs mini:** Polygon and some secrets may live on the **mini** while bots run on **tower**. ModelRouter on the mini is the **single front door**; tower clients use `http://Kevins-Mac-mini.local:3000` (or Tailscale). Keys stay on the mini — tower doesn’t duplicate `.env` files.
 
 ## OpenRouter — do you need it?
 

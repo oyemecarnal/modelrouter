@@ -4,7 +4,7 @@
 
 ## North star (homelab)
 
-One **on-LAN front door** for LLM calls: `http://kc-mini-lan:3000` (always-on), with laptop for dev and tower for agent/bot **runtime**.
+One **on-LAN front door** for LLM calls: `http://Kevins-Mac-mini.local:3000` on kc-mini (always-on), with laptop for dev and tower for agent/bot **runtime**. Use `kc-mini-lan` for SSH only.
 
 **Before calibration:** untangle all wires (`docs/CLEAN_WIRES.md`) — new ModelRouter API key, no provider keys on clients, one meter.
 

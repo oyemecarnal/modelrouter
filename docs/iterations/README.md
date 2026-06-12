@@ -21,3 +21,9 @@ Five quick iterations per cycle. Each version: small change → test → doc.
 | 2.5 | Committee bug fixes + widget auth → **v2.5.0** | [2.5.md](2.5.md) |
 
 After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
+
+## Cycle 3 (reliability + Phase 0 tail)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 3.1 | Daemon pid, health bind, salt warn, doc URL sync | [3.1.md](3.1.md) |

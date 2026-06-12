@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.5.1] — 2026-06-12 (iteration 3.1)
+
+### Fixed
+- Daemon pidfile tracks `litellm` process (`start.sh` no longer pipes through `tee`)
+- Health probes use loopback when gateway binds `0.0.0.0` (kc-mini LAN)
+- `doctor` reconciles stale pidfile from port listener
+
+### Changed
+- Docs/scripts use `Kevins-Mac-mini.local` for LAN HTTP (`kc-mini-lan` SSH-only)
+- `homelab-status` reads gateway URL from `config/hosts.yaml`
+- `make push-client-env-tower` documented in README and doctor next-steps
+
 ## [2.5.0] — 2026-06-12 (iteration cycle 2)
 
 ### Added
