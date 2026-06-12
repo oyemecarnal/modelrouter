@@ -1,0 +1,106 @@
+# Policy presets — copy into modelrouter.yaml / modelrouter.minimal.yaml model_list + fallbacks.
+# See docs/POLICY_ROUTER.md for plain-language guide.
+#
+# Presets (what clients request):
+#   cheap         — lowest cost; simple Q&A, classification, short summaries
+#   code          — coding tasks; Groq Llama first
+#   review        — careful answers; smart tier
+#   hermes-fast   — smalshi Hermes agent routine work (kc-tower)
+#   hermes-smart  — smalshi Hermes agent complex / high-stakes reasoning
+#   offline       — local Ollama only (+ one cloud backup if local down)
+#
+# OpenRouter: intentionally NOT wired — stub in config/openrouter.stub.yaml
+
+preset_models:
+  - model_name: cheap
+    litellm_params:
+      model: groq/llama-3.1-8b-instant
+      api_key: os.environ/GROQ_API_KEY
+    model_info:
+      mode: chat
+      description: "Low-cost preset — Groq 8B"
+
+  - model_name: cheap
+    litellm_params:
+      model: mistral/mistral-small-latest
+      api_key: os.environ/MISTRAL_API_KEY
+    model_info:
+      mode: chat
+      description: "Low-cost preset — Mistral small"
+
+  - model_name: code
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+    model_info:
+      mode: chat
+      supports_function_calling: true
+
+  - model_name: code
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      mode: chat
+      supports_function_calling: true
+
+  - model_name: review
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      mode: chat
+
+  - model_name: review
+    litellm_params:
+      model: anthropic/claude-sonnet-4-20250514
+      api_key: os.environ/ANTHROPIC_API_KEY
+    model_info:
+      mode: chat
+
+  - model_name: hermes-fast
+    litellm_params:
+      model: groq/llama-3.1-8b-instant
+      api_key: os.environ/GROQ_API_KEY
+    model_info:
+      mode: chat
+      description: "Hermes routine — cheap, fast"
+
+  - model_name: hermes-fast
+    litellm_params:
+      model: mistral/mistral-small-latest
+      api_key: os.environ/MISTRAL_API_KEY
+    model_info:
+      mode: chat
+
+  - model_name: hermes-smart
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+    model_info:
+      mode: chat
+      supports_function_calling: true
+
+  - model_name: hermes-smart
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+    model_info:
+      mode: chat
+      supports_function_calling: true
+
+  - model_name: offline
+    litellm_params:
+      model: ollama/llama3.2
+      api_base: os.environ/OLLAMA_API_BASE
+    model_info:
+      mode: chat
+      description: "Air-gapped / no-cloud — local Ollama"
+
+preset_fallbacks:
+  - cheap: [mistral-small, groq-fast, local]
+  - code: [fast, groq-llama, mistral-small, local]
+  - review: [smart, fast, groq-llama]
+  - hermes-fast: [cheap, groq-fast, mistral-small, local]
+  - hermes-smart: [smart, code, fast, groq-llama, mistral-small, local]
+  - offline: [groq-fast]

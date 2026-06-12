@@ -1,0 +1,296 @@
+# API key catalog — families, pricing hints, signup links.
+# Live pricing merged from OpenRouter where available (api_comparator.py).
+# See docs/API_INVENTORY.md
+
+version: 1
+
+families:
+  - id: chat_frontier
+    label: Chat / Frontier LLM
+    purpose: Best-quality reasoning, coding, agents
+    weight: 1.0
+    repo_fit: [smalshi-hermes, cursor-dev, modelrouter-agents]
+    keys:
+      - env: OPENAI_API_KEY
+        label: OpenAI
+        signup: https://platform.openai.com/api-keys
+        pricing_ref: openai/gpt-4o-mini
+        static_input_per_m: 0.15
+        static_output_per_m: 0.60
+        notes: Codex subscription often cheaper for IDE use
+      - env: ANTHROPIC_API_KEY
+        label: Anthropic
+        signup: https://console.anthropic.com
+        pricing_ref: anthropic/claude-3.5-sonnet
+        static_input_per_m: 3.00
+        static_output_per_m: 15.00
+      - env: GOOGLE_API_KEY
+        label: Google AI
+        signup: https://aistudio.google.com/apikey
+        pricing_ref: google/gemini-2.0-flash
+        static_input_per_m: 0.10
+        static_output_per_m: 0.40
+        aliases: [GEMINI_API_KEY]
+      - env: GEMINI_API_KEY
+        label: Gemini (alias)
+        hidden: true
+
+  - id: chat_fast_cheap
+    label: Fast / Cheap LLM
+    purpose: High-volume loops, routing fallbacks, Hermes-fast
+    weight: 0.95
+    repo_fit: [smalshi-hermes, kalshi-bot, coinbot]
+    keys:
+      - env: GROQ_API_KEY
+        label: Groq
+        signup: https://console.groq.com
+        pricing_ref: groq/llama-3.3-70b-versatile
+        static_input_per_m: 0.59
+        static_output_per_m: 0.79
+        free_tier: true
+      - env: MISTRAL_API_KEY
+        label: Mistral
+        signup: https://console.mistral.ai
+        pricing_ref: mistral/mistral-small-latest
+        static_input_per_m: 0.20
+        static_output_per_m: 0.60
+        free_tier: true
+      - env: DEEPSEEK_API_KEY
+        label: DeepSeek
+        signup: https://platform.deepseek.com
+        pricing_ref: deepseek/deepseek-chat
+        static_input_per_m: 0.27
+        static_output_per_m: 1.10
+      - env: TOGETHER_API_KEY
+        label: Together AI
+        signup: https://api.together.xyz
+        pricing_ref: together/meta-llama/Llama-3-8b-chat-hf
+        static_input_per_m: 0.20
+        static_output_per_m: 0.20
+      - env: FIREWORKS_API_KEY
+        label: Fireworks AI
+        signup: https://fireworks.ai
+        pricing_ref: fireworks/accounts/fireworks/models/llama-v3p1-8b-instruct
+        static_input_per_m: 0.20
+        static_output_per_m: 0.20
+      - env: COHERE_API_KEY
+        label: Cohere
+        signup: https://dashboard.cohere.com
+        pricing_ref: cohere/command-r
+        static_input_per_m: 0.50
+        static_output_per_m: 1.50
+
+  - id: chat_aggregator
+    label: LLM Aggregator
+    purpose: One API bill, exotic models, overflow routing
+    weight: 0.5
+    repo_fit: [smalshi-hermes]
+    keys:
+      - env: OPENROUTER_API_KEY
+        label: OpenRouter
+        signup: https://openrouter.ai/keys
+        pricing_ref: openrouter/auto
+        static_input_per_m: 1.00
+        static_output_per_m: 3.00
+        notes: Markup over direct; stub in modelrouter until needed
+
+  - id: chat_open_weights
+    label: Open weights / HF
+    purpose: Self-serve open models, embeddings
+    weight: 0.4
+    keys:
+      - env: HUGGINGFACE_API_KEY
+        label: Hugging Face
+        signup: https://huggingface.co/settings/tokens
+        static_input_per_m: 0.30
+        static_output_per_m: 0.30
+      - env: REPLICATE_API_TOKEN
+        label: Replicate
+        signup: https://replicate.com/account/api-tokens
+        notes: Per-run pricing varies by model
+
+  - id: chat_xai
+    label: xAI / Grok
+    purpose: Alternative frontier model
+    weight: 0.35
+    keys:
+      - env: XAI_API_KEY
+        label: xAI
+        signup: https://x.ai/api
+        pricing_ref: x-ai/grok-beta
+        static_input_per_m: 5.00
+        static_output_per_m: 15.00
+
+  - id: search_grounded
+    label: Search / Grounded answers
+    purpose: Agent web search, RAG grounding
+    weight: 0.7
+    repo_fit: [smalshi-hermes, modelrouter-agents]
+    keys:
+      - env: PERPLEXITY_API_KEY
+        label: Perplexity
+        signup: https://www.perplexity.ai/settings/api
+        static_input_per_m: 1.00
+        static_output_per_m: 1.00
+      - env: TAVILY_API_KEY
+        label: Tavily
+        signup: https://tavily.com
+        notes: Search API; priced per search not per token
+      - env: SERPER_API_KEY
+        label: Serper (Google)
+        signup: https://serper.dev
+      - env: BRAVE_SEARCH_API_KEY
+        label: Brave Search
+        signup: https://brave.com/search/api
+
+  - id: embeddings_vector
+    label: Embeddings / Vector DB
+    purpose: RAG, semantic search
+    weight: 0.45
+    keys:
+      - env: PINECONE_API_KEY
+        label: Pinecone
+        signup: https://app.pinecone.io
+      - env: WEAVIATE_API_KEY
+        label: Weaviate Cloud
+        signup: https://console.weaviate.cloud
+
+  - id: voice_media
+    label: Voice / Media
+    purpose: TTS, transcription, image gen
+    weight: 0.3
+    keys:
+      - env: ELEVENLABS_API_KEY
+        label: ElevenLabs
+        signup: https://elevenlabs.io
+      - env: ASSEMBLYAI_API_KEY
+        label: AssemblyAI
+        signup: https://www.assemblyai.com
+
+  - id: dev_platform
+    label: Dev platform / IDE
+    purpose: Cloud agents, not LiteLLM routing
+    weight: 0.6
+    repo_fit: [cursor-dev]
+    keys:
+      - env: CURSOR_API_KEY
+        label: Cursor API
+        signup: https://cursor.com/settings
+        notes: Separate from MODELROUTER_MASTER_KEY
+      - env: GITHUB_TOKEN
+        label: GitHub
+        signup: https://github.com/settings/tokens
+        aliases: [GH_TOKEN]
+      - env: GH_TOKEN
+        label: GitHub (alias)
+        hidden: true
+
+  - id: gateway
+    label: ModelRouter gateway
+    purpose: Client auth to your LiteLLM proxy
+    weight: 1.0
+    repo_fit: [smalshi-hermes, kalshi-bot, coinbot, cursor-dev]
+    keys:
+      - env: MODELROUTER_MASTER_KEY
+        label: ModelRouter master
+        notes: Clients use this; not a provider key
+      - env: LITELLM_SALT_KEY
+        label: LiteLLM salt
+        notes: DB encryption for virtual keys
+
+  - id: market_data
+    label: Market data
+    purpose: Quotes, fundamentals — not LLM
+    weight: 0.85
+    repo_fit: [coinbot, kalshi-bot]
+    keys:
+      - env: POLYGON_API_KEY
+        label: Polygon.io
+        signup: https://polygon.io
+      - env: ALPHA_VANTAGE_API_KEY
+        label: Alpha Vantage
+        signup: https://www.alphavantage.co/support/#api-key
+      - env: FINNHUB_API_KEY
+        label: Finnhub
+        signup: https://finnhub.io
+
+  - id: prediction_markets
+    label: Prediction markets
+    purpose: Kalshi, Polymarket bots
+    weight: 0.8
+    repo_fit: [kalshi-bot]
+    keys:
+      - env: KALSHI_API_KEY
+        label: Kalshi
+        signup: https://kalshi.com
+      - env: POLYMARKET_API_KEY
+        label: Polymarket
+        signup: https://polymarket.com
+
+  - id: exchange_crypto
+    label: Crypto exchange
+    purpose: Balances, trading — coinbot
+    weight: 0.75
+    repo_fit: [coinbot]
+    keys:
+      - env: KRAKEN_API_KEY
+        label: Kraken
+        signup: https://www.kraken.com
+      - env: KRAKEN_API_SECRET
+        label: Kraken secret
+        hidden: true
+      - env: COINBASE_API_KEY
+        label: Coinbase
+        signup: https://www.coinbase.com/cloud
+      - env: COINBASE_CDP_KEY_FILE
+        label: Coinbase CDP file
+        notes: Path to CDP JSON
+      - env: BINANCE_API_KEY
+        label: Binance
+        signup: https://www.binance.com
+
+  - id: chain_rpc
+    label: Blockchain RPC
+    purpose: On-chain reads, wallet inventory
+    weight: 0.5
+    keys:
+      - env: ALCHEMY_API_KEY
+        label: Alchemy
+        signup: https://dashboard.alchemy.com
+      - env: INFURA_API_KEY
+        label: Infura
+        signup: https://infura.io
+      - env: ETHERSCAN_API_KEY
+        label: Etherscan
+        signup: https://etherscan.io/apis
+
+  - id: messaging
+    label: Messaging / alerts
+    purpose: Bot notifications
+    weight: 0.55
+    repo_fit: [coinbot, kalshi-bot]
+    keys:
+      - env: TELEGRAM_BOT_TOKEN
+        label: Telegram
+        signup: https://t.me/BotFather
+      - env: DISCORD_BOT_TOKEN
+        label: Discord
+        signup: https://discord.com/developers
+      - env: SLACK_BOT_TOKEN
+        label: Slack
+        signup: https://api.slack.com/apps
+
+  - id: payments_comms
+    label: Payments / comms SaaS
+    purpose: Billing, SMS, email automation
+    weight: 0.25
+    keys:
+      - env: STRIPE_API_KEY
+        label: Stripe
+        signup: https://dashboard.stripe.com/apikeys
+      - env: TWILIO_AUTH_TOKEN
+        label: Twilio
+        signup: https://www.twilio.com
+      - env: SENDGRID_API_KEY
+        label: SendGrid
+        signup: https://sendgrid.com

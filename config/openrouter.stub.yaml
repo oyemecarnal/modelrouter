@@ -1,0 +1,16 @@
+# OpenRouter — NOT ACTIVE (stub for future overflow tier)
+#
+# You do not need OpenRouter if Groq + Mistral + OpenAI + Gemini + local Ollama
+# cover your models. OpenRouter is useful when you want ONE bill and exotic models
+# without wiring each provider — a paid backup, not a requirement.
+#
+# To enable later:
+#   1. Add OPENROUTER_API_KEY to .env
+#   2. Append to model_list in modelrouter.yaml:
+#
+#   - model_name: overflow
+#     litellm_params:
+#       model: openrouter/auto
+#       api_key: os.environ/OPENROUTER_API_KEY
+#
+#   3. Add fallback tail: smart: [..., overflow]

@@ -1,0 +1,147 @@
+# Machine inventory scraper — allowed paths only. Masked output; never exfiltrates secrets.
+# See docs/INVENTORY.md and docs/CLEAN_WIRES.md
+
+version: 1
+
+# Roots to search (must exist; ~ expands to home)
+allowed_roots:
+  - "~/dev"
+  - "~/dev/modelrouter"
+  - "~/.config"
+  - "~/Library/Application Support"
+
+# Explicit files outside tree walks
+explicit_files:
+  - "~/.zshrc"
+  - "~/.bash_profile"
+  - "~/.bashrc"
+  - "~/.profile"
+
+skip_dir_names:
+  - node_modules
+  - .venv
+  - venv
+  - __pycache__
+  - .git
+  - dist
+  - build
+  - .next
+  - site-packages
+  - Library/Caches
+  - Library/Logs
+
+skip_file_suffixes:
+  - .example
+  - .template
+  - .sample
+  - .bak
+  - .backup
+  - .log
+  - .pyc
+
+max_file_bytes: 262144  # 256KB per file for content scan
+
+# Env-style API / token keys (KEY=value lines)
+api_key_names:
+  - OPENAI_API_KEY
+  - ANTHROPIC_API_KEY
+  - GOOGLE_API_KEY
+  - GEMINI_API_KEY
+  - OPENROUTER_API_KEY
+  - GROQ_API_KEY
+  - MISTRAL_API_KEY
+  - CURSOR_API_KEY
+  - MODELROUTER_MASTER_KEY
+  - MODELROUTER_KEY_HERMES
+  - MODELROUTER_KEY_KALSHI
+  - MODELROUTER_KEY_COINBOT
+  - LITELLM_SALT_KEY
+  - COHERE_API_KEY
+  - DEEPSEEK_API_KEY
+  - TOGETHER_API_KEY
+  - FIREWORKS_API_KEY
+  - XAI_API_KEY
+  - PERPLEXITY_API_KEY
+  - HUGGINGFACE_API_KEY
+  - POLYGON_API_KEY
+  - TELEGRAM_BOT_TOKEN
+  - GITHUB_TOKEN
+  - GH_TOKEN
+  - DISCORD_BOT_TOKEN
+  - SLACK_BOT_TOKEN
+  - STRIPE_API_KEY
+  - TWILIO_AUTH_TOKEN
+  - SENDGRID_API_KEY
+  - ALCHEMY_API_KEY
+  - INFURA_API_KEY
+  - ETHERSCAN_API_KEY
+  - COINBASE_API_KEY
+  - KRAKEN_API_KEY
+  - BINANCE_API_KEY
+
+# Inline patterns (masked capture) — high confidence only
+content_patterns:
+  - name: openai_project
+    regex: 'sk-proj-[A-Za-z0-9_-]{8,}'
+  - name: openai_legacy
+    regex: 'sk-[A-Za-z0-9]{20,}'
+  - name: groq
+    regex: 'gsk_[A-Za-z0-9]{20,}'
+  - name: github_pat
+    regex: 'github_pat_[A-Za-z0-9_]{20,}'
+  - name: github_oauth
+    regex: 'ghp_[A-Za-z0-9]{20,}'
+  - name: anthropic
+    regex: 'sk-ant-[A-Za-z0-9_-]{10,}'
+  - name: stripe
+    regex: 'sk_live_[A-Za-z0-9]{10,}'
+
+# Crypto wallet & chain credential surfaces (metadata only — no private keys / mnemonics)
+crypto_surfaces:
+  - id: ethereum_keystore
+    label: Ethereum keystore (UTC JSON)
+    glob: "**/keystore/UTC--*"
+    roots: ["~/.ethereum", "~/dev"]
+    read_public_address: true
+
+  - id: ethereum_accounts
+    label: Ethereum geth accounts dir
+    path: "~/.ethereum/keystore"
+    type: directory
+
+  - id: metamask
+    label: MetaMask (browser vault — do not parse)
+    path: "~/Library/Application Support/Google/Chrome/Default/Local Extension Settings/nkbihfbeogaeaoehlefnkodbefgpgknn"
+    type: presence
+
+  - id: solana_config
+    label: Solana CLI config
+    path: "~/.config/solana"
+    type: directory
+
+  - id: solana_id_json
+    label: Solana CLI keypair (id.json — not read)
+    path: "~/.config/solana/id.json"
+    type: presence
+
+  - id: coinbase_cdp
+    label: Coinbase CDP API JSON
+    glob: "**/cdp_api_key.json"
+    roots: ["~/dev/API", "~/dev"]
+    read_json_keys: [id]
+
+  - id: hardware_ledger
+    label: Ledger Live
+    path: "~/Library/Application Support/Ledger Live"
+    type: presence
+
+  - id: env_wallet_keys
+    label: Wallet env vars
+    env_names:
+      - ETH_PRIVATE_KEY
+      - PRIVATE_KEY
+      - WALLET_PRIVATE_KEY
+      - MNEMONIC
+      - SEED_PHRASE
+      - SOLANA_PRIVATE_KEY
+    warn: "Never commit — prefer hardware / keystore / vault"

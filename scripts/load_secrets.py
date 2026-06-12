@@ -61,12 +61,15 @@ def read_op(reference: str, account: str | None = None) -> str:
 
 
 def ensure_defaults() -> None:
-    if not os.environ.get("MODELROUTER_MASTER_KEY"):
-        os.environ["MODELROUTER_MASTER_KEY"] = "sk-modelrouter-local-dev"
-        print("[secrets] WARNING: Using default MODELROUTER_MASTER_KEY — set a real key for production")
+    mk = os.environ.get("MODELROUTER_MASTER_KEY", "")
+    if not mk or "change-me" in mk or mk == "sk-modelrouter-local-dev":
+        if not mk:
+            os.environ["MODELROUTER_MASTER_KEY"] = "sk-modelrouter-local-dev"
+        print("[secrets] WARNING: MODELROUTER_MASTER_KEY is placeholder — run: make rotate-master-key")
 
     if not os.environ.get("LITELLM_SALT_KEY"):
         os.environ["LITELLM_SALT_KEY"] = os.environ["MODELROUTER_MASTER_KEY"]
+        print("[secrets] WARNING: LITELLM_SALT_KEY unset — using master key (set distinct salt for Docker)")
 
     os.environ.setdefault("OLLAMA_API_BASE", "http://127.0.0.1:11434")
     os.environ.setdefault("REDIS_HOST", "127.0.0.1")

@@ -36,6 +36,32 @@ KEY_LABELS: dict[str, str] = {
     "TELEGRAM_BOT_TOKEN": "Telegram",
     "GITHUB_TOKEN": "GitHub",
     "GH_TOKEN": "GitHub",
+    "KRAKEN_API_KEY": "Kraken",
+    "KRAKEN_API_SECRET": "Kraken Secret",
+    "COINBASE_API_KEY": "Coinbase",
+    "COINBASE_API_SECRET": "Coinbase Secret",
+    "COINBASE_CDP_KEY_FILE": "Coinbase CDP",
+    "BINANCE_API_KEY": "Binance",
+    "ALCHEMY_API_KEY": "Alchemy",
+    "INFURA_API_KEY": "Infura",
+    "ETHERSCAN_API_KEY": "Etherscan",
+    "TAVILY_API_KEY": "Tavily",
+    "SERPER_API_KEY": "Serper",
+    "BRAVE_SEARCH_API_KEY": "Brave Search",
+    "REPLICATE_API_TOKEN": "Replicate",
+    "PINECONE_API_KEY": "Pinecone",
+    "WEAVIATE_API_KEY": "Weaviate",
+    "ELEVENLABS_API_KEY": "ElevenLabs",
+    "ASSEMBLYAI_API_KEY": "AssemblyAI",
+    "ALPHA_VANTAGE_API_KEY": "Alpha Vantage",
+    "FINNHUB_API_KEY": "Finnhub",
+    "KALSHI_API_KEY": "Kalshi",
+    "POLYMARKET_API_KEY": "Polymarket",
+    "STRIPE_API_KEY": "Stripe",
+    "TWILIO_AUTH_TOKEN": "Twilio",
+    "SENDGRID_API_KEY": "SendGrid",
+    "DISCORD_BOT_TOKEN": "Discord",
+    "SLACK_BOT_TOKEN": "Slack",
 }
 
 OP_REF = re.compile(r"^op://")
@@ -145,8 +171,28 @@ PRIORITY_KEYS = frozenset(
         "MODELROUTER_MASTER_KEY",
         "POLYGON_API_KEY",
         "GITHUB_TOKEN",
+        "KRAKEN_API_KEY",
+        "TELEGRAM_BOT_TOKEN",
+        "COINBASE_CDP_KEY_FILE",
     }
 )
+
+
+def catalog_env_names(cfg: dict[str, Any]) -> set[str]:
+    try:
+        from api_catalog import load_catalog
+
+        names: set[str] = set()
+        for fam in load_catalog(cfg).get("families") or []:
+            for key_def in fam.get("keys") or []:
+                env = key_def.get("env")
+                if env:
+                    names.add(env)
+                for alias in key_def.get("aliases") or []:
+                    names.add(alias)
+        return names
+    except Exception:
+        return set()
 
 
 def discover_key_cards(cfg: dict[str, Any]) -> list[ProviderSnapshot]:
@@ -154,14 +200,18 @@ def discover_key_cards(cfg: dict[str, Any]) -> list[ProviderSnapshot]:
     sources = collect_key_sources(cfg)
     cards: list[ProviderSnapshot] = []
 
-    for key_name in sorted(set(sources) | PRIORITY_KEYS):
+    catalog_keys = catalog_env_names(cfg)
+    for key_name in sorted(set(sources) | PRIORITY_KEYS | catalog_keys):
         label = KEY_LABELS.get(key_name, key_name.replace("_", " ").title())
         source = sources.get(key_name, "")
         value = resolve_secret(key_name, dev_root)
 
         if value:
             status = "ok"
-            detail = mask_value(value)
+            if key_name.endswith("_FILE") or key_name.endswith("_PATH"):
+                detail = value if len(value) <= 48 else f"…{value[-44:]}"
+            else:
+                detail = mask_value(value)
         elif source and "1Password" in source:
             status = "configured"
             detail = source

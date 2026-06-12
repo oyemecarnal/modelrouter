@@ -56,6 +56,11 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       GOOGLE_API_KEY: ${GOOGLE_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY:-}
+      CURSOR_API_KEY: ${CURSOR_API_KEY:-}
+      POLYGON_API_KEY: ${POLYGON_API_KEY:-}
       OLLAMA_API_BASE: ${OLLAMA_API_BASE:-http://host.docker.internal:11434}
       PYTHONPATH: /app
     command:

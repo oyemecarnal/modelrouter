@@ -1,0 +1,57 @@
+# Living catalog: cheaper or better alternatives to burning model tokens.
+# Update when you discover a good substitute. Reviewed via: make cost-review
+
+review_question: >
+  Is there already a better tool for this — cost-effective or saves model use?
+  If yes, prefer it; only route through ModelRouter what still needs an LLM.
+
+alternatives:
+  - id: repo-search
+    instead_of: "LLM search over codebase"
+    use: "rg / IDE / Cursor codebase search"
+    saves: "Avoids smart/fast calls for navigation"
+
+  - id: cursor-tab
+    instead_of: "model smart for every inline edit"
+    use: "Cursor Tab + fast for small edits"
+    saves: "Subscription capacity vs API tokens"
+
+  - id: codex-subscription
+    instead_of: "OPENAI_API_KEY for all coding"
+    use: "Codex OAuth quota (widget tracks %)"
+    saves: "Use API only when Codex window exhausted"
+
+  - id: local-ollama
+    instead_of: "cloud for bulk/offline drafts"
+    use: "preset offline (Ollama llama3.2)"
+    saves: "Zero marginal cost; groq-fast only if local down"
+
+  - id: groq-mistral-free
+    instead_of: "gpt-4o-mini for routine agent loops"
+    use: "presets cheap / hermes-fast"
+    saves: "Groq + Mistral free tiers before OpenAI"
+
+  - id: keys-widget
+    instead_of: "building custom quota dashboards"
+    use: "tokens/ widget + make route-hints"
+    saves: "Dev time; informs downshift without extra API calls"
+
+  - id: doctor-cron
+    instead_of: "agent asking LLM if gateway is up"
+    use: "make doctor / healthcheck in cron"
+    saves: "Zero tokens for ops checks"
+
+  - id: openrouter-stub
+    instead_of: "paying OpenRouter $5+/mo by default"
+    use: "direct providers + fallbacks (enable overflow only when needed)"
+    saves: "Skip third-party markup until you need exotic models"
+
+  - id: polygon-direct
+    instead_of: "LLM for market data"
+    use: "Polygon API on tower/mini (keys where bot runs)"
+    saves: "Models interpret data; don't fetch quotes via chat"
+
+not_worth_replacing:
+  - "ModelRouter gateway for multi-project presets + fallbacks on kc-mini"
+  - "Per-project virtual keys (labels today; spend caps with Docker+DB later)"
+  - "MCP route_recommend for agents choosing hermes-fast vs hermes-smart"

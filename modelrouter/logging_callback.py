@@ -16,6 +16,8 @@ from litellm.integrations.custom_logger import CustomLogger
 class ModelRouterLogger(CustomLogger):
     def log_pre_api_call(self, model: str, messages: list, kwargs: dict) -> None:
         request_id = kwargs.get("litellm_call_id", "unknown")
+        metadata = kwargs.get("metadata") or {}
+        project = metadata.get("user") or metadata.get("project") or metadata.get("trace_user")
         print(
             json.dumps(
                 {
@@ -23,6 +25,7 @@ class ModelRouterLogger(CustomLogger):
                     "event": "request_start",
                     "request_id": request_id,
                     "model": model,
+                    "project": project,
                     "stream": kwargs.get("stream", False),
                 }
             ),

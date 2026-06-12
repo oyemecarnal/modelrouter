@@ -1,22 +1,27 @@
 # ModelRouter
 
-Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint for OpenAI, Anthropic, Gemini, Ollama, and 100+ providers — with fallbacks, circuit breakers, caching, and 1Password secrets.
+**v1.5.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
 
-Drop-in replacement for OpenRouter on your machine.
+Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://kc-mini-lan:3000`) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
+
+Drop-in replacement for OpenRouter on your LAN (OpenRouter itself is stubbed — optional later).
 
 ```
 Base URL: http://127.0.0.1:3000
 API Key:  <MODELROUTER_MASTER_KEY>
 ```
 
-## Quick start
+## Quick start (homelab)
 
 ```bash
 make install          # venv + litellm + config files
 cp .env.example .env  # add your keys (or use secrets.yaml + 1Password)
 make daemon           # start in background
-make health           # verify it's up
+make homelab-status   # laptop + mini + doctor
+make test && make lint
 ```
+
+**Tower / Hermes:** base URL `http://kc-mini-lan:3000`, models `hermes-fast` / `hermes-smart` — see `config/hosts.yaml`.
 
 Test:
 
@@ -176,6 +181,32 @@ The Mac mini has `~/dev/agency_agents/agency-agents-main.zip` — a library of s
 make agents        # sync curated agents from kc-mini
 make deploy-mini   # deploy to Mac mini and start daemon
 ```
+
+## Policy router
+
+Clients request a **job type**, not a vendor model name:
+
+| Preset | Use for |
+|--------|---------|
+| `hermes-fast` | smalshi Hermes routine work (kc-tower) |
+| `hermes-smart` | Hermes complex / high-stakes reasoning |
+| `cheap` | Lowest cost, simple Q&A |
+| `code` | Coding tasks |
+| `review` | Careful quality pass |
+| `offline` | Local Ollama first |
+
+```bash
+make doctor          # process, keys, presets, mini reachability
+make route-hints     # widget quota → data/route_hints.json
+make project-keys    # per-project API key labels in .env
+make rotate-master-key  # HUMAN: then update Cursor API key
+```
+
+Plain-language guide: `docs/POLICY_ROUTER.md`. OpenRouter is **stubbed** (`config/openrouter.stub.yaml`) — optional paid backup, not required.
+
+**Cost discipline:** occasionally run `make cost-review` — asks whether a cheaper non-LLM tool or lower preset already solves the job (`docs/COST_REVIEW.md`).
+
+**Product path:** clean wires first (`docs/CLEAN_WIRES.md`), then Console + connectors (`docs/PRODUCT_VISION.md`) — homelab → Pro → Business; not rushed.
 
 ## Keys widget
 

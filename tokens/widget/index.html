@@ -160,6 +160,21 @@
     .fill { height: 100%; border-radius: 99px; transition: width 0.35s ease; }
     .pct { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
     .detail { font-size: 9px; color: var(--muted); margin-top: 2px; }
+    .equity-total {
+      font-size: 18px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: var(--green);
+      margin: 2px 0 6px;
+    }
+    .asset-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #b8bac6;
+      margin-top: 3px;
+      font-variant-numeric: tabular-nums;
+    }
     .empty {
       color: var(--muted);
       font-size: 11px;
@@ -168,6 +183,56 @@
     }
     .spin { display: inline-block; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
+    .wallet-card { cursor: pointer; }
+    .wallet-card.open { border-color: rgba(110, 231, 255, 0.25); }
+    .tx-list { margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
+    .tx-row {
+      font-size: 9px;
+      color: #b8bac6;
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-variant-numeric: tabular-nums;
+    }
+    .tx-row:last-child { border-bottom: none; }
+    .tx-in { color: var(--green); }
+    .tx-out { color: var(--orange); }
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+      display: none; align-items: center; justify-content: center; z-index: 20;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      width: calc(100% - 24px); max-width: 360px;
+      background: var(--bg1); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px;
+    }
+    .modal h2 { font-size: 13px; margin-bottom: 10px; }
+    .modal label { display: block; font-size: 9px; color: var(--muted); margin: 8px 0 4px; }
+    .modal input, .modal select {
+      width: 100%; padding: 7px 8px; border-radius: 8px;
+      border: 1px solid var(--border); background: var(--glass); color: var(--text); font-size: 11px;
+    }
+    .modal-actions { display: flex; gap: 6px; margin-top: 12px; justify-content: flex-end; }
+    .btn-danger { border-color: rgba(255,92,92,0.35); color: #ffb0b0; }
+    .wallet-actions { display: flex; gap: 4px; }
+    .wallet-actions button { padding: 4px 6px; font-size: 9px; }
+    .modal.wide { max-width: 400px; max-height: 85vh; overflow-y: auto; }
+    .family-block { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
+    .family-head { font-size: 10px; font-weight: 600; margin-bottom: 4px; }
+    .key-pick {
+      display: flex; align-items: center; justify-content: space-between; gap: 6px;
+      font-size: 10px; padding: 4px 0; cursor: pointer;
+    }
+    .key-pick:hover { color: var(--accent); }
+    .key-pick .tag { font-size: 8px; color: var(--muted); }
+    .key-pick.ok .tag { color: var(--green); }
+    .compare-row { font-size: 10px; color: #b8bac6; margin-top: 4px; }
+    .compare-save { color: var(--green); font-size: 9px; }
+    .assess-box {
+      font-size: 10px; line-height: 1.45; color: #c8cad4;
+      white-space: pre-wrap; max-height: 200px; overflow-y: auto;
+    }
+    .btn-accent { border-color: rgba(110, 231, 255, 0.45); color: var(--accent); }
   </style>
 </head>
 <body>
@@ -177,12 +242,67 @@
       <div class="updated" id="updated">Loading…</div>
     </div>
     <div class="actions">
+      <button id="btn-assess" type="button" class="btn-accent" title="AI cost comparison via ModelRouter">◎ Assess</button>
+      <button id="btn-key" type="button" title="Add API key from catalog">＋ Key</button>
+      <button id="btn-wallet" type="button" title="Add watch-only wallet">＋ Wallet</button>
       <button id="btn-refresh" type="button" title="Fetch latest usage">↻ Refresh</button>
       <button id="btn-edit" type="button" title="Open keys file">✎ Edit</button>
     </div>
   </header>
   <div id="scroll">
     <div id="providers"></div>
+  </div>
+  <div id="key-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal wide">
+      <h2>Add API key</h2>
+      <p class="detail">Pick a provider family — stored in <code>tokens/.env.local</code> until you remove it.</p>
+      <div id="key-families"></div>
+      <label for="k-env">Env variable</label>
+      <input id="k-env" type="text" readonly placeholder="Select a provider below" />
+      <label for="k-value">API key / token</label>
+      <input id="k-value" type="password" placeholder="sk-… / gsk_…" autocomplete="off" />
+      <div class="modal-actions">
+        <button id="k-cancel" type="button">Cancel</button>
+        <button id="k-save" type="button">Save</button>
+      </div>
+      <div id="k-error" class="error" style="margin-top:8px;display:none"></div>
+    </div>
+  </div>
+  <div id="assess-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal wide">
+      <h2>Assess my APIs</h2>
+      <p class="detail">Live pricing + repo-aware comparison via ModelRouter gateway.</p>
+      <div id="assess-body" class="assess-box">Running assessment…</div>
+      <div class="modal-actions">
+        <button id="a-close" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+  <div id="wallet-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal">
+      <h2>Add watch-only wallet</h2>
+      <p class="detail">Public address only — no private keys stored. Persists until you remove it.</p>
+      <label for="w-label">Label</label>
+      <input id="w-label" type="text" placeholder="Ledger ETH" maxlength="64" />
+      <label for="w-chain">Chain</label>
+      <select id="w-chain">
+        <option value="ethereum">Ethereum</option>
+        <option value="bitcoin">Bitcoin</option>
+        <option value="solana">Solana</option>
+      </select>
+      <label for="w-kind">Type</label>
+      <select id="w-kind">
+        <option value="cold">Cold — last seen on-chain</option>
+        <option value="hot">Hot — live on-chain balance</option>
+      </select>
+      <label for="w-address">Address</label>
+      <input id="w-address" type="text" placeholder="0x… / bc1… / Solana pubkey" spellcheck="false" />
+      <div class="modal-actions">
+        <button id="w-cancel" type="button">Cancel</button>
+        <button id="w-save" type="button">Save</button>
+      </div>
+      <div id="w-error" class="error" style="margin-top:8px;display:none"></div>
+    </div>
   </div>
   <script>
     const primary = ['openai-codex', 'anthropic', 'cursor', 'gemini', 'openrouter', 'github-copilot', 'groq', 'mistral'];
@@ -199,6 +319,136 @@
       if (hours < 0) return 'resets soon';
       if (hours < 24) return `resets in ${hours}h`;
       return `resets in ${Math.floor(hours / 24)}d`;
+    }
+
+    const openWalletTx = new Set();
+    let lastSnapshot = null;
+
+    function renderCompare(compare) {
+      if (!compare || !compare.families || !compare.families.length) return '';
+      const rows = compare.families.slice(0, 6).map(f => {
+        const cheap = f.cheapest ? f.cheapest.label : '—';
+        const yours = f.best_configured ? f.best_configured.label : 'none';
+        const save = f.potential_savings_pct ? `<span class="compare-save">~${f.potential_savings_pct}% vs your pick</span>` : '';
+        const cost = f.cheapest && f.cheapest.cost_score != null
+          ? ` ($${f.cheapest.input_per_m}/M in)` : '';
+        return `<div class="compare-row"><strong>${f.label}</strong>: cheapest <em>${cheap}</em>${cost} · yours: ${yours} ${save}</div>`;
+      }).join('');
+      const gaps = (compare.repo_gaps || []).slice(0, 3).map(g =>
+        `<div class="detail">Gap for ${g.projects.join(', ')}: add ${g.suggested || '?'}</div>`
+      ).join('');
+      return `<div class="section-title">Cost compare</div><div class="card">${rows}${gaps}<div class="detail" style="margin-top:6px">Pricing: OpenRouter live + catalog static</div></div>`;
+    }
+
+    function populateKeyFamilies(catalog) {
+      const root = document.getElementById('key-families');
+      if (!catalog || !catalog.families) {
+        root.innerHTML = '<div class="detail">Refresh to load catalog</div>';
+        return;
+      }
+      root.innerHTML = catalog.families.map(fam => {
+        const keys = (fam.keys || []).map(k => {
+          const tag = k.status === 'ok' ? 'configured' : (k.free_tier ? 'free tier' : 'add');
+          return `<div class="key-pick ${k.status}" data-env="${k.env}" data-signup="${k.signup || ''}" title="${k.notes || ''}">
+            <span>${k.label}</span><span class="tag">${tag}</span></div>`;
+        }).join('');
+        return `<div class="family-block"><div class="family-head">${fam.label} <span class="tag">${fam.purpose || ''}</span></div>${keys}</div>`;
+      }).join('');
+      root.querySelectorAll('.key-pick').forEach(el => {
+        el.addEventListener('click', () => {
+          document.getElementById('k-env').value = el.getAttribute('data-env') || '';
+          const signup = el.getAttribute('data-signup');
+          if (signup && !document.getElementById('k-value').value) {
+            document.getElementById('k-error').style.display = 'none';
+          }
+        });
+      });
+    }
+
+    function fmtTime(ms) {
+      if (!ms) return '—';
+      return new Date(ms).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    }
+
+    function renderWallets(wallets) {
+      if (!wallets || wallets.enabled === false) return '';
+      const rows = wallets.wallets || [];
+      if (!rows.length && !wallets.error) {
+        return '<div class="section-title">Wallets</div><div class="card"><div class="detail">No wallets yet — tap ＋ Wallet to track a public address.</div></div>';
+      }
+      const cards = rows.map(w => {
+        const amt = w.native_amount != null ? `${Number(w.native_amount).toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.native_symbol || ''}` : '—';
+        const mode = w.mode === 'live' ? 'live' : 'last seen';
+        const seen = w.fetched_at ? fmtTime(w.fetched_at) : '';
+        const open = openWalletTx.has(w.id);
+        return `
+          <article class="card wallet-card ${open ? 'open' : ''}" data-wallet-id="${w.id}">
+            <div class="card-head">
+              <span class="card-name"><span class="dot ${w.status || 'configured'}"></span>${w.label || w.chain}</span>
+              <span class="badge">${w.kind || 'cold'} · ${mode}</span>
+            </div>
+            <div class="equity-total" style="font-size:15px">${amt}</div>
+            <div class="detail">${w.address_masked || ''}${seen ? ' · ' + seen : ''}</div>
+            ${w.error ? `<div class="error">${w.error}</div>` : ''}
+            <div class="wallet-actions" style="margin-top:6px">
+              <button type="button" class="btn-txs" data-id="${w.id}">${open ? 'Hide' : 'Transactions'}</button>
+              <button type="button" class="btn-rm btn-danger" data-id="${w.id}">Remove</button>
+            </div>
+            <div class="tx-list" id="tx-${w.id}" style="display:${open ? 'block' : 'none'}"></div>
+          </article>`;
+      }).join('');
+      const err = wallets.error ? `<div class="card"><div class="error">${wallets.error}</div></div>` : '';
+      return `<div class="section-title">Wallets</div>${err}${cards}`;
+    }
+
+    async function loadWalletTx(walletId) {
+      const box = document.getElementById('tx-' + walletId);
+      if (!box) return;
+      box.innerHTML = '<div class="detail">Loading transactions…</div>';
+      try {
+        const res = await fetch('/wallet-txs?id=' + encodeURIComponent(walletId));
+        const data = await res.json();
+        const txs = data.transactions || [];
+        if (!txs.length) {
+          box.innerHTML = '<div class="detail">No recent transactions' + (data.error ? ' — ' + data.error : '') + '</div>';
+          return;
+        }
+        box.innerHTML = txs.map(tx => {
+          const dir = tx.direction === 'in' ? 'tx-in' : (tx.direction === 'out' ? 'tx-out' : '');
+          const amt = tx.amount != null ? `${tx.amount} ${tx.symbol || ''}` : (tx.symbol || 'activity');
+          const cp = tx.counterparty_masked ? ` · ${tx.counterparty_masked}` : '';
+          return `<div class="tx-row ${dir}">${fmtTime(tx.time)} · ${tx.direction || 'tx'} · ${amt}${cp}</div>`;
+        }).join('');
+      } catch (e) {
+        box.innerHTML = '<div class="error">Failed to load transactions</div>';
+      }
+    }
+
+    function bindWalletEvents() {
+      document.querySelectorAll('.btn-txs').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          if (!id) return;
+          if (openWalletTx.has(id)) {
+            openWalletTx.delete(id);
+          } else {
+            openWalletTx.add(id);
+            await loadWalletTx(id);
+          }
+          await loadSnapshot();
+        });
+      });
+      document.querySelectorAll('.btn-rm').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-id');
+          if (!id || !confirm('Remove this wallet from tracking?')) return;
+          await fetch('/wallets/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
+          openWalletTx.delete(id);
+          await loadSnapshot();
+        });
+      });
     }
 
     function render(snapshot) {
@@ -223,6 +473,37 @@
 
       const live = sorted.filter(p => p.kind !== 'configured');
       const keys = sorted.filter(p => p.kind === 'configured');
+      const equity = snapshot.equity;
+
+      function renderEquity(eq) {
+        if (!eq) return '';
+        if (eq.error && !eq.brokers?.length) {
+          return `<div class="section-title">Equity</div><div class="card"><div class="error">${eq.error}</div></div>`;
+        }
+        const total = eq.total_equity_usd != null
+          ? `$${Number(eq.total_equity_usd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+          : '—';
+        const host = eq.host ? `<div class="detail">via ${eq.host}</div>` : '';
+        const brokerCards = (eq.brokers || []).map(b => {
+          const amt = b.equity_usd != null
+            ? `$${Number(b.equity_usd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+            : '—';
+          const assets = (b.assets || []).slice(0, 4).map(a =>
+            `<div class="asset-row"><span>${a.asset}</span><span>$${Number(a.value_usd || 0).toFixed(2)}</span></div>`
+          ).join('');
+          return `
+            <article class="card">
+              <div class="card-head">
+                <span class="card-name"><span class="dot ${b.status}"></span>${(b.broker || '').toUpperCase()}</span>
+                <span class="badge">${b.status}</span>
+              </div>
+              <div class="equity-total">${amt}</div>
+              ${b.error ? `<div class="error">${b.error}</div>` : ''}
+              ${assets}
+            </article>`;
+        }).join('');
+        return `<div class="section-title">Equity</div><div class="card"><div class="detail">Total (USD)</div><div class="equity-total">${total}</div>${host}</div>${brokerCards}`;
+      }
 
       function renderCard(p) {
         const isKey = p.kind === 'configured';
@@ -257,10 +538,19 @@
           </article>`;
       }
 
+      lastSnapshot = snapshot;
       root.innerHTML =
+        renderEquity(equity) +
+        renderCompare(snapshot.apiCompare) +
+        renderWallets(snapshot.wallets) +
         (live.length ? '<div class="section-title">Usage</div>' + live.map(renderCard).join('') : '') +
         (keys.length ? '<div class="section-title">API Keys</div>' + keys.map(renderCard).join('') : '') ||
         '<div class="empty">No providers configured</div>';
+      bindWalletEvents();
+      for (const id of openWalletTx) {
+        const box = document.getElementById('tx-' + id);
+        if (box && box.style.display !== 'none' && !box.innerHTML.trim()) loadWalletTx(id);
+      }
     }
 
     async function loadSnapshot() {
@@ -291,6 +581,124 @@
         document.getElementById('updated').textContent = 'Edit failed';
       }
     }
+
+    const modal = document.getElementById('wallet-modal');
+    const wError = document.getElementById('w-error');
+
+    function openWalletModal() {
+      wError.style.display = 'none';
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+    function closeWalletModal() {
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    async function saveWallet() {
+      wError.style.display = 'none';
+      const body = {
+        label: document.getElementById('w-label').value,
+        chain: document.getElementById('w-chain').value,
+        kind: document.getElementById('w-kind').value,
+        address: document.getElementById('w-address').value.trim(),
+      };
+      try {
+        const res = await fetch('/wallets/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          wError.textContent = data.error || 'Save failed';
+          wError.style.display = 'block';
+          return;
+        }
+        document.getElementById('w-label').value = '';
+        document.getElementById('w-address').value = '';
+        closeWalletModal();
+        await refreshAll();
+      } catch (e) {
+        wError.textContent = 'Save failed';
+        wError.style.display = 'block';
+      }
+    }
+
+    const keyModal = document.getElementById('key-modal');
+    const kError = document.getElementById('k-error');
+    function openKeyModal() {
+      kError.style.display = 'none';
+      populateKeyFamilies(lastSnapshot && lastSnapshot.apiCatalog);
+      keyModal.classList.add('show');
+    }
+    function closeKeyModal() {
+      keyModal.classList.remove('show');
+    }
+    async function saveKey() {
+      kError.style.display = 'none';
+      const body = {
+        env: document.getElementById('k-env').value,
+        value: document.getElementById('k-value').value.trim(),
+      };
+      if (!body.env) {
+        kError.textContent = 'Select a provider from the catalog';
+        kError.style.display = 'block';
+        return;
+      }
+      try {
+        const res = await fetch('/keys/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          kError.textContent = data.error || 'Save failed';
+          kError.style.display = 'block';
+          return;
+        }
+        document.getElementById('k-value').value = '';
+        closeKeyModal();
+        await refreshAll();
+      } catch (e) {
+        kError.textContent = 'Save failed';
+        kError.style.display = 'block';
+      }
+    }
+
+    const assessModal = document.getElementById('assess-modal');
+    async function runAssess() {
+      assessModal.classList.add('show');
+      const body = document.getElementById('assess-body');
+      body.textContent = 'Running assessment via ModelRouter…';
+      try {
+        const res = await fetch('/api-assess', { method: 'POST' });
+        const data = await res.json();
+        if (!data.ok) {
+          body.textContent = data.error || 'Assessment failed';
+          return;
+        }
+        const narr = data.assessment && data.assessment.narrative;
+        body.textContent = (narr && narr.text) ? narr.text : JSON.stringify(data.assessment, null, 2);
+      } catch (e) {
+        body.textContent = 'Assessment failed — is the gateway running?';
+      }
+    }
+
+    document.getElementById('btn-key').addEventListener('click', openKeyModal);
+    document.getElementById('k-cancel').addEventListener('click', closeKeyModal);
+    document.getElementById('k-save').addEventListener('click', saveKey);
+    keyModal.addEventListener('click', (e) => { if (e.target === keyModal) closeKeyModal(); });
+
+    document.getElementById('btn-assess').addEventListener('click', runAssess);
+    document.getElementById('a-close').addEventListener('click', () => assessModal.classList.remove('show'));
+    assessModal.addEventListener('click', (e) => { if (e.target === assessModal) assessModal.classList.remove('show'); });
+
+    document.getElementById('btn-wallet').addEventListener('click', openWalletModal);
+    document.getElementById('w-cancel').addEventListener('click', closeWalletModal);
+    document.getElementById('w-save').addEventListener('click', saveWallet);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeWalletModal(); });
 
     document.getElementById('btn-refresh').addEventListener('click', refreshAll);
     document.getElementById('btn-edit').addEventListener('click', openEdit);

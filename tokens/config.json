@@ -19,5 +19,28 @@
   "session_cache_days": 30,
   "widget_fetch_in_panel": true,
   "watchdog_enabled": true,
-  "edit_file": ".env.local"
+  "edit_file": ".env.local",
+  "equity": {
+    "enabled": true,
+    "remote_host": "kc-mini-lan",
+    "coinbot_root": "/Users/kevinreed/dev/coinbot",
+    "brokers": ["coinbase", "kraken"],
+    "prefer_remote": true,
+    "force_live": true,
+    "local_brokers": ["kraken"],
+    "remote_brokers": ["coinbase"]
+  },
+  "wallets": {
+    "enabled": true,
+    "hot_cache_seconds": 90,
+    "cold_cache_seconds": 600,
+    "tx_limit": 12
+  },
+  "api_catalog": {
+    "enabled": true
+  },
+  "assess": {
+    "enabled": true,
+    "model": "fast"
+  }
 }

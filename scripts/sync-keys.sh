@@ -44,12 +44,16 @@ resolve_key() {
     "$HOME/dev/smalshi/.env"
     "$HOME/dev/smalshi/Codex/.env"
     "$HOME/dev/coinbot/.env"
+    "$HOME/dev/openclaw/.env"
     "$HOME/dev/Kalshi_bot/.env"
     "$HOME/dev/project_kc/signals/.env"
   )
 
   if $USE_MINI && [[ -f "${REMOTE_ENV:-}" ]]; then
     sources=("$REMOTE_ENV" "${sources[@]}")
+  fi
+  if $USE_MINI && [[ -f "${REMOTE_COINBOT_ENV:-}" ]]; then
+    sources=("$REMOTE_COINBOT_ENV" "${sources[@]}")
   fi
 
   if [[ "$key" == "GOOGLE_API_KEY" || "$key" == "GEMINI_API_KEY" ]]; then
@@ -65,16 +69,27 @@ resolve_key() {
       val=$(get_val_zshrc "$key" 2>/dev/null || true)
     fi
   fi
+  if [[ "$key" == "COINBASE_CDP_KEY_FILE" ]]; then
+    for candidate in \
+      "$HOME/dev/API/cdp_api_key.json" \
+      "$HOME/dev/coinbot/cdp_api_key.json"; do
+      [[ -f "$candidate" ]] && echo "$candidate" && return 0
+    done
+  fi
+
   [[ -n "${val:-}" ]] && echo "$val"
 }
 
-KEYS="OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GEMINI_API_KEY OPENROUTER_API_KEY CURSOR_API_KEY POLYGON_API_KEY GROQ_API_KEY TOGETHER_API_KEY MISTRAL_API_KEY COHERE_API_KEY DEEPSEEK_API_KEY XAI_API_KEY HUGGINGFACE_API_KEY FIREWORKS_API_KEY PERPLEXITY_API_KEY"
+KEYS="OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GEMINI_API_KEY OPENROUTER_API_KEY CURSOR_API_KEY POLYGON_API_KEY GROQ_API_KEY TOGETHER_API_KEY MISTRAL_API_KEY COHERE_API_KEY DEEPSEEK_API_KEY XAI_API_KEY HUGGINGFACE_API_KEY FIREWORKS_API_KEY PERPLEXITY_API_KEY KRAKEN_API_KEY KRAKEN_API_SECRET TELEGRAM_BOT_TOKEN COINBASE_API_KEY COINBASE_API_SECRET COINBASE_CDP_KEY_FILE"
 
 REMOTE_ENV=""
+REMOTE_COINBOT_ENV=""
 if $USE_MINI; then
   echo "[sync-keys] Pulling kc-mini ~/dev/modelrouter/.env snapshot..."
   REMOTE_ENV=$(mktemp)
   scp kc-mini-lan:~/dev/modelrouter/.env "$REMOTE_ENV" 2>/dev/null || true
+  REMOTE_COINBOT_ENV=$(mktemp)
+  scp kc-mini-lan:~/dev/coinbot/.env "$REMOTE_COINBOT_ENV" 2>/dev/null || true
 fi
 
 [[ -f "$ENV_FILE" ]] || cp "$ROOT/.env.example" "$ENV_FILE"
@@ -124,4 +139,5 @@ else
 fi
 
 [[ -n "$REMOTE_ENV" ]] && rm -f "$REMOTE_ENV"
+[[ -n "$REMOTE_COINBOT_ENV" ]] && rm -f "$REMOTE_COINBOT_ENV"
 exit 0

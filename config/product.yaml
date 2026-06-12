@@ -1,0 +1,29 @@
+# Product metadata — vision anchor (not billing yet)
+# See docs/PRODUCT_VISION.md
+
+name: ModelRouter
+version_file: VERSION
+api:
+  surface: openai_compatible
+  base_path: /v1
+  # Future: versioned product API for Console (separate from LiteLLM proxy)
+  console_api_path: null  # e.g. /mr/v1 when Phase 1
+
+tiers:
+  personal:
+    status: active
+    includes: [gateway, presets, keys_widget, homelab_scripts]
+  pro:
+    status: planned
+    includes: [console_ui, multi_host, project_caps, mcp]
+  business:
+    status: vision
+    includes: [sso, audit, team_keys, connector_admin, support]
+
+phase: 0  # 0=clean wires, 1=catalog+calibration, 2=connectors, 3=pro, 4=business
+
+separation:
+  gateway_env_prefix: MODELROUTER_
+  project_key_prefix: MODELROUTER_KEY_
+  provider_keys_host: kc-mini
+  docs: docs/CLEAN_WIRES.md

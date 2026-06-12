@@ -1,4 +1,7 @@
-.PHONY: install start stop restart health logs status daemon-enable daemon-disable docker-up docker-down
+.PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
+.PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
+.PHONY: keys-sync-remote groq-setup push-env-mini keys-widget-install keys-widget keys-widget-fetch
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke test lint cost-review homelab-status
 
 install:
 	./scripts/install.sh
@@ -16,6 +19,9 @@ restart: stop daemon
 
 health:
 	./scripts/healthcheck.sh
+
+doctor:
+	./scripts/doctor.sh
 
 logs:
 	tail -f data/modelrouter.log
@@ -51,13 +57,18 @@ deploy-mini:
 keys-audit:
 	./scripts/discover-keys.sh
 
+inventory:
+	./scripts/inventory-scrape.sh
+
+inventory-mini:
+	./scripts/inventory-scrape-remote.sh
+
 keys-sync:
 	./scripts/sync-keys.sh
 
 keys-sync-mini:
 	./scripts/sync-keys.sh --from-mini
 
-# On kc-mini: fill .env from smalshi/coinbot/etc on that machine
 keys-sync-remote:
 	ssh kc-mini-lan 'cd ~/dev/modelrouter && make keys-sync && make restart'
 
@@ -65,7 +76,7 @@ groq-setup:
 	./scripts/setup-groq.sh
 
 push-env-mini:
-	./scripts/push-env-to-mini.sh MISTRAL_API_KEY GROQ_API_KEY
+	./scripts/push-env-to-mini.sh MISTRAL_API_KEY GROQ_API_KEY OPENAI_API_KEY GOOGLE_API_KEY GEMINI_API_KEY OPENROUTER_API_KEY POLYGON_API_KEY MODELROUTER_MASTER_KEY LITELLM_SALT_KEY
 
 keys-widget-install:
 	cd tokens && ./scripts/install.sh
@@ -75,3 +86,34 @@ keys-widget:
 
 keys-widget-fetch:
 	cd tokens && .venv/bin/python3 scripts/fetch_usage.py --print
+
+route-hints:
+	PYTHONPATH=. .venv/bin/python -m modelrouter.route_policy --all
+
+project-keys:
+	./scripts/issue-project-keys.sh
+
+rotate-master-key:
+	./scripts/rotate-master-key.sh
+
+mcp-install:
+	.venv/bin/pip install -q -r requirements-mcp.txt
+
+smoke:
+	PYTHONPATH=. .venv/bin/python -c "import yaml; yaml.safe_load(open('config/modelrouter.minimal.yaml'))"
+	PYTHONPATH=. .venv/bin/python -m modelrouter.route_policy --project smalshi-hermes
+
+test:
+	./scripts/test.sh
+
+lint:
+	./scripts/lint.sh
+
+remote-health:
+	./scripts/remote-health.sh
+
+homelab-status:
+	./scripts/homelab-status.sh
+
+cost-review:
+	./scripts/cost-review.sh

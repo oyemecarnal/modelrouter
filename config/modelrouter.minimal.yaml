@@ -95,6 +95,48 @@ model_list:
     model_info:
       mode: embedding
 
+  # ── Policy presets (see docs/POLICY_ROUTER.md) ─────────────────────
+  - model_name: cheap
+    litellm_params:
+      model: groq/llama-3.1-8b-instant
+      api_key: os.environ/GROQ_API_KEY
+  - model_name: cheap
+    litellm_params:
+      model: mistral/mistral-small-latest
+      api_key: os.environ/MISTRAL_API_KEY
+  - model_name: code
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+  - model_name: code
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: review
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: hermes-fast
+    litellm_params:
+      model: groq/llama-3.1-8b-instant
+      api_key: os.environ/GROQ_API_KEY
+  - model_name: hermes-fast
+    litellm_params:
+      model: mistral/mistral-small-latest
+      api_key: os.environ/MISTRAL_API_KEY
+  - model_name: hermes-smart
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+  - model_name: hermes-smart
+    litellm_params:
+      model: groq/llama-3.3-70b-versatile
+      api_key: os.environ/GROQ_API_KEY
+  - model_name: offline
+    litellm_params:
+      model: ollama/llama3.2
+      api_base: os.environ/OLLAMA_API_BASE
+
 router_settings:
   routing_strategy: simple-shuffle
   num_retries: 2
@@ -112,6 +154,12 @@ litellm_settings:
   fallbacks:
     - smart: [fast, groq-llama, mistral-small, local]
     - fast: [groq-fast, mistral-small, local]
+    - cheap: [groq-fast, mistral-small, local]
+    - code: [fast, groq-llama, mistral-small, local]
+    - review: [smart, fast, groq-llama]
+    - hermes-fast: [cheap, groq-fast, mistral-small, local]
+    - hermes-smart: [smart, code, fast, groq-llama, mistral-small, local]
+    - offline: [groq-fast]
   success_callback: ["modelrouter.logging_callback.logging_callback"]
   failure_callback: ["modelrouter.logging_callback.logging_callback"]
 

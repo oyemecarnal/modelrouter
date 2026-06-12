@@ -64,5 +64,6 @@ else
 fi
 
 echo ""
+echo "Full machine scan (allowed paths + crypto surfaces): make inventory"
 echo "Run: ./scripts/sync-keys.sh --dry-run   # preview fill for modelrouter/.env"
 echo "Run: ./scripts/sync-keys.sh             # fill empty vars only"

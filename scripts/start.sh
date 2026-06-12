@@ -7,7 +7,7 @@ source "$ROOT/scripts/lib.sh"
 
 PORT="${MODELROUTER_PORT:-3000}"
 HOST="${MODELROUTER_HOST:-127.0.0.1}"
-WORKERS="${MODELROUTER_WORKERS:-2}"
+WORKERS="${MODELROUTER_WORKERS:-1}"
 LOGFILE="${MODELROUTER_LOG:-$ROOT/data/modelrouter.log}"
 
 mkdir -p "$ROOT/data" "$ROOT/.pids"
