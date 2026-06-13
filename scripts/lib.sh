@@ -46,6 +46,20 @@ modelrouter_wait_healthy() {
   return 1
 }
 
+# Write pidfile from port listener (litellm), not the start.sh wrapper.
+modelrouter_reconcile_pidfile() {
+  local port="${MODELROUTER_PORT:-3000}"
+  local pidfile="${MODELROUTER_ROOT}/.pids/modelrouter.pid"
+  local listen_pid
+  listen_pid="$(lsof -ti :"$port" 2>/dev/null | head -1 || true)"
+  if [[ -n "$listen_pid" ]]; then
+    mkdir -p "$(dirname "$pidfile")"
+    echo "$listen_pid" > "$pidfile"
+    return 0
+  fi
+  return 1
+}
+
 modelrouter_install_python_deps() {
   local venv
   venv="$(modelrouter_venv)"

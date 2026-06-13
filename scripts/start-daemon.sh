@@ -10,8 +10,16 @@ LOGFILE="${MODELROUTER_LOG:-$ROOT/data/modelrouter.log}"
 
 mkdir -p "$ROOT/data" "$ROOT/.pids"
 
+PORT="${MODELROUTER_PORT:-3000}"
+
+if modelrouter_reconcile_pidfile && modelrouter_wait_healthy 5; then
+  echo "[modelrouter] Already running (PID $(cat "$PIDFILE"))"
+  exit 0
+fi
+
 if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
   if modelrouter_wait_healthy 15; then
+    modelrouter_reconcile_pidfile || true
     echo "[modelrouter] Already running (PID $(cat "$PIDFILE"))"
     exit 0
   fi
@@ -27,6 +35,7 @@ echo "[modelrouter] Started daemon PID $(cat "$PIDFILE")"
 echo "[modelrouter] Logs: $LOGFILE"
 
 if modelrouter_wait_healthy 45; then
+  modelrouter_reconcile_pidfile || true
   echo "[modelrouter] Health check passed"
 else
   echo "[modelrouter] WARNING: not healthy after 45s — run: make doctor" >&2

@@ -1,11 +1,8 @@
 # Key rotation checklist
 
-## Groq (manual — prior exposure)
+## Groq (optional)
 
-1. Revoke old key at [console.groq.com](https://console.groq.com)
-2. Create new key; update `GROQ_API_KEY` in laptop `modelrouter/.env`
-3. `make push-env-mini`
-4. `make restart` on mini if needed: `ssh kc-mini-lan 'cd ~/dev/modelrouter && make restart'`
+Rotation waived for homelab. Rotate only if you revoke the key at [console.groq.com](https://console.groq.com), then `make push-env-mini`.
 
 ## Anthropic (hermes-smart / review)
 

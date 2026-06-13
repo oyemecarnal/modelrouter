@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.6.1] — 2026-06-13 (tower wiring + daemon pidfile)
+
+### Added
+- `docs/TOWER_WIRING.md` — Tailscale gateway URL for kc-tower Linux clients
+
+### Fixed
+- `start-daemon.sh` — pidfile reconciled from port listener (`modelrouter_reconcile_pidfile`)
+- Tower `client.env` uses mini Tailscale IP (mDNS fails on Linux)
+
+### Changed
+- `push-env-mini` includes `ANTHROPIC_API_KEY`; human backlog cleared in `HOMELAB_GOALS`
+- `remote-health` / `smoke-tower` prefer `kc-tower` SSH and Tailscale gateway probe
+
 ## [3.6.0] — 2026-06-13 (Cycle 6 — clean wires + Console MVP)
 
 ### Added

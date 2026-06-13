@@ -21,7 +21,7 @@ One **on-LAN front door** for LLM calls: `http://Kevins-Mac-mini.local:3000` on 
 | Host | Role |
 |------|------|
 | **kc-mini** | Gateway, keys, compose smalshi, deploy target |
-| **kc-tower** | Hermes, Kalshi, coinbot runtime → calls mini |
+| **kc-tower** | Hermes, Kalshi, coinbot runtime → calls mini via Tailscale (`docs/TOWER_WIRING.md`) |
 | **laptop** | Dev, Cursor, widget, push to mini |
 
 ## Iteration cycle
@@ -31,10 +31,10 @@ Versions `1.1` → `1.5` per cycle. See `docs/iterations/`. Agent playbook: `doc
 ## Human backlog
 
 - [x] Master key — keep `crsr_*` as `MODELROUTER_MASTER_KEY` (Cursor-compatible gateway bearer)
-- [x] `LITELLM_SALT_KEY` — rotate with `make rotate-salt-key` (does not change master)
-- [ ] Confirm Cursor base URL → ModelRouter (not direct OpenAI) — see `docs/CURSOR_WIRING.md`, `make smoke-cursor`
-- [ ] `ANTHROPIC_API_KEY` on kc-mini when available — `make push-env-mini`; see `docs/KEY_ROTATION.md`
-- [ ] Rotate Groq key (prior chat exposure) — see `docs/KEY_ROTATION.md`
+- [x] `LITELLM_SALT_KEY` — distinct salt set (`make rotate-salt-key` if rotating; master unchanged)
+- [x] Cursor → ModelRouter — verified in Cursor settings (`docs/CURSOR_WIRING.md`)
+- [x] `ANTHROPIC_API_KEY` on kc-mini — `review` / `hermes-smart` Anthropic routes
+- [x] Groq key — rotation waived (key OK)
 - [x] `kc-tower` SSH aliases in `~/.ssh/config` + `config/hosts.yaml`
-- [ ] `make push-client-env-tower` when tower is online (`make smoke-tower` to verify)
-- [ ] `LITELLM_SALT_KEY` — set distinct salt before Docker/Postgres (`make rotate-master-key` rotates master too)
+- [x] **kc-tower Tailscale** — up (`kc-tower` @ `100.116.94.38`)
+- [x] `make push-client-env-tower` — client.env uses mini Tailscale URL (`100.85.245.23:3000`)

@@ -48,7 +48,7 @@ tower_ssh_host() {
     return 0
   fi
   local candidate
-  for candidate in kc-tower-lan kc-tower; do
+  for candidate in kc-tower kc-tower-lan; do
     if ssh -o ConnectTimeout=3 -o BatchMode=yes "$candidate" 'true' 2>/dev/null; then
       echo "$candidate"
       return 0
@@ -66,7 +66,11 @@ check_mini_gateway || fail=1
 
 if host="$(tower_ssh_host)"; then
   echo "  ok  kc-tower  ssh $host"
-  gw="${MINI_GATEWAY_URL:-http://Kevins-Mac-mini.local:${MODELROUTER_PORT:-3000}}"
+  gw="${MINI_GATEWAY_URL:-}"
+  if [[ -z "$gw" ]] || [[ "$gw" == *Kevins-Mac-mini.local* ]]; then
+    gw="$(awk '/^gateway:/{f=1} f && /^  url_tailscale:/{print $2; exit}' "$ROOT/config/hosts.yaml" 2>/dev/null || true)"
+    gw="${gw:-http://100.85.245.23:${MODELROUTER_PORT:-3000}}"
+  fi
   ssh -o ConnectTimeout=5 "$host" \
     "curl -sf --max-time 4 ${gw}/health/liveliness && echo '  ok  tower→mini gateway' || echo '  down tower→mini gateway'" || true
 else

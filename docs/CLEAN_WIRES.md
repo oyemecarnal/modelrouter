@@ -48,10 +48,10 @@ You cannot calibrate spend or context until traffic flows through **one meter**.
 
 ## Migration checklist (homelab)
 
-- [ ] Cursor: base URL → ModelRouter; API key → `MODELROUTER_MASTER_KEY` only *(human — verify in Cursor settings)*
+- [x] Cursor: base URL → ModelRouter; API key → `MODELROUTER_MASTER_KEY` *(verified 2026-06-13)*
 - [x] Tower template: `config/client.env.example` + `make push-client-env-tower`
-- [ ] Hermes/tower: deploy `client.env` when kc-tower SSH is up *(human — tower was offline)*
-- [ ] Remove provider keys from tower `.env` files *(human — after tower online)*
+- [x] Hermes/tower: `client.env` deployed — Tailscale gateway URL (`docs/TOWER_WIRING.md`)
+- [ ] Remove provider keys from tower `.env` files *(if agents still have direct OpenAI/Groq keys)*
 - [ ] Stop new keys in `~/.zshrc` — mini `modelrouter/.env` + 1Password *(human habit)*
 - [ ] `make keys-audit` monthly; `make cost-review` each cycle
 - [ ] Document exceptions in `config/projects.yaml` if something must bypass gateway

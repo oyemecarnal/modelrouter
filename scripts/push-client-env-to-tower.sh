@@ -9,7 +9,7 @@ modelrouter_load_env
 
 TOWER_SSH="${KC_TOWER_SSH:-}"
 if [[ -z "$TOWER_SSH" ]]; then
-  for candidate in kc-tower-lan kc-tower; do
+  for candidate in kc-tower kc-tower-lan; do
     if ssh -o ConnectTimeout=4 -o BatchMode=yes "$candidate" 'true' 2>/dev/null; then
       TOWER_SSH="$candidate"
       break
@@ -28,14 +28,19 @@ if [[ -z "$KEY" ]]; then
   exit 1
 fi
 
+GW_URL="$(awk '/^gateway:/{f=1} f && /^  url_tailscale:/{print $2; exit}' "$ROOT/config/hosts.yaml" 2>/dev/null || true)"
+GW_URL="${GW_URL:-http://100.85.245.23:3000}"
+GW_BASE="${GW_URL%/}/v1"
+
 REMOTE_ENV='~/.config/modelrouter/client.env'
 TMP="$(mktemp)"
 trap 'rm -f "$TMP"' EXIT
 
 cat > "$TMP" <<EOF
 # ModelRouter gateway client — synced from laptop ($(date -u +%Y-%m-%d))
-OPENAI_API_BASE=http://Kevins-Mac-mini.local:3000/v1
-OPENAI_BASE_URL=http://Kevins-Mac-mini.local:3000/v1
+# Tower uses Tailscale IP (mDNS does not resolve on Linux)
+OPENAI_API_BASE=${GW_BASE}
+OPENAI_BASE_URL=${GW_BASE}
 OPENAI_API_KEY=${KEY}
 MODELROUTER_PRESET_ROUTINE=hermes-fast
 MODELROUTER_PRESET_COMPLEX=hermes-smart

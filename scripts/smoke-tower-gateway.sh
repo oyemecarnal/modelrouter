@@ -7,7 +7,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 source "$ROOT/scripts/lib.sh"
 modelrouter_load_env
 
-GW="${MODELROUTER_MINI_URL:-http://Kevins-Mac-mini.local:${MODELROUTER_PORT:-3000}}"
+GW="${MODELROUTER_MINI_URL:-$(awk '/^gateway:/{f=1} f && /^  url_tailscale:/{print $2; exit}' "$ROOT/config/hosts.yaml" 2>/dev/null)}"
+GW="${GW:-http://Kevins-Mac-mini.local:${MODELROUTER_PORT:-3000}}"
 KEY="${MODELROUTER_KEY_HERMES:-${MODELROUTER_MASTER_KEY:-}}"
 BASE="${GW}/v1"
 
@@ -21,7 +22,7 @@ tower_ssh_host() {
     return 0
   fi
   local candidate
-  for candidate in kc-tower-lan kc-tower; do
+  for candidate in kc-tower kc-tower-lan; do
     if ssh -o ConnectTimeout=4 -o BatchMode=yes "$candidate" 'true' 2>/dev/null; then
       echo "$candidate"
       return 0

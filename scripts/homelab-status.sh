@@ -23,7 +23,7 @@ echo ""
 echo "── Tower (kc-tower)"
 TOWER_SSH="${KC_TOWER_SSH:-}"
 if [[ -z "$TOWER_SSH" ]]; then
-  for c in kc-tower-lan kc-tower; do
+  for c in kc-tower kc-tower-lan; do
     ssh -o ConnectTimeout=3 -o BatchMode=yes "$c" 'true' 2>/dev/null && TOWER_SSH="$c" && break
   done
 fi

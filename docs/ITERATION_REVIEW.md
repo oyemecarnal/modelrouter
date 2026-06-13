@@ -68,15 +68,15 @@ Plus prior work in same tree: policy presets, doctor, cost-review, MCP, route_po
 ### Must fix (reliability & security)
 
 1. **Rotate master key** — still placeholder; `make rotate-master-key` then update Cursor + tower clients. *(Human)*
-2. **Daemon stability** — process still dies intermittently; plist `KeepAlive` + slow start caused thrash (mitigated: health fail now exit 0). Next: run `litellm` under `start.sh` only, pidfile track litellm child, or use launchd `ThrottleInterval`.
+2. **Daemon stability** — pidfile reconciled from port listener in `start-daemon.sh` (`modelrouter_reconcile_pidfile`). launchd: `make daemon-enable`.
 3. **MCP reads `.env`** — fixed this cycle; copy real key into `.cursor/mcp.json` (not committed).
 4. **`route_hints.json` multi-project** — fixed: `--all` now writes full dict.
-5. **`ANTHROPIC_API_KEY`** — empty; `hermes-smart`/`review` lean on OpenAI/Groq until filled. *(Human)*
+5. **`ANTHROPIC_API_KEY`** — on kc-mini *(done)*
 
 ### Should change (homelab simplicity)
 
 6. **`KC_TOWER_SSH`** — confirm tower hostname in `~/.ssh/config`; add to `docs/HOMELAB_GOALS.md` when known. *(Human)*
-7. **Single env template for tower** — `config/client.env.example` with only `OPENAI_BASE_URL=http://Kevins-Mac-mini.local:3000/v1` + project key — no provider keys on tower.
+7. **Single env template for tower** — `config/client.env.example`; tower uses Tailscale URL `http://100.85.245.23:3000/v1` (`docs/TOWER_WIRING.md`)
 8. **`make deploy-mini` post-hook** — auto `make remote-health` on success.
 9. **install shellcheck** on laptop/mini — `brew install shellcheck` for real lint.
 10. **Widget auto-restart** — optional launchd for keys panel (like gateway).

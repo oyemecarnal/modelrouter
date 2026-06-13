@@ -42,7 +42,7 @@ for k in GROQ_API_KEY ANTHROPIC_API_KEY; do
   fi
 done
 
-warn "Groq: rotate at console.groq.com if key was ever exposed in chat — then make push-env-mini"
+# Groq rotation waived unless you choose to rotate — see docs/KEY_ROTATION.md
 
 echo ""
 echo "── kc-mini (remote)"
@@ -64,4 +64,4 @@ if [[ $issues -gt 0 ]]; then
   echo "Action: make rotate-salt-key && make push-env-mini (after Groq/Anthropic updates)"
   exit 1
 fi
-echo "Key hygiene OK (Groq rotation is manual if exposure suspected)"
+echo "Key hygiene OK"
