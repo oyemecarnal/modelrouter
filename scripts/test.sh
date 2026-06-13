@@ -26,6 +26,26 @@ echo "── Policy presets SSOT"
 echo "── Models catalog SSOT"
 .venv/bin/python scripts/check_catalog.py
 
+echo "── Preset max_tokens sync"
+.venv/bin/python scripts/sync_preset_max_tokens.py | grep -qE 'in sync|Updated'
+
+echo "── Preset catalog (widget snapshot)"
+PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+from preset_catalog import load_preset_catalog
+d = load_preset_catalog({'modelrouter_root': '$ROOT'})
+assert len(d.get('presets', [])) >= 6, d
+assert 'catalog_version' in d
+print(f'  ok {len(d[\"presets\"])} policy presets')
+"
+
+echo "── Security (gitignore)"
+.venv/bin/python -c "
+from pathlib import Path
+gi = Path('.gitignore').read_text()
+assert 'data/CORE_APIS.md' in gi, 'CORE_APIS.md must stay gitignored'
+print('  ok data/CORE_APIS.md gitignored')
+"
+
 echo "── Health (optional)"
 if ./scripts/healthcheck.sh &>/dev/null; then
   echo "  ok gateway"

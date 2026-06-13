@@ -76,7 +76,7 @@ Plus prior work in same tree: policy presets, doctor, cost-review, MCP, route_po
 ### Should change (homelab simplicity)
 
 6. **`KC_TOWER_SSH`** — confirm tower hostname in `~/.ssh/config`; add to `docs/HOMELAB_GOALS.md` when known. *(Human)*
-7. **Single env template for tower** — `config/client.env.example` with only `OPENAI_BASE_URL=http://kc-mini-lan:3000/v1` + project key — no provider keys on tower.
+7. **Single env template for tower** — `config/client.env.example` with only `OPENAI_BASE_URL=http://Kevins-Mac-mini.local:3000/v1` + project key — no provider keys on tower.
 8. **`make deploy-mini` post-hook** — auto `make remote-health` on success.
 9. **install shellcheck** on laptop/mini — `brew install shellcheck` for real lint.
 10. **Widget auto-restart** — optional launchd for keys panel (like gateway).

@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.5.0] — 2026-06-12 (iteration 4.5 — Cycle 4 capstone)
+
+### Added
+- `tokens/scripts/preset_catalog.py` — policy preset grid for widget snapshot
+- `scripts/sync_preset_max_tokens.py`, `make sync-preset-tokens` — catalog → gateway `max_tokens`
+- Widget **Policy presets** section (tier, max tokens, clients, project map)
+- `docs/CYCLES.md` + repo-local `.cursor/commands/` — full `/cycle` pipeline
+- `test.sh` — preset catalog smoke, sync check, CORE_APIS gitignore guard
+
+### Changed
+- Primary preset routes in `policy_presets.yaml` + gateway YAMLs carry catalog `max_tokens_default`
+- `check_catalog.py` verifies primary `max_tokens` matches catalog
+- `doctor` / `homelab-status` mention `make core-apis`
+
 ## [3.2.0] — 2026-06-12 (iteration 4.2)
 
 ### Added

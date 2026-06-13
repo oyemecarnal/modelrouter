@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.2.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
+**v3.5.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
 
 Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://Kevins-Mac-mini.local:3000` on LAN; `kc-mini-lan` is SSH-only) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
 
@@ -212,6 +212,8 @@ Plain-language guide: `docs/POLICY_ROUTER.md`. OpenRouter is **stubbed** (`confi
 **Cost discipline:** occasionally run `make cost-review` — asks whether a cheaper non-LLM tool or lower preset already solves the job (`docs/COST_REVIEW.md`).
 
 **Product path:** clean wires first (`docs/CLEAN_WIRES.md`), then Console + connectors (`docs/PRODUCT_VISION.md`) — homelab → Pro → Business; not rushed.
+
+**Agent cycles:** repo-local `/cycle` runs the **full pipeline** (cleanup → deepclean → test/lint → five iterations → ship). See `docs/CYCLES.md`. Overrides global `~/Dev/prompts/cycles.md` when this repo is open.
 
 ## Keys widget
 

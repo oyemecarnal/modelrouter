@@ -2,7 +2,7 @@
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
 .PHONY: route-hints project-keys rotate-master-key mcp-install smoke test lint cost-review homelab-status
-.PHONY: check-presets consolidate-keys check-catalog core-apis
+.PHONY: check-presets consolidate-keys check-catalog core-apis sync-preset-tokens
 
 install:
 	./scripts/install.sh
@@ -130,6 +130,9 @@ check-presets:
 
 check-catalog:
 	.venv/bin/python scripts/check_catalog.py
+
+sync-preset-tokens:
+	.venv/bin/python scripts/sync_preset_max_tokens.py
 
 core-apis:
 	./scripts/update-core-api-list.sh

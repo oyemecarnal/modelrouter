@@ -38,3 +38,16 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 |---------|--------|-----|
 | 4.1 | `models_catalog.yaml` + salt rotate → **v3.1.0** | [4.1.md](4.1.md) |
 | 4.2 | `make core-apis` private live API list → **v3.2.0** | [4.2.md](4.2.md) |
+| 4.3 | Preset catalog in widget snapshot | [4.3.md](4.3.md) |
+| 4.4 | Widget policy presets UI | [4.4.md](4.4.md) |
+| 4.5 | `max_tokens` sync + ops hints → **v3.5.0** | [4.5.md](4.5.md) |
+
+## Cycle 5 (Phase 1 tail — validation & agent ops)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 5.1 | Test harness hardening | [5.1.md](5.1.md) |
+| 5.2 | Doc drift — LAN URL in ITERATION_REVIEW | [5.2.md](5.2.md) |
+| 5.3 | PRODUCT_VISION Phase 1 max_tokens done | [5.3.md](5.3.md) |
+| 5.4 | CHANGELOG + cycles playbook | [5.4.md](5.4.md) |
+| 5.5 | Full `/cycle` validate + ship gate | [5.5.md](5.5.md) |

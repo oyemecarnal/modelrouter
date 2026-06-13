@@ -19,3 +19,6 @@ echo ""
 echo ""
 echo "── Cost review (header)"
 "$ROOT/scripts/cost-review.sh" 2>/dev/null | sed -n '1,12p' || true
+echo ""
+echo "── Private API inventory"
+echo "  make core-apis  →  data/CORE_APIS.md (gitignored, masked keys)"

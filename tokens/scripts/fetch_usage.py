@@ -76,6 +76,7 @@ class Snapshot:
     wallets: dict[str, Any] | None = None
     api_catalog: dict[str, Any] | None = None
     api_compare: dict[str, Any] | None = None
+    policy_presets: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -101,6 +102,8 @@ class Snapshot:
             out["apiCatalog"] = self.api_catalog
         if self.api_compare is not None:
             out["apiCompare"] = self.api_compare
+        if self.policy_presets is not None:
+            out["policyPresets"] = self.policy_presets
         return out
 
 
@@ -863,6 +866,14 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
         except Exception as exc:
             api_compare = {"error": str(exc)[:200], "families": []}
 
+    policy_presets: dict[str, Any] | None = None
+    try:
+        from preset_catalog import load_preset_catalog
+
+        policy_presets = load_preset_catalog(cfg)
+    except Exception as exc:
+        policy_presets = {"error": str(exc)[:200], "presets": [], "projects": []}
+
     return Snapshot(
         updated_at=int(time.time() * 1000),
         providers=providers,
@@ -870,6 +881,7 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
         wallets=wallets,
         api_catalog=api_catalog,
         api_compare=api_compare,
+        policy_presets=policy_presets,
     )
 
 

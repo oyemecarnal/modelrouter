@@ -16,6 +16,7 @@ preset_models:
     litellm_params:
       model: groq/llama-3.1-8b-instant
       api_key: os.environ/GROQ_API_KEY
+      max_tokens: 4096
     model_info:
       mode: chat
       description: "Low-cost preset — Groq 8B"
@@ -32,6 +33,7 @@ preset_models:
     litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY
+      max_tokens: 8192
     model_info:
       mode: chat
       supports_function_calling: true
@@ -48,6 +50,7 @@ preset_models:
     litellm_params:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 8192
     model_info:
       mode: chat
 
@@ -62,6 +65,7 @@ preset_models:
     litellm_params:
       model: groq/llama-3.1-8b-instant
       api_key: os.environ/GROQ_API_KEY
+      max_tokens: 4096
     model_info:
       mode: chat
       description: "Hermes routine — cheap, fast"
@@ -77,6 +81,7 @@ preset_models:
     litellm_params:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 16384
     model_info:
       mode: chat
       supports_function_calling: true
@@ -93,6 +98,7 @@ preset_models:
     litellm_params:
       model: ollama/llama3.2
       api_base: os.environ/OLLAMA_API_BASE
+      max_tokens: 4096
     model_info:
       mode: chat
       description: "Air-gapped / no-cloud — local Ollama"

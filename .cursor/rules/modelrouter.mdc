@@ -31,3 +31,7 @@ Self-hosted LLM gateway powered by LiteLLM. OpenAI-compatible API at `http://127
 make install && make daemon && make health
 ./scripts/deploy-to-mini.sh
 ```
+
+## Cursor slash commands (repo-local)
+
+Project commands in `.cursor/commands/` **override** global prompts when this workspace is open. Use `/cycle`, `/i5`, `/cleanup`, `/deepclean`, `/cleanship`, `/ship`. **`/cycle` runs the full pipeline** (all phases in order). Playbook: `docs/CYCLES.md`.

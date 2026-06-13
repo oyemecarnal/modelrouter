@@ -105,7 +105,7 @@ Avoid a single god-mode connector until security model is designed (Business tie
 - [x] `config/models_catalog.yaml` — context window, cost tier, presets (Phase 1 SSOT)
 - [x] `make check-catalog` / `scripts/check_catalog.py` — drift check in `make test`
 - [ ] Console MVP: static grid reading catalog + `/v1/models` + widget snapshot
-- [ ] Per-preset max tokens enforced in LiteLLM config
+- [x] Per-preset max tokens enforced in LiteLLM config (`make sync-preset-tokens`, `check_catalog`)
 
 ### Phase 2 — Connector MVP (3.x)
 

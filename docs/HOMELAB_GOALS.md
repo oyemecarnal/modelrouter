@@ -26,7 +26,7 @@ One **on-LAN front door** for LLM calls: `http://Kevins-Mac-mini.local:3000` on 
 
 ## Iteration cycle
 
-Versions `1.1` → `1.5` per cycle. See `docs/iterations/`.
+Versions `1.1` → `1.5` per cycle. See `docs/iterations/`. Agent playbook: `docs/CYCLES.md` (repo-local `/cycle` slash commands in `.cursor/commands/`).
 
 ## Human backlog
 

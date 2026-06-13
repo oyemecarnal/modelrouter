@@ -227,6 +227,10 @@
     .key-pick .tag { font-size: 8px; color: var(--muted); }
     .key-pick.ok .tag { color: var(--green); }
     .compare-row { font-size: 10px; color: #b8bac6; margin-top: 4px; }
+    .preset-grid { display: flex; flex-direction: column; gap: 8px; }
+    .preset-row { font-size: 10px; color: #b8bac6; }
+    .preset-head { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
+    .tier-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: #2a2d3a; color: #9aa0b4; text-transform: lowercase; }
     .compare-save { color: var(--green); font-size: 9px; }
     .assess-box {
       font-size: 10px; line-height: 1.45; color: #c8cad4;
@@ -357,6 +361,37 @@
         `<div class="detail">Gap for ${g.projects.join(', ')}: add ${g.suggested || '?'}</div>`
       ).join('');
       return `<div class="section-title">Cost compare</div><div class="card">${rows}${gaps}<div class="detail" style="margin-top:6px">Pricing: OpenRouter live + catalog static</div></div>`;
+    }
+
+    function tierClass(tier) {
+      if (!tier || tier === '—') return '';
+      return 'tier-' + String(tier).replace(/[^a-z0-9_]+/gi, '_');
+    }
+
+    function renderPolicyPresets(pc) {
+      if (!pc || pc.error) {
+        if (pc && pc.error) {
+          return `<div class="section-title">Policy presets</div><div class="card"><div class="error">${pc.error}</div></div>`;
+        }
+        return '';
+      }
+      if (!pc.presets || !pc.presets.length) return '';
+      const rows = pc.presets.map(p => {
+        const clients = (p.clients || []).join(', ') || '—';
+        const tok = p.max_tokens ? `${Number(p.max_tokens).toLocaleString()} max` : '';
+        const bits = [p.description || p.id, tok, clients].filter(Boolean).join(' · ');
+        return `<div class="preset-row">
+          <div class="preset-head"><strong>${p.label || p.id}</strong>
+            <span class="tier-badge ${tierClass(p.cost_tier)}">${p.cost_tier || '—'}</span></div>
+          <div class="detail">${bits}</div>
+        </div>`;
+      }).join('');
+      const proj = (pc.projects || []).slice(0, 4).map(pr => {
+        const map = Object.entries(pr.presets || {}).map(([k, v]) => `${k}→${v}`).join(', ');
+        return `<div class="detail">${pr.id}: ${map || '—'}</div>`;
+      }).join('');
+      const ver = pc.catalog_version ? `<div class="detail" style="margin-top:6px">catalog v${pc.catalog_version}</div>` : '';
+      return `<div class="section-title">Policy presets</div><div class="card preset-grid">${rows}${proj}${ver}</div>`;
     }
 
     function populateKeyFamilies(catalog) {
@@ -561,6 +596,7 @@
       root.innerHTML =
         renderEquity(equity) +
         renderCompare(snapshot.apiCompare) +
+        renderPolicyPresets(snapshot.policyPresets) +
         renderWallets(snapshot.wallets) +
         (live.length ? '<div class="section-title">Usage</div>' + live.map(renderCard).join('') : '') +
         (keys.length ? '<div class="section-title">API Keys</div>' + keys.map(renderCard).join('') : '') ||

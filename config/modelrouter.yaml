@@ -142,6 +142,7 @@ model_list:
     litellm_params:
       model: groq/llama-3.1-8b-instant
       api_key: os.environ/GROQ_API_KEY
+      max_tokens: 4096
   - model_name: cheap
     litellm_params:
       model: mistral/mistral-small-latest
@@ -150,6 +151,7 @@ model_list:
     litellm_params:
       model: groq/llama-3.3-70b-versatile
       api_key: os.environ/GROQ_API_KEY
+      max_tokens: 8192
   - model_name: code
     litellm_params:
       model: openai/gpt-4o-mini
@@ -158,10 +160,12 @@ model_list:
     litellm_params:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 8192
   - model_name: hermes-fast
     litellm_params:
       model: groq/llama-3.1-8b-instant
       api_key: os.environ/GROQ_API_KEY
+      max_tokens: 4096
   - model_name: hermes-fast
     litellm_params:
       model: mistral/mistral-small-latest
@@ -170,6 +174,7 @@ model_list:
     litellm_params:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 16384
   - model_name: hermes-smart
     litellm_params:
       model: groq/llama-3.3-70b-versatile
@@ -178,6 +183,7 @@ model_list:
     litellm_params:
       model: ollama/llama3.2
       api_base: os.environ/OLLAMA_API_BASE
+      max_tokens: 4096
 
 router_settings:
   routing_strategy: simple-shuffle
