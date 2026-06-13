@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.6.0] — 2026-06-13 (Cycle 6 — clean wires + Console MVP)
+
+### Added
+- `make smoke-cursor`, `make smoke-tower` — verify Cursor and tower→mini gateway paths
+- `docs/CURSOR_WIRING.md`, `docs/KEY_ROTATION.md`, `docs/CONSOLE_SPEC.md`
+- `make check-key-hygiene`, `make usage-rollup` — salt/key checks and log metering
+- Widget **Console** section — catalog presets + provider models grid (`console_grid.py`)
+- `modelrouter/usage_rollup.py` — JSON log rollup by model/preset
+
+### Changed
+- `homelab-status` — tower SSH / client.env row
+- `doctor` — `check-key-hygiene` in next steps
+- `test.sh` — console grid smoke
+
 ## [3.5.0] — 2026-06-12 (iteration 4.5 — Cycle 4 capstone)
 
 ### Added

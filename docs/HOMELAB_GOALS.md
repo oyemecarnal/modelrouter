@@ -32,9 +32,9 @@ Versions `1.1` → `1.5` per cycle. See `docs/iterations/`. Agent playbook: `doc
 
 - [x] Master key — keep `crsr_*` as `MODELROUTER_MASTER_KEY` (Cursor-compatible gateway bearer)
 - [x] `LITELLM_SALT_KEY` — rotate with `make rotate-salt-key` (does not change master)
-- [ ] Confirm Cursor base URL → ModelRouter (not direct OpenAI)
-- [ ] `ANTHROPIC_API_KEY` on kc-mini when available
-- [ ] Rotate Groq key (prior chat exposure)
+- [ ] Confirm Cursor base URL → ModelRouter (not direct OpenAI) — see `docs/CURSOR_WIRING.md`, `make smoke-cursor`
+- [ ] `ANTHROPIC_API_KEY` on kc-mini when available — `make push-env-mini`; see `docs/KEY_ROTATION.md`
+- [ ] Rotate Groq key (prior chat exposure) — see `docs/KEY_ROTATION.md`
 - [x] `kc-tower` SSH aliases in `~/.ssh/config` + `config/hosts.yaml`
-- [ ] `make push-client-env-tower` when tower is online
+- [ ] `make push-client-env-tower` when tower is online (`make smoke-tower` to verify)
 - [ ] `LITELLM_SALT_KEY` — set distinct salt before Docker/Postgres (`make rotate-master-key` rotates master too)

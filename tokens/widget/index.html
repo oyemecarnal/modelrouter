@@ -231,6 +231,9 @@
     .preset-row { font-size: 10px; color: #b8bac6; }
     .preset-head { display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
     .tier-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: #2a2d3a; color: #9aa0b4; text-transform: lowercase; }
+    .console-table { font-size: 9px; color: #b8bac6; margin-top: 6px; }
+    .console-row { display: grid; grid-template-columns: 1.2fr 0.7fr 0.6fr 0.8fr; gap: 4px; padding: 2px 0; border-bottom: 1px solid #2a2d3a; }
+    .console-row.head { color: var(--muted); font-size: 8px; text-transform: uppercase; }
     .compare-save { color: var(--green); font-size: 9px; }
     .assess-box {
       font-size: 10px; line-height: 1.45; color: #c8cad4;
@@ -392,6 +395,36 @@
       }).join('');
       const ver = pc.catalog_version ? `<div class="detail" style="margin-top:6px">catalog v${pc.catalog_version}</div>` : '';
       return `<div class="section-title">Policy presets</div><div class="card preset-grid">${rows}${proj}${ver}</div>`;
+    }
+
+    function renderConsole(grid) {
+      if (!grid || grid.error) {
+        if (grid && grid.error) {
+          return `<div class="section-title">Console</div><div class="card"><div class="error">${grid.error}</div></div>`;
+        }
+        return '';
+      }
+      const live = grid.gateway_live
+        ? `${(grid.gateway_models || []).length} models live`
+        : 'catalog only (gateway down)';
+      const presetRows = (grid.presets || []).slice(0, 9).map(p =>
+        `<div class="console-row"><span>${p.label || p.id}</span><span>${p.cost_tier || '—'}</span><span>${p.max_tokens ? p.max_tokens.toLocaleString() : '—'}</span><span>${(p.clients || []).join(', ') || '—'}</span></div>`
+      ).join('');
+      const modelRows = (grid.models || []).slice(0, 8).map(m =>
+        `<div class="console-row"><span>${m.id}</span><span>${m.cost_tier || '—'}</span><span>${m.context_window ? (m.context_window / 1000).toFixed(0) + 'k' : '—'}</span><span>${m.provider || '—'}</span></div>`
+      ).join('');
+      return `<div class="section-title">Console</div><div class="card">
+        <div class="detail">Gateway: ${live}</div>
+        <div class="console-table">
+          <div class="console-row head"><span>Preset</span><span>Tier</span><span>Max tok</span><span>Clients</span></div>
+          ${presetRows}
+        </div>
+        <div class="detail" style="margin-top:8px">Provider models</div>
+        <div class="console-table">
+          <div class="console-row head"><span>Model</span><span>Tier</span><span>Context</span><span>Provider</span></div>
+          ${modelRows}
+        </div>
+      </div>`;
     }
 
     function populateKeyFamilies(catalog) {
@@ -597,6 +630,7 @@
         renderEquity(equity) +
         renderCompare(snapshot.apiCompare) +
         renderPolicyPresets(snapshot.policyPresets) +
+        renderConsole(snapshot.consoleGrid) +
         renderWallets(snapshot.wallets) +
         (live.length ? '<div class="section-title">Usage</div>' + live.map(renderCard).join('') : '') +
         (keys.length ? '<div class="section-title">API Keys</div>' + keys.map(renderCard).join('') : '') ||

@@ -51,3 +51,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 5.3 | PRODUCT_VISION Phase 1 max_tokens done | [5.3.md](5.3.md) |
 | 5.4 | CHANGELOG + cycles playbook | [5.4.md](5.4.md) |
 | 5.5 | Full `/cycle` validate + ship gate | [5.5.md](5.5.md) |
+
+## Cycle 6 (clean wires + Console MVP)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 6.1 | `smoke-cursor` + `CURSOR_WIRING.md` | [6.1.md](6.1.md) |
+| 6.2 | `smoke-tower` + homelab tower row | [6.2.md](6.2.md) |
+| 6.3 | `check-key-hygiene` + `KEY_ROTATION.md` + push-env-mini | [6.3.md](6.3.md) |
+| 6.4 | `CONSOLE_SPEC.md` + widget Console grid | [6.4.md](6.4.md) |
+| 6.5 | `usage-rollup` + ship → **v3.6.0** | [6.5.md](6.5.md) |

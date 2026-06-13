@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.5.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
+**v3.6.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [iteration review](docs/ITERATION_REVIEW.md))
 
 Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://Kevins-Mac-mini.local:3000` on LAN; `kc-mini-lan` is SSH-only) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
 
@@ -115,7 +115,10 @@ make homelab-status   # doctor + remote-health + cost-review
 make deploy-mini      # rsync + restart on kc-mini
 make push-env-mini    # sync selected secrets to mini
 make push-client-env-tower  # tower client.env (gateway key only)
-make core-apis            # private data/CORE_APIS.md (gitignored, masked)
+make smoke-cursor        # verify Cursor gateway path
+make smoke-tower         # verify tower→mini presets
+make check-key-hygiene   # salt + provider key hygiene
+make usage-rollup        # log-based usage by model
 
 # Auto-start at login (macOS launchd)
 make daemon-enable

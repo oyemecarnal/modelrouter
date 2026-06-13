@@ -77,6 +77,7 @@ class Snapshot:
     api_catalog: dict[str, Any] | None = None
     api_compare: dict[str, Any] | None = None
     policy_presets: dict[str, Any] | None = None
+    console_grid: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -104,6 +105,8 @@ class Snapshot:
             out["apiCompare"] = self.api_compare
         if self.policy_presets is not None:
             out["policyPresets"] = self.policy_presets
+        if self.console_grid is not None:
+            out["consoleGrid"] = self.console_grid
         return out
 
 
@@ -874,6 +877,14 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
     except Exception as exc:
         policy_presets = {"error": str(exc)[:200], "presets": [], "projects": []}
 
+    console_grid: dict[str, Any] | None = None
+    try:
+        from console_grid import load_console_grid
+
+        console_grid = load_console_grid(cfg)
+    except Exception as exc:
+        console_grid = {"error": str(exc)[:200], "presets": [], "models": []}
+
     return Snapshot(
         updated_at=int(time.time() * 1000),
         providers=providers,
@@ -882,6 +893,7 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
         api_catalog=api_catalog,
         api_compare=api_compare,
         policy_presets=policy_presets,
+        console_grid=console_grid,
     )
 
 

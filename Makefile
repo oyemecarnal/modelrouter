@@ -1,8 +1,8 @@
 .PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke test lint cost-review homelab-status
-.PHONY: check-presets consolidate-keys check-catalog core-apis sync-preset-tokens
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower usage-rollup test lint cost-review homelab-status
+.PHONY: check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene
 
 install:
 	./scripts/install.sh
@@ -110,6 +110,15 @@ smoke:
 	PYTHONPATH=. .venv/bin/python -c "import yaml; yaml.safe_load(open('config/modelrouter.minimal.yaml'))"
 	PYTHONPATH=. .venv/bin/python -m modelrouter.route_policy --project smalshi-hermes
 
+smoke-cursor:
+	./scripts/smoke-cursor-wiring.sh
+
+smoke-tower:
+	./scripts/smoke-tower-gateway.sh
+
+usage-rollup:
+	./scripts/usage-rollup.sh
+
 test:
 	./scripts/test.sh
 
@@ -133,6 +142,9 @@ check-catalog:
 
 sync-preset-tokens:
 	.venv/bin/python scripts/sync_preset_max_tokens.py
+
+check-key-hygiene:
+	./scripts/check-key-hygiene.sh
 
 core-apis:
 	./scripts/update-core-api-list.sh

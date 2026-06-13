@@ -35,7 +35,16 @@ from preset_catalog import load_preset_catalog
 d = load_preset_catalog({'modelrouter_root': '$ROOT'})
 assert len(d.get('presets', [])) >= 6, d
 assert 'catalog_version' in d
-print(f'  ok {len(d[\"presets\"])} policy presets')
+print('  ok', len(d.get('presets', [])), 'policy presets')
+"
+
+echo "── Console grid"
+PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+from console_grid import load_console_grid
+d = load_console_grid({'modelrouter_root': '$ROOT'})
+assert len(d.get('presets', [])) >= 6
+assert len(d.get('models', [])) >= 5
+print('  ok console:', len(d.get('presets', [])), 'presets,', len(d.get('models', [])), 'models')
 "
 
 echo "── Security (gitignore)"
