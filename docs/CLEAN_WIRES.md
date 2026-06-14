@@ -71,8 +71,8 @@ See `docs/INVENTORY.md` — wallet-*style* audit (locations, not custody).
 
 Once traffic is metered:
 
-1. **Tokens** — LiteLLM logs + future UI show per-project / per-preset usage
-2. **Context windows** — map presets to max context in `config/models_catalog.yaml` (future)
+1. **Tokens** — `make usage-rollup` (24h log summary); `make homelab-status` prints header
+2. **Context windows** — `config/models_catalog.yaml` + `docs/CONTEXT_GUIDE.md`; `make check-catalog` enforces `context_window`
 3. **Cross-machine** — same presets on laptop, mini, tower; gateway is source of truth
 
 ## What not to tangle

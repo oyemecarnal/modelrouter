@@ -20,6 +20,9 @@ echo ""
 echo "── Cost review (header)"
 "$ROOT/scripts/cost-review.sh" 2>/dev/null | sed -n '1,12p' || true
 echo ""
+echo "── Usage rollup (24h)"
+"$ROOT/scripts/usage-rollup.sh" --hours 24 2>/dev/null | sed -n '1,10p' || true
+echo ""
 echo "── Tower (kc-tower)"
 TOWER_SSH="${KC_TOWER_SSH:-}"
 if [[ -z "$TOWER_SSH" ]]; then

@@ -61,3 +61,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 6.3 | `check-key-hygiene` + `KEY_ROTATION.md` + push-env-mini | [6.3.md](6.3.md) |
 | 6.4 | `CONSOLE_SPEC.md` + widget Console grid | [6.4.md](6.4.md) |
 | 6.5 | `usage-rollup` + ship → **v3.6.0** | [6.5.md](6.5.md) |
+
+## Cycle 7 (Phase 0/1 capstone — calibration ops)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 7.1 | Snapshot export security guard in `test.sh` | [7.1.md](7.1.md) |
+| 7.2 | Test harness pidfile reconcile before health | [7.2.md](7.2.md) |
+| 7.3 | `context_window` catalog check + `CONTEXT_GUIDE.md` | [7.3.md](7.3.md) |
+| 7.4 | `usage-rollup` in `homelab-status` + doctor hints | [7.4.md](7.4.md) |
+| 7.5 | Phase markers + ship → **v3.7.0** | [7.5.md](7.5.md) |

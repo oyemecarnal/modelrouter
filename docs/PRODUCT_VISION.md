@@ -92,20 +92,22 @@ Avoid a single god-mode connector until security model is designed (Business tie
 
 ## Phased roadmap (don’t skip phases)
 
-### Phase 0 — Clean wires (now → 3.0)
+### Phase 0 — Clean wires (complete → 3.7)
 
 - [x] Fail-closed startup; project key refresh on rotate
 - [x] `config/client.env.example` for tower (no provider keys)
 - [x] `docs/CLEAN_WIRES.md` migration guide (human items flagged)
 - [x] Daemon reliable enough to trust metering (pid + stop + health bind)
-- [ ] All clients on gateway only *(human: Cursor verify, tower deploy)*
+- [x] All clients on gateway only — Cursor, tower Tailscale, mini canonical keys (`docs/HOMELAB_GOALS.md`)
 
-### Phase 1 — Catalog & calibration (3.1 → 4.x)
+### Phase 1 — Catalog & calibration (complete → 3.7)
 
 - [x] `config/models_catalog.yaml` — context window, cost tier, presets (Phase 1 SSOT)
 - [x] `make check-catalog` / `scripts/check_catalog.py` — drift check in `make test`
 - [x] Console MVP: static grid in widget — `docs/CONSOLE_SPEC.md`, **Console** section (`consoleGrid`)
 - [x] Per-preset max tokens enforced in LiteLLM config (`make sync-preset-tokens`, `check_catalog`)
+- [x] Context window SSOT + selection guide — `docs/CONTEXT_GUIDE.md`; `check_catalog` validates `context_window`
+- [x] Log metering in ops — `make usage-rollup` in `homelab-status` and `doctor` next steps
 
 ### Phase 2 — Connector MVP (3.x)
 
@@ -159,7 +161,8 @@ Run `make cost-review`. If the answer is “use grep not GPT,” the product sho
 
 ## Next doc when ready
 
-- `docs/CONSOLE_SPEC.md` — wireframes + API for model grid (Phase 1)
+- `docs/CONSOLE_SPEC.md` — wireframes + API for model grid (Phase 1) ✓
+- `docs/CONTEXT_GUIDE.md` — preset selection by context window (Phase 1) ✓
 - `docs/CONNECTOR_SPEC.md` — OAuth scopes + vault layout (Phase 2)
 
-No code until Phase 0 checklist is mostly green.
+Phase 0/1 complete at **v3.7.0**. Phase 2 connector work is next; no connector code until spec is drafted.

@@ -138,3 +138,21 @@ make health   → alive (laptop + mini after restart)
 remote-health → laptop+mini alive; tower skip
 Bugbot        → 7 findings; 4 patched in-cycle
 ```
+
+---
+
+## Cycle 7 checkpoint (v3.7.0)
+
+**Theme:** Phase 0 + Phase 1 complete; calibration ops wired.
+
+| Iter | Deliverable |
+|------|-------------|
+| 7.1 | Snapshot export must not contain raw API key prefixes (`test.sh`) |
+| 7.2 | Pidfile reconcile before optional health in `make test` |
+| 7.3 | `context_window` enforced in `check_catalog`; `docs/CONTEXT_GUIDE.md` |
+| 7.4 | `usage-rollup` in `homelab-status`; doctor next steps |
+| 7.5 | `PRODUCT_VISION` phase markers; **v3.7.0** |
+
+**Human backlog (unchanged):** Remove stray provider keys on tower agent `.env` if any remain (`CLEAN_WIRES.md`).
+
+**Next cycle 8 proposal:** Phase 2 connector MVP sketch — `docs/CONNECTOR_SPEC.md` draft, one provider paste-key flow.

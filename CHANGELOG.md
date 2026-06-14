@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.7.0] — 2026-06-12 (Cycle 7 — Phase 0/1 complete, calibration ops)
+
+### Added
+- `docs/CONTEXT_GUIDE.md` — preset selection by context window and cost
+- `test.sh` — snapshot export guard (no raw API key prefixes in widget catalog JSON)
+- `homelab-status` — 24h usage rollup header
+
+### Changed
+- `check_catalog.py` — every catalog model must have `context_window`
+- `test.sh` — reconcile pidfile before optional health check
+- `doctor` — `usage-rollup` and `homelab-status` in next steps
+- `PRODUCT_VISION` — Phase 0 (clean wires) and Phase 1 (catalog/calibration) marked complete
+- `CLEAN_WIRES` — calibration section points at rollup + context SSOT
+
 ## [3.6.1] — 2026-06-13 (tower wiring + daemon pidfile)
 
 ### Added

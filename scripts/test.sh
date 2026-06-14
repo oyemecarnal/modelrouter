@@ -55,7 +55,24 @@ assert 'data/CORE_APIS.md' in gi, 'CORE_APIS.md must stay gitignored'
 print('  ok data/CORE_APIS.md gitignored')
 "
 
+echo "── Security (snapshot exports)"
+PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+import json, re
+from preset_catalog import load_preset_catalog
+from console_grid import load_console_grid
+SECRET_RE = re.compile(r'(?:sk-[A-Za-z0-9]{8,}|gsk_[A-Za-z0-9]{8,}|ant-api[A-Za-z0-9_-]{8,}|crsr_[A-Za-z0-9]{8,})')
+cfg = {'modelrouter_root': '$ROOT'}
+for name, data in [('policyPresets', load_preset_catalog(cfg)), ('consoleGrid', load_console_grid(cfg))]:
+    blob = json.dumps(data)
+    m = SECRET_RE.search(blob)
+    assert not m, f'{name} snapshot may leak secrets ({m.group(0)[:12]}...)'
+print('  ok snapshot exports (no raw key prefixes)')
+"
+
 echo "── Health (optional)"
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib.sh" 2>/dev/null || true
+modelrouter_reconcile_pidfile 2>/dev/null || true
 if ./scripts/healthcheck.sh &>/dev/null; then
   echo "  ok gateway"
 else

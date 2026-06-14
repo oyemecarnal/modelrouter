@@ -73,6 +73,14 @@ def main() -> int:
             print(f"  FAIL catalog missing model: {model}", file=sys.stderr)
             ok = False
 
+    for mid, minfo in (cat.get("models") or {}).items():
+        if not isinstance(minfo, dict):
+            continue
+        cw = minfo.get("context_window")
+        if cw is None or int(cw) <= 0:
+            print(f"  FAIL catalog model {mid}: missing context_window", file=sys.stderr)
+            ok = False
+
     cat_limits = {
         k: int(v.get("max_tokens_default"))
         for k, v in (cat.get("presets") or {}).items()
