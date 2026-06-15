@@ -76,7 +76,11 @@ assert validate_provider_key('GROQ_API_KEY', 'gsk_' + 'a' * 48) is None
 assert validate_provider_key('GROQ_API_KEY', 'bad') is not None
 assert validate_provider_key('ANTHROPIC_API_KEY', 'sk-ant-api03-' + 'x' * 40) is None
 assert validate_provider_key('ANTHROPIC_API_KEY', 'sk-bad') is not None
-print('  ok env_store key validation (groq + anthropic)')
+assert validate_provider_key('OPENAI_API_KEY', 'sk-proj-' + 'x' * 40) is None
+assert validate_provider_key('OPENAI_API_KEY', 'bad') is not None
+assert validate_provider_key('MISTRAL_API_KEY', 'a' * 32) is None
+assert validate_provider_key('MISTRAL_API_KEY', 'short') is not None
+print('  ok env_store key validation (groq + anthropic + openai + mistral)')
 "
 
 echo "── Connector registry"
@@ -110,6 +114,8 @@ d = load_homelab_status({'modelrouter_root': '$ROOT', 'receiver': {'enabled': Tr
 assert d.get('enabled') and len(d.get('leds', [])) >= 10, d
 assert len(d.get('themePresets', {})) >= 5, d
 assert len(d.get('rows', [])) >= 3, d
+api_row = next((r for r in d['rows'] if r.get('id') == 'connectors'), {})
+assert len(api_row.get('leds', [])) >= 4, 'registry-driven API KEY LEDs'
 print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'presets')
 "
 

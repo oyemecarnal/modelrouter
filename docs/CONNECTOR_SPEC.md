@@ -1,12 +1,12 @@
-# Connector spec (Phase 2 MVP)
+# Connector spec (Phase 2)
 
-**Status:** Groq paste-key flow first (`make connect-groq`). OAuth deferred.  
-**SSOT for signup links:** `config/api_catalog.yaml`  
+**Status:** Four paste-key connectors (Groq, Anthropic, OpenAI, Mistral) + `config/connectors.yaml` registry. OAuth deferred.  
+**SSOT for signup links:** `config/api_catalog.yaml` (registry mirrors in `config/connectors.yaml`)  
 **Vault write:** `modelrouter/env_store.py` → local `.env` only; never repo or chat.
 
 ## Goal
 
-One provider end-to-end: user pastes API key → validated → stored in gateway `.env` on kc-mini → gateway restarted. Keys never touch git, logs, or widget snapshots.
+Paste API key → validated → stored in gateway `.env` on kc-mini → gateway restarted. Keys never touch git, logs, or widget snapshots.
 
 ## Security model (non-negotiable)
 
@@ -18,44 +18,31 @@ One provider end-to-end: user pastes API key → validated → stored in gateway
 | Atomic writes | `env_store.update_env_file` writes via temp + rename |
 | Validate before store | `env_store.validate_provider_key` per env var prefix |
 | Staged consent | Paste-key only in Phase 2; OAuth needs separate spec |
+| Tower agents | Provider keys on kc-mini only — `make audit-tower-wires` |
 
-## Phase 2 MVP flow (Groq)
-
-```
-User → make connect-groq
-         ├─ paste gsk_… (hidden prompt)
-         ├─ validate prefix
-         ├─ update laptop .env (atomic)
-         ├─ make push-env-mini GROQ_API_KEY
-         └─ optional: restart mini gateway
-```
-
-Signup: [console.groq.com/keys](https://console.groq.com/keys) (GitHub OAuth for console; API key is separate).
-
-## Connector registry (Phase 2.5)
+## Connector registry
 
 `config/connectors.yaml` lists paste-key connectors. Generic entry:
 
 ```bash
 make connect-provider PROVIDER=anthropic
-make connect-provider PROVIDER=groq
 ./scripts/connect-provider.sh   # lists ids
 ```
 
-## Future (Phase 2.5+)
-
-- OAuth / refresh tokens
-- Widget "Add provider" button
-- 1Password write from connector (read-only via `load_secrets.py` today)
-- OpenRouter wiring (stub stays)
+Receiver widget API KEY row reads the same registry (`tokens/scripts/homelab_status.py`).
 
 ## Commands
 
 ```bash
 make connect-groq        # paste → local .env → push-env-mini
 make connect-anthropic   # paste sk-ant-… → mini (hermes-smart / review)
-make check-key-hygiene # verify keys on laptop + mini
-make push-env-mini     # manual key sync when needed
+make connect-openai      # paste sk-… → mini (smart / code)
+make connect-mistral     # paste Mistral key → mini
+make connect-provider PROVIDER=<id>
+make audit-tower-wires   # stray provider keys on kc-tower
+make clean-tower-wires   # push client.env + re-audit
+make check-key-hygiene   # verify keys on laptop + mini
+make push-env-mini       # manual key sync when needed
 ```
 
 Docs: `docs/ENV.md`
@@ -64,12 +51,15 @@ Docs: `docs/ENV.md`
 
 ```bash
 make check-key-hygiene
-make doctor            # GROQ_API_KEY set on mini
-make smoke-tower       # hermes-fast uses Groq via gateway
+make doctor
+make smoke-tower         # hermes-fast / cheap via gateway
+make smoke-hermes-smart  # Anthropic route on mini
 ```
 
 ## Future (Phase 2.5+)
 
-- ~~`make connect-anthropic`~~ — done (Cycle 9)
-- Connector row in Console widget (status only, no key display) — receiver bar LEDs
-- `config/connectors.yaml` registry driving a generic `connect-provider.sh`
+- OAuth / refresh tokens
+- Widget “Add provider” button (signup deep-link from registry)
+- 1Password write from connector (read-only via `load_secrets.py` today)
+- OpenRouter wiring (stub stays)
+- Google/Gemini paste-key connectors

@@ -109,12 +109,13 @@ Avoid a single god-mode connector until security model is designed (Business tie
 - [x] Context window SSOT + selection guide — `docs/CONTEXT_GUIDE.md`; `check_catalog` validates `context_window`
 - [x] Log metering in ops — `make usage-rollup` in `homelab-status` and `doctor` next steps
 
-### Phase 2 — Connector MVP (3.8+)
+### Phase 2 — Connector MVP (3.8+ → 3.12)
 
 - [x] Connector spec — `docs/CONNECTOR_SPEC.md` (security model, vault rules)
-- [x] Groq paste-key end-to-end — `make connect-groq` (local `.env` → push-env-mini → mini restart)
-- [x] Anthropic paste-key — `make connect-anthropic` (`docs/ENV.md`)
-- [ ] Keys never touch repo; vault write only *(connectors done; OAuth deferred)*
+- [x] Paste-key connectors — Groq, Anthropic, OpenAI, Mistral (`config/connectors.yaml`, `make connect-provider`)
+- [x] Registry-driven receiver LEDs — `homelab_status` reads `connectors.yaml`
+- [x] Tower wire audit — `make audit-tower-wires`, `make clean-tower-wires`
+- [x] Keys never touch repo; vault write only *(OAuth deferred)*
 - [ ] “Add new” button → provider page → return → key stored *(widget UI deferred)*
 
 ### Phase 3 — Pro product (4.x)
@@ -167,5 +168,6 @@ Run `make cost-review`. If the answer is “use grep not GPT,” the product sho
 - `docs/CONTEXT_GUIDE.md` — preset selection by context window (Phase 1) ✓
 - `docs/CONNECTOR_SPEC.md` — OAuth scopes + vault layout (Phase 2) ✓ MVP
 - `docs/POSITIONING.md` — market wedge vs LiteLLM / Portkey / key wallets ✓
+- `docs/LANDING.md` — Personal tier landing stub ✓
 
-Phase 0/1 complete at **v3.7.0**. Phase 2 Groq + Anthropic connectors at **v3.9.0**; OAuth and widget UI next.
+Phase 0/1 complete at **v3.7.0**. Phase 2 connectors through **v3.12.0** (4 paste-key flows, registry, tower audit). OAuth and widget “Add provider” UI next.

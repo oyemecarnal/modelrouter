@@ -101,3 +101,23 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 10.3 | Registry ↔ `connect-{id}.sh` mapping | [10.3.md](10.3.md) |
 | 10.4 | Ops docs — `connect-provider`, smoke hints | [10.4.md](10.4.md) |
 | 10.5 | Capstone + ship → **v3.10.0** | [10.5.md](10.5.md) |
+
+## Cycle 11 (tower audit + OpenAI connector)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 11.1 | `make audit-tower-wires` — no secret print | [11.1.md](11.1.md) |
+| 11.2 | Hygiene hook + non-blocking tower SSH | [11.2.md](11.2.md) |
+| 11.3 | `make connect-openai` + registry | [11.3.md](11.3.md) |
+| 11.4 | README positioning + ops docs | [11.4.md](11.4.md) |
+| 11.5 | Capstone → **v3.11.0** | [11.5.md](11.5.md) |
+
+## Cycle 12 (landing + Mistral + registry LEDs)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 12.1 | Audit `client.env` gateway-key whitelist | [12.1.md](12.1.md) |
+| 12.2 | `make clean-tower-wires` | [12.2.md](12.2.md) |
+| 12.3 | `make connect-mistral` | [12.3.md](12.3.md) |
+| 12.4 | Registry-driven receiver LEDs + `LANDING.md` | [12.4.md](12.4.md) |
+| 12.5 | Capstone → **v3.12.0** | [12.5.md](12.5.md) |

@@ -1,8 +1,8 @@
 # ModelRouter
 
-**v3.9.0** — Homelab AI gateway ([goals](docs/HOMELAB_GOALS.md) · [env](docs/ENV.md) · [iteration review](docs/ITERATION_REVIEW.md))
+**v3.12.0** — Self-hosted AI control plane ([landing](docs/LANDING.md) · [positioning](docs/POSITIONING.md) · [env](docs/ENV.md))
 
-Self-hosted LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)**. One OpenAI-compatible endpoint on **kc-mini** (`http://Kevins-Mac-mini.local:3000` on LAN; `kc-mini-lan` is SSH-only) for laptop, tower agents, and Cursor — with policy presets, fallbacks, and cost discipline.
+One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 
 Drop-in replacement for OpenRouter on your LAN (OpenRouter itself is stubbed — optional later).
 
@@ -116,18 +116,19 @@ make deploy-mini      # rsync + restart on kc-mini
 make push-env-mini    # sync selected secrets to mini
 make push-client-env-tower  # tower client.env (gateway key only)
 make daemon-enable    # auto-start at login (macOS launchd)
+make daemon-disable
 make smoke-cursor        # verify Cursor gateway path
 make smoke-tower         # verify tower→mini presets
 make smoke-hermes-smart  # verify hermes-smart / Anthropic route on mini
 make check-key-hygiene   # salt + provider key hygiene
-make connect-groq        # paste Groq key → .env → mini (Phase 2 connector)
+make connect-groq        # paste Groq key → .env → mini
 make connect-anthropic   # paste Anthropic key → mini (hermes-smart / review)
+make connect-openai      # paste OpenAI key → mini (smart / code)
+make connect-mistral     # paste Mistral key → mini (code / fallbacks)
 make connect-provider PROVIDER=anthropic  # generic registry dispatch
+make audit-tower-wires   # scan kc-tower for stray provider keys
+make clean-tower-wires   # push client.env + re-audit tower
 make usage-rollup        # log-based usage by model
-
-# Auto-start at login (macOS launchd)
-make daemon-enable
-make daemon-disable
 ```
 
 ## Docker (production)

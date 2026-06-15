@@ -185,7 +185,7 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 9.2 | `make connect-anthropic`, `docs/ENV.md` |
 | 9.3 | Widget receiver — 5 theme presets, Classic R/G default |
 | 9.4 | `homelab_status` — paths, API keys, network LED rows |
-| 9.5 | **v3.9.0** (includes unshipped Cycle 8 Groq connector) |
+| 9.5 | **v3.9.0** (shipped in v3.10.0 bundle) |
 
 **Next cycle 10 proposal:** `config/connectors.yaml` registry, generic `connect-provider.sh`, optional `smoke-hermes-smart`.
 
@@ -201,6 +201,38 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 10.2 | `make smoke-hermes-smart` — hermes-smart via mini gateway |
 | 10.3 | Registry ↔ `connect-{id}.sh` mapping in `test.sh` |
 | 10.4 | `connect-provider` + smoke in README / ENV / doctor |
-| 10.5 | **v3.10.0** (ships Cycles 8–10; origin at v3.7.0) |
+| 10.5 | **v3.10.0** (shipped) |
 
 **Next cycle 11 proposal:** Tower `.env` cleanup (`CLEAN_WIRES`), landing blurb from `POSITIONING.md`, third connector (OpenAI paste-key).
+
+---
+
+## Cycle 11 checkpoint (v3.11.0)
+
+**Theme:** Clean tower wires + OpenAI paste-key connector.
+
+| Iter | Deliverable |
+|------|-------------|
+| 11.1 | `make audit-tower-wires` — stray provider keys on kc-tower |
+| 11.2 | `check-key-hygiene` tower audit hint; soft skip when offline |
+| 11.3 | `make connect-openai` + registry (3 connectors) |
+| 11.4 | README positioning blurb + ops docs |
+| 11.5 | **v3.11.0** |
+
+**Next cycle 12 proposal:** Landing/purchase stub (`docs/LANDING.md`), Mistral connector, widget connector row from registry.
+
+---
+
+## Cycle 12 checkpoint (v3.12.0)
+
+**Theme:** Landing stub, Mistral connector, registry-driven receiver.
+
+| Iter | Deliverable |
+|------|-------------|
+| 12.1 | Audit whitelist for tower `client.env` gateway shim |
+| 12.2 | `make clean-tower-wires` |
+| 12.3 | `make connect-mistral` (4 registry connectors) |
+| 12.4 | `homelab_status` ← `connectors.yaml`; `docs/LANDING.md` |
+| 12.5 | **v3.12.0** |
+
+**Next cycle 13 proposal:** Ship bundle (v3.11+v3.12), Google/Gemini connector, widget signup links from registry.

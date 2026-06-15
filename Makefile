@@ -1,8 +1,8 @@
 .PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-provider
-.PHONY: check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-provider audit-tower-wires clean-tower-wires
+.PHONY: check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene audit-tower-wires clean-tower-wires
 
 install:
 	./scripts/install.sh
@@ -82,6 +82,12 @@ connect-groq:
 connect-anthropic:
 	./scripts/connect-anthropic.sh
 
+connect-openai:
+	./scripts/connect-openai.sh
+
+connect-mistral:
+	./scripts/connect-mistral.sh
+
 connect-provider:
 	./scripts/connect-provider.sh $(or $(PROVIDER),)
 
@@ -157,6 +163,12 @@ sync-preset-tokens:
 
 check-key-hygiene:
 	./scripts/check-key-hygiene.sh
+
+audit-tower-wires:
+	./scripts/audit-tower-wires.sh
+
+clean-tower-wires:
+	./scripts/clean-tower-wires.sh
 
 core-apis:
 	./scripts/update-core-api-list.sh

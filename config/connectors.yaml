@@ -24,3 +24,23 @@ connectors:
     signup: https://console.anthropic.com/settings/keys
     presets: [hermes-smart, review]
     make_target: connect-anthropic
+
+  openai:
+    label: OpenAI
+    env: OPENAI_API_KEY
+    mode: paste_key
+    validate: openai
+    script: connect-openai.sh
+    signup: https://platform.openai.com/api-keys
+    presets: [smart, code]
+    make_target: connect-openai
+
+  mistral:
+    label: Mistral
+    env: MISTRAL_API_KEY
+    mode: paste_key
+    validate: mistral
+    script: connect-mistral.sh
+    signup: https://console.mistral.ai
+    presets: [code, mistral-small]
+    make_target: connect-mistral

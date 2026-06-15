@@ -11,6 +11,8 @@
 | --------- | ------------------------ | ------------------- | ---------- |
 | Groq      | `make connect-groq`      | `GROQ_API_KEY`      | `gsk_…`    |
 | Anthropic | `make connect-anthropic` | `ANTHROPIC_API_KEY` | `sk-ant-…` |
+| OpenAI    | `make connect-openai`    | `OPENAI_API_KEY`    | `sk-…`     |
+| Mistral   | `make connect-mistral`   | `MISTRAL_API_KEY`   | alphanumeric |
 
 
 Generic registry: `make connect-provider PROVIDER=<id>` (see `config/connectors.yaml`).

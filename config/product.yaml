@@ -12,7 +12,7 @@ api:
 tiers:
   personal:
     status: active
-    includes: [gateway, presets, keys_widget, homelab_scripts]
+    includes: [gateway, presets, keys_widget, homelab_scripts, connectors, landing_stub]
   pro:
     status: planned
     includes: [console_ui, multi_host, project_caps, mcp]

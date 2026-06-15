@@ -75,7 +75,7 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 - Policy-based routing, not vendor lock-in per app  
 - Self-hosted gateway on your hardware  
 - Masked inventory — find keys, don’t exfiltrate them  
-- Paste-key connectors with validation (Groq, Anthropic)  
+- Paste-key connectors with validation (Groq, Anthropic, OpenAI, Mistral)  
 - Stereo-receiver ops UI — distinctive, memorable  
 
 ## What we do not claim (yet)
@@ -109,11 +109,11 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 
 **Next wires (in order)**
 
-1. **`/ship` v3.10.0** — publish Cycles 8–10 bundle (origin at v3.7.0)  
-2. **`make connect-provider PROVIDER=anthropic`** — generic registry (`config/connectors.yaml`)  
-3. **Tower `.env` cleanup** — provider keys off agents  
-4. **`make smoke-hermes-smart`** — prove Anthropic route end-to-end  
-5. **Landing / purchase** — Personal tier: self-host tarball + docs (when ready)  
+1. **`/ship` v3.12.0** — publish Cycles 11–12 (origin at v3.10.0)  
+2. **`make clean-tower-wires`** — fix tower agent `.env` strays (e.g. coinbot)  
+3. **`make connect-mistral`** — if Mistral routes needed on mini  
+4. **Personal tier** — `docs/LANDING.md` when ready to sell tarball  
+5. **Registry in widget** — signup links from `connectors.yaml`  
 
 ---
 

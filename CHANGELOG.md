@@ -1,5 +1,36 @@
 # Changelog
 
+## [3.12.0] — 2026-06-15 (Cycle 12 — landing stub + Mistral + registry LEDs)
+
+### Added
+- `docs/LANDING.md` — Personal tier landing / purchase stub
+- `make connect-mistral` — paste Mistral key → mini
+- `make clean-tower-wires` — push tower `client.env` + re-audit
+
+### Changed
+- `homelab_status` — API KEY row driven by `config/connectors.yaml`
+- `audit-tower-wires` — skip `OPENAI_API_KEY` in tower `client.env` (gateway shim)
+- `test.sh` — Mistral validation + registry LED smoke (4+ paste-key LEDs)
+
+### Changed (deepclean)
+- `docs/PRODUCT_VISION.md`, `CONNECTOR_SPEC.md` — version and Phase 2 status sync
+- `README` — dedupe `daemon-enable`; connector command labels
+- `tokens/README.md` — fix broken Files table
+- `check-key-hygiene` — mini checks include OpenAI + Mistral
+
+## [3.11.0] — 2026-06-15 (Cycle 11 — tower audit + OpenAI connector)
+
+### Added
+- `make audit-tower-wires` — scan kc-tower for stray provider keys (no values printed)
+- `make connect-openai` — paste `sk-…` → `.env` → `push-env-mini` → mini restart
+- OpenAI entry in `config/connectors.yaml` (`smart`, `code` presets)
+
+### Changed
+- `README` — positioning one-liner, version sync
+- `check-key-hygiene` — `OPENAI_API_KEY` + tower audit hint
+- `test.sh` — OpenAI validation + 3-connector registry
+- `docs/CLEAN_WIRES.md` — audit command for tower checklist
+
 ## [3.10.0] — 2026-06-15 (Cycle 10 — connector registry + hermes-smart smoke)
 
 ### Added

@@ -126,15 +126,40 @@ def _key_state(env_var: str, value: str, validators: dict[str, str]) -> str:
     return "ok"
 
 
-CONNECTOR_DEFS = [
-    ("openai", "OPENAI", "OPENAI_API_KEY", "sk-"),
-    ("groq", "GROQ", "GROQ_API_KEY", "gsk_"),
-    ("anthro", "ANTHRO", "ANTHROPIC_API_KEY", "sk-ant-"),
-    ("mistral", "MIST", "MISTRAL_API_KEY", ""),
+_PREFIX_HINTS: dict[str, str] = {
+    "GROQ_API_KEY": "gsk_",
+    "ANTHROPIC_API_KEY": "sk-ant-",
+    "OPENAI_API_KEY": "sk-",
+    "MISTRAL_API_KEY": "",
+}
+
+# Non-registry keys shown on receiver bar (laptop / stub providers)
+EXTRA_CONNECTOR_DEFS = [
     ("google", "GOOGLE", "GOOGLE_API_KEY", "AIza"),
     ("cursor", "CURSOR", "CURSOR_API_KEY", ""),
     ("openrouter", "OROUTE", "OPENROUTER_API_KEY", "sk-or-"),
 ]
+
+
+def _load_registry_connectors(root: Path) -> list[tuple[str, str, str, str]]:
+    """Paste-key connectors from config/connectors.yaml (SSOT)."""
+    try:
+        import yaml
+
+        path = root / "config" / "connectors.yaml"
+        if not path.exists():
+            return []
+        reg = yaml.safe_load(path.read_text()) or {}
+        out: list[tuple[str, str, str, str]] = []
+        for cid, c in (reg.get("connectors") or {}).items():
+            env_var = (c or {}).get("env") or ""
+            label = ((c or {}).get("label") or cid).upper()[:6]
+            prefix = _PREFIX_HINTS.get(env_var, "")
+            out.append((cid, label, env_var, prefix))
+        return out
+    except Exception:
+        return []
+
 
 DEFAULT_WEBHOOKS = [
     {"id": "groq_net", "label": "GROQ", "url": "https://api.groq.com"},
@@ -221,9 +246,11 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
         )
     )
 
-    validators = {env_var: prefix for _, _, env_var, prefix in CONNECTOR_DEFS}
+    connector_defs = _load_registry_connectors(root) + EXTRA_CONNECTOR_DEFS
+
+    validators = {env_var: prefix for _, _, env_var, prefix in connector_defs}
     connectors: list[dict[str, str]] = []
-    for cid, label, env_var, prefix in CONNECTOR_DEFS:
+    for cid, label, env_var, prefix in connector_defs:
         val = env.get(env_var, "")
         if env_var == "GOOGLE_API_KEY" and not val:
             val = env.get("GEMINI_API_KEY", "")

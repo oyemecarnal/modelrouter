@@ -31,4 +31,4 @@ make usage-rollup       # 24h traffic by model (JSON logs)
 make homelab-status     # includes usage rollup header
 ```
 
-See `docs/CONSOLE_SPEC.md` for the widget grid and `docs/PRODUCT_VISION.md` Phase 2 for connector work next.
+See `docs/CONSOLE_SPEC.md` for the widget grid. Connectors: `docs/CONNECTOR_SPEC.md`, `make connect-provider`.
