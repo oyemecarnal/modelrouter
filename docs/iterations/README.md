@@ -71,3 +71,33 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 7.3 | `context_window` catalog check + `CONTEXT_GUIDE.md` | [7.3.md](7.3.md) |
 | 7.4 | `usage-rollup` in `homelab-status` + doctor hints | [7.4.md](7.4.md) |
 | 7.5 | Phase markers + ship → **v3.7.0** | [7.5.md](7.5.md) |
+
+## Cycle 8 (Phase 2 — Groq connector MVP)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 8.1 | `CONNECTOR_SPEC.md` security model | [8.1.md](8.1.md) |
+| 8.2 | `env_store.py` atomic `.env` writes | [8.2.md](8.2.md) |
+| 8.3 | Groq key validation + test smoke | [8.3.md](8.3.md) |
+| 8.4 | `make connect-groq` end-to-end ops | [8.4.md](8.4.md) |
+| 8.5 | Phase 2 markers + ship → **v3.8.0** | [8.5.md](8.5.md) |
+
+## Cycle 9 (Anthropic connector + receiver bar)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 9.1 | Connector script checks + Anthropic validation in `test.sh` | [9.1.md](9.1.md) |
+| 9.2 | `make connect-anthropic` + `docs/ENV.md` | [9.2.md](9.2.md) |
+| 9.3 | Widget receiver — 5 presets, 3 LED rows | [9.3.md](9.3.md) |
+| 9.4 | `homelab_status` + webhook network probes | [9.4.md](9.4.md) |
+| 9.5 | Docs sync + ship → **v3.9.0** | [9.5.md](9.5.md) |
+
+## Cycle 10 (connector registry + hermes-smart smoke)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 10.1 | `connectors.yaml` registry validation in `test.sh` | [10.1.md](10.1.md) |
+| 10.2 | `make smoke-hermes-smart` | [10.2.md](10.2.md) |
+| 10.3 | Registry ↔ `connect-{id}.sh` mapping | [10.3.md](10.3.md) |
+| 10.4 | Ops docs — `connect-provider`, smoke hints | [10.4.md](10.4.md) |
+| 10.5 | Capstone + ship → **v3.10.0** | [10.5.md](10.5.md) |

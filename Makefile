@@ -1,7 +1,7 @@
 .PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower usage-rollup test lint cost-review homelab-status
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-provider
 .PHONY: check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene
 
 install:
@@ -76,6 +76,15 @@ keys-sync-remote:
 groq-setup:
 	./scripts/setup-groq.sh
 
+connect-groq:
+	./scripts/connect-groq.sh
+
+connect-anthropic:
+	./scripts/connect-anthropic.sh
+
+connect-provider:
+	./scripts/connect-provider.sh $(or $(PROVIDER),)
+
 push-env-mini:
 	./scripts/push-env-to-mini.sh MISTRAL_API_KEY GROQ_API_KEY OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GEMINI_API_KEY OPENROUTER_API_KEY POLYGON_API_KEY MODELROUTER_MASTER_KEY LITELLM_SALT_KEY
 
@@ -115,6 +124,9 @@ smoke-cursor:
 
 smoke-tower:
 	./scripts/smoke-tower-gateway.sh
+
+smoke-hermes-smart:
+	./scripts/smoke-hermes-smart.sh
 
 usage-rollup:
 	./scripts/usage-rollup.sh

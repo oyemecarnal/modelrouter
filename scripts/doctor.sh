@@ -111,3 +111,7 @@ echo "  make core-apis            # refresh gitignored data/CORE_APIS.md (masked
 echo "  make check-key-hygiene    # salt distinct, provider keys, Groq rotate reminder"
 echo "  make usage-rollup         # log-based metering by model/preset (24h default)"
 echo "  make homelab-status       # doctor + remote-health + cost + usage header"
+echo "  make connect-groq         # paste Groq key → .env → push-env-mini (Phase 2)"
+echo "  make connect-anthropic    # paste Anthropic key → mini (hermes-smart / review)"
+echo "  make connect-provider PROVIDER=anthropic  # registry dispatch (config/connectors.yaml)"
+echo "  make smoke-hermes-smart   # hermes-smart chat via mini gateway"

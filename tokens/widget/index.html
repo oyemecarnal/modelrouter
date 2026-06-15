@@ -18,6 +18,15 @@
       --orange: #ffb020;
       --red: #ff5c5c;
       --track: rgba(255, 255, 255, 0.08);
+      --rx-bg: #120e0a;
+      --rx-panel: #1c1610;
+      --rx-bezel: #4a4034;
+      --rx-label: #a89478;
+      --led-ok: #33ff55;
+      --led-warn: #ffaa22;
+      --led-down: #ff3344;
+      --led-skip: #3a4550;
+      --led-off: #0a0a0a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -75,6 +84,135 @@
     button:hover { border-color: rgba(110, 231, 255, 0.35); background: rgba(110, 231, 255, 0.08); }
     button:active { transform: scale(0.97); }
     button:disabled { opacity: 0.5; cursor: wait; }
+    .receiver-bar {
+      flex-shrink: 0;
+      padding: 6px 12px 10px;
+      background: linear-gradient(180deg, var(--rx-bg) 0%, color-mix(in srgb, var(--rx-bg) 70%, #000) 100%);
+      border-bottom: 2px solid var(--rx-bezel);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), inset 0 -2px 8px rgba(0,0,0,0.5);
+    }
+    .receiver-presets {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .preset-btn {
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 7px;
+      border-radius: 4px;
+      border: 1px solid var(--rx-bezel);
+      background: color-mix(in srgb, var(--rx-panel) 80%, transparent);
+      color: var(--rx-label);
+      cursor: pointer;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .preset-btn:hover {
+      border-color: var(--led-ok);
+    }
+    .preset-btn.active {
+      border-color: var(--led-ok);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--led-ok) 35%, transparent);
+      color: var(--text);
+    }
+    .receiver-row-label {
+      font-size: 6px;
+      letter-spacing: 0.14em;
+      color: var(--rx-label);
+      opacity: 0.7;
+      width: 100%;
+      margin: 4px 0 2px 2px;
+    }
+    .receiver-row-label:first-of-type { margin-top: 0; }
+    .receiver-bar.mode-classic-rg .led-lamp.down,
+    .receiver-bar.mode-classic-rg .led-lamp.off,
+    .receiver-bar.mode-classic-rg .led-lamp.skip {
+      background: var(--led-off);
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.6);
+      opacity: 0.85;
+    }
+    .receiver-bar.mode-classic-rg .led-lamp.ok {
+      background: var(--led-ok);
+      box-shadow: 0 0 8px var(--led-ok), 0 0 16px color-mix(in srgb, var(--led-ok) 60%, transparent);
+    }
+    .receiver-panel {
+      background: linear-gradient(165deg, var(--rx-panel), #14100c);
+      border: 1px solid var(--rx-bezel);
+      border-radius: 6px;
+      padding: 8px 10px 6px;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.45);
+    }
+    .receiver-brand {
+      font-size: 8px;
+      letter-spacing: 0.28em;
+      color: var(--rx-label);
+      text-align: center;
+      margin-bottom: 8px;
+      font-weight: 600;
+      opacity: 0.85;
+    }
+    .receiver-led-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    .led-unit {
+      flex: 1;
+      min-width: 28px;
+      max-width: 44px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: default;
+    }
+    .led-bezel {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #3a342c, #1a1612);
+      border: 2px solid var(--rx-bezel);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.7), 0 1px 0 rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .led-lamp {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--led-off);
+      transition: background 0.25s, box-shadow 0.25s;
+    }
+    .led-lamp.ok {
+      background: var(--led-ok);
+      box-shadow: 0 0 6px var(--led-ok), 0 0 14px color-mix(in srgb, var(--led-ok) 55%, transparent);
+    }
+    .led-lamp.warn {
+      background: var(--led-warn);
+      box-shadow: 0 0 6px var(--led-warn), 0 0 12px color-mix(in srgb, var(--led-warn) 50%, transparent);
+    }
+    .led-lamp.down {
+      background: var(--led-down);
+      box-shadow: 0 0 6px var(--led-down), 0 0 12px color-mix(in srgb, var(--led-down) 45%, transparent);
+    }
+    .led-lamp.skip {
+      background: var(--led-skip);
+      box-shadow: 0 0 3px var(--led-skip);
+      opacity: 0.55;
+    }
+    .led-label {
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      color: var(--rx-label);
+      text-align: center;
+      line-height: 1.1;
+    }
     #scroll {
       flex: 1;
       overflow-y: auto;
@@ -256,6 +394,13 @@
       <button id="btn-edit" type="button" title="Open keys file">✎ Edit</button>
     </div>
   </header>
+  <div id="receiver-bar" class="receiver-bar mode-classic-rg" aria-label="Homelab status receiver">
+    <div id="receiver-presets" class="receiver-presets"></div>
+    <div class="receiver-panel">
+      <div class="receiver-brand">C O N N E C T I V I T Y</div>
+      <div id="receiver-rows"></div>
+    </div>
+  </div>
   <div id="scroll">
     <div id="providers"></div>
   </div>
@@ -330,6 +475,8 @@
 
     const openWalletTx = new Set();
     let lastSnapshot = null;
+    let themePresetsCache = {};
+    const RECEIVER_PRESET_KEY = 'mr-receiver-preset';
     let widgetToken = '';
 
     function authHeaders(extra = {}) {
@@ -395,6 +542,95 @@
       }).join('');
       const ver = pc.catalog_version ? `<div class="detail" style="margin-top:6px">catalog v${pc.catalog_version}</div>` : '';
       return `<div class="section-title">Policy presets</div><div class="card preset-grid">${rows}${proj}${ver}</div>`;
+    }
+
+    function applyReceiverTheme(theme) {
+      if (!theme) return;
+      const root = document.documentElement;
+      const bar = document.getElementById('receiver-bar');
+      if (theme.background) root.style.setProperty('--rx-bg', theme.background);
+      if (theme.panel) root.style.setProperty('--rx-panel', theme.panel);
+      if (theme.bezel) root.style.setProperty('--rx-bezel', theme.bezel);
+      if (theme.label) root.style.setProperty('--rx-label', theme.label);
+      const led = theme.led || {};
+      if (led.ok) root.style.setProperty('--led-ok', led.ok);
+      if (led.warn) root.style.setProperty('--led-warn', led.warn);
+      if (led.down) root.style.setProperty('--led-down', led.down);
+      if (led.skip) root.style.setProperty('--led-skip', led.skip);
+      if (led.off) root.style.setProperty('--led-off', led.off);
+      if (bar) {
+        bar.classList.remove('mode-classic-rg', 'mode-marantz', 'mode-mcintosh', 'mode-denon', 'mode-pioneer');
+        const active = localStorage.getItem(RECEIVER_PRESET_KEY) || 'classic-rg';
+        bar.classList.add('mode-' + active);
+      }
+    }
+
+    function renderLedRow(leds) {
+      return `<div class="receiver-led-row">${(leds || []).map(led => `
+        <div class="led-unit" title="${(led.detail || led.label || '').replace(/"/g, '&quot;')}">
+          <div class="led-bezel"><div class="led-lamp ${led.state || 'off'}"></div></div>
+          <div class="led-label">${led.label || led.id}</div>
+        </div>`).join('')}</div>`;
+    }
+
+    function selectReceiverPreset(presetId) {
+      const preset = themePresetsCache[presetId];
+      if (!preset) return;
+      localStorage.setItem(RECEIVER_PRESET_KEY, presetId);
+      applyReceiverTheme({ ...preset, led: preset.led || {} });
+      document.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.preset === presetId);
+      });
+    }
+
+    function renderPresetStrip(status) {
+      const strip = document.getElementById('receiver-presets');
+      if (!strip) return;
+      const presets = status.themePresets || {};
+      themePresetsCache = presets;
+      const defaultId = status.defaultPreset || 'classic-rg';
+      const active = localStorage.getItem(RECEIVER_PRESET_KEY) || defaultId;
+      const ids = Object.keys(presets);
+      if (!ids.length) {
+        strip.innerHTML = '';
+        return;
+      }
+      strip.innerHTML = ids.map(id => {
+        const p = presets[id];
+        const name = (p && p.name) || id;
+        const hint = (p && p.hint) ? ` title="${p.hint.replace(/"/g, '&quot;')}"` : '';
+        return `<button type="button" class="preset-btn${id === active ? ' active' : ''}" data-preset="${id}"${hint}>${name}</button>`;
+      }).join('');
+      strip.querySelectorAll('.preset-btn').forEach(btn => {
+        btn.addEventListener('click', () => selectReceiverPreset(btn.dataset.preset));
+      });
+      if (presets[active]) {
+        applyReceiverTheme(presets[active]);
+      } else if (status.theme) {
+        applyReceiverTheme(status.theme);
+      }
+    }
+
+    function renderReceiverBar(status) {
+      const rowsRoot = document.getElementById('receiver-rows');
+      if (!rowsRoot) return;
+      if (!status || status.enabled === false) {
+        rowsRoot.innerHTML = '';
+        return;
+      }
+      renderPresetStrip(status);
+      if (status.error) {
+        rowsRoot.innerHTML = `<div class="detail" style="text-align:center;color:var(--led-warn)">${status.error}</div>`;
+        return;
+      }
+      const rows = status.rows || [];
+      if (rows.length) {
+        rowsRoot.innerHTML = rows.map(row => `
+          <div class="receiver-row-label">${row.label || row.id}</div>
+          ${renderLedRow(row.leds)}`).join('');
+      } else {
+        rowsRoot.innerHTML = renderLedRow(status.leds);
+      }
     }
 
     function renderConsole(grid) {
@@ -626,6 +862,7 @@
       }
 
       lastSnapshot = snapshot;
+      renderReceiverBar(snapshot.homelabStatus);
       root.innerHTML =
         renderEquity(equity) +
         renderCompare(snapshot.apiCompare) +

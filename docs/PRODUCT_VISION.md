@@ -109,11 +109,13 @@ Avoid a single god-mode connector until security model is designed (Business tie
 - [x] Context window SSOT + selection guide — `docs/CONTEXT_GUIDE.md`; `check_catalog` validates `context_window`
 - [x] Log metering in ops — `make usage-rollup` in `homelab-status` and `doctor` next steps
 
-### Phase 2 — Connector MVP (3.x)
+### Phase 2 — Connector MVP (3.8+)
 
-- [ ] One provider end-to-end (e.g. Groq: paste key or OAuth if available)
-- [ ] Keys never touch repo; vault write only
-- [ ] “Add new” button → provider page → return → key stored
+- [x] Connector spec — `docs/CONNECTOR_SPEC.md` (security model, vault rules)
+- [x] Groq paste-key end-to-end — `make connect-groq` (local `.env` → push-env-mini → mini restart)
+- [x] Anthropic paste-key — `make connect-anthropic` (`docs/ENV.md`)
+- [ ] Keys never touch repo; vault write only *(connectors done; OAuth deferred)*
+- [ ] “Add new” button → provider page → return → key stored *(widget UI deferred)*
 
 ### Phase 3 — Pro product (4.x)
 
@@ -163,6 +165,7 @@ Run `make cost-review`. If the answer is “use grep not GPT,” the product sho
 
 - `docs/CONSOLE_SPEC.md` — wireframes + API for model grid (Phase 1) ✓
 - `docs/CONTEXT_GUIDE.md` — preset selection by context window (Phase 1) ✓
-- `docs/CONNECTOR_SPEC.md` — OAuth scopes + vault layout (Phase 2)
+- `docs/CONNECTOR_SPEC.md` — OAuth scopes + vault layout (Phase 2) ✓ MVP
+- `docs/POSITIONING.md` — market wedge vs LiteLLM / Portkey / key wallets ✓
 
-Phase 0/1 complete at **v3.7.0**. Phase 2 connector work is next; no connector code until spec is drafted.
+Phase 0/1 complete at **v3.7.0**. Phase 2 Groq + Anthropic connectors at **v3.9.0**; OAuth and widget UI next.

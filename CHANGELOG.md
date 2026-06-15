@@ -1,5 +1,42 @@
 # Changelog
 
+## [3.10.0] — 2026-06-15 (Cycle 10 — connector registry + hermes-smart smoke)
+
+### Added
+- `config/connectors.yaml` — paste-key connector registry (groq, anthropic)
+- `make connect-provider PROVIDER=<id>` — generic dispatch via `scripts/connect-provider.sh`
+- `make smoke-hermes-smart` — prove `hermes-smart` / Anthropic route on kc-mini
+- `docs/POSITIONING.md` — control-plane wedge vs LiteLLM / key wallets
+
+### Changed
+- `test.sh` — `connectors.yaml` registry validation (no secret-like values, script mapping)
+- `README`, `docs/ENV.md`, `doctor` — connect-provider + smoke-hermes-smart hints
+
+## [3.9.0] — 2026-06-15 (Cycle 9 — Anthropic connector + receiver bar)
+
+### Added
+- `make connect-anthropic` — paste `sk-ant-…` → `.env` → `push-env-mini` → mini restart
+- `docs/ENV.md` — environment variable reference (gateway, providers, clients)
+- Widget **receiver bar** — 3 LED rows (paths, API keys, network) + 5 theme presets (Classic R/G, Marantz, McIntosh, Denon, Pioneer)
+- `tokens/scripts/homelab_status.py`, `receiver_themes.py` — connectivity probes for widget snapshot
+
+### Changed
+- `test.sh` — Anthropic validation, connector script checks, homelab_status smoke (18 LEDs, 5 presets)
+- `tokens/config.json` — `receiver.default_preset: classic-rg`, webhook probes
+- `README` — links `docs/ENV.md`, connect commands
+
+## [3.8.0] — 2026-06-14 (Cycle 8 — Phase 2 Groq connector MVP)
+
+### Added
+- `docs/CONNECTOR_SPEC.md` — connector security model and Groq paste-key flow
+- `modelrouter/env_store.py` — atomic `.env` writes + provider key validation
+- `make connect-groq` — paste `gsk_…` → local `.env` → `push-env-mini` → mini restart
+
+### Changed
+- `test.sh` — `env_store` validation smoke
+- `doctor` / `KEY_ROTATION.md` — `connect-groq` in ops hints
+- `PRODUCT_VISION` / `config/product.yaml` — Phase 2 started
+
 ## [3.7.0] — 2026-06-12 (Cycle 7 — Phase 0/1 complete, calibration ops)
 
 ### Added

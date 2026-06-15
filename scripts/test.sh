@@ -69,6 +69,50 @@ for name, data in [('policyPresets', load_preset_catalog(cfg)), ('consoleGrid', 
 print('  ok snapshot exports (no raw key prefixes)')
 "
 
+echo "── Connector validation"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+from modelrouter.env_store import validate_provider_key
+assert validate_provider_key('GROQ_API_KEY', 'gsk_' + 'a' * 48) is None
+assert validate_provider_key('GROQ_API_KEY', 'bad') is not None
+assert validate_provider_key('ANTHROPIC_API_KEY', 'sk-ant-api03-' + 'x' * 40) is None
+assert validate_provider_key('ANTHROPIC_API_KEY', 'sk-bad') is not None
+print('  ok env_store key validation (groq + anthropic)')
+"
+
+echo "── Connector registry"
+test -x "$ROOT/scripts/connect-provider.sh" || { echo "  FAIL missing connect-provider.sh" >&2; exit 1; }
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+import re
+import yaml
+from pathlib import Path
+
+root = Path('$ROOT')
+reg = yaml.safe_load((root / 'config/connectors.yaml').read_text()) or {}
+connectors = reg.get('connectors') or {}
+assert connectors, 'connectors.yaml empty'
+secret_re = re.compile(r'(gsk_|sk-ant-|sk-[A-Za-z0-9]{10,})')
+required = {'env', 'validate', 'script', 'make_target'}
+for cid, c in connectors.items():
+    missing = required - set(c or {})
+    assert not missing, f'{cid} missing {missing}'
+    blob = yaml.dump({cid: c})
+    assert not secret_re.search(blob), f'{cid} registry may contain secret-like value'
+    script = root / 'scripts' / c['script']
+    assert script.is_file(), f'{cid} script missing: {script}'
+    assert (root / 'scripts' / f\"connect-{cid}.sh\").is_file(), f'connect-{cid}.sh missing'
+print('  ok connectors.yaml', len(connectors), 'entries + connect-provider')
+"
+
+echo "── Homelab status (widget)"
+PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+from homelab_status import load_homelab_status
+d = load_homelab_status({'modelrouter_root': '$ROOT', 'receiver': {'enabled': True, 'default_preset': 'classic-rg'}})
+assert d.get('enabled') and len(d.get('leds', [])) >= 10, d
+assert len(d.get('themePresets', {})) >= 5, d
+assert len(d.get('rows', [])) >= 3, d
+print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'presets')
+"
+
 echo "── Health (optional)"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/lib.sh" 2>/dev/null || true

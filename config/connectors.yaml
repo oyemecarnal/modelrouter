@@ -1,0 +1,26 @@
+# Connector registry — paste-key flows (Phase 2.5 SSOT)
+# Scripts: scripts/connect-provider.sh → connect-{id}.sh
+# Signup/pricing detail: config/api_catalog.yaml
+
+version: 1
+
+connectors:
+  groq:
+    label: Groq
+    env: GROQ_API_KEY
+    mode: paste_key
+    validate: groq
+    script: connect-groq.sh
+    signup: https://console.groq.com/keys
+    presets: [cheap, hermes-fast]
+    make_target: connect-groq
+
+  anthropic:
+    label: Anthropic
+    env: ANTHROPIC_API_KEY
+    mode: paste_key
+    validate: anthropic
+    script: connect-anthropic.sh
+    signup: https://console.anthropic.com/settings/keys
+    presets: [hermes-smart, review]
+    make_target: connect-anthropic

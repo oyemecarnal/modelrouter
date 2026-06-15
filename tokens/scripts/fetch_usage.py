@@ -78,6 +78,7 @@ class Snapshot:
     api_compare: dict[str, Any] | None = None
     policy_presets: dict[str, Any] | None = None
     console_grid: dict[str, Any] | None = None
+    homelab_status: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -107,6 +108,8 @@ class Snapshot:
             out["policyPresets"] = self.policy_presets
         if self.console_grid is not None:
             out["consoleGrid"] = self.console_grid
+        if self.homelab_status is not None:
+            out["homelabStatus"] = self.homelab_status
         return out
 
 
@@ -885,6 +888,14 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
     except Exception as exc:
         console_grid = {"error": str(exc)[:200], "presets": [], "models": []}
 
+    homelab_status: dict[str, Any] | None = None
+    try:
+        from homelab_status import load_homelab_status
+
+        homelab_status = load_homelab_status(cfg)
+    except Exception as exc:
+        homelab_status = {"enabled": True, "error": str(exc)[:200], "leds": []}
+
     return Snapshot(
         updated_at=int(time.time() * 1000),
         providers=providers,
@@ -894,6 +905,7 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
         api_compare=api_compare,
         policy_presets=policy_presets,
         console_grid=console_grid,
+        homelab_status=homelab_status,
     )
 
 

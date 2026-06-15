@@ -20,7 +20,7 @@ tiers:
     status: vision
     includes: [sso, audit, team_keys, connector_admin, support]
 
-phase: 0  # 0=clean wires, 1=catalog+calibration, 2=connectors, 3=pro, 4=business
+phase: 2  # 0=clean wires, 1=catalog+calibration, 2=connectors, 3=pro, 4=business
 
 separation:
   gateway_env_prefix: MODELROUTER_

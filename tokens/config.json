@@ -14,7 +14,7 @@
   "dev_root": "/Users/kevinreed/dev",
   "modelrouter_root": "/Users/kevinreed/dev/modelrouter",
   "widget_on_top": false,
-  "widget_size": 420,
+  "widget_size": 500,
   "refresh_interval_seconds": 120,
   "session_cache_days": 30,
   "widget_fetch_in_panel": true,
@@ -42,5 +42,15 @@
   "assess": {
     "enabled": true,
     "model": "fast"
+  },
+  "receiver": {
+    "enabled": true,
+    "default_preset": "classic-rg",
+    "webhooks": [
+      {"id": "groq_net", "label": "GROQ", "url": "https://api.groq.com"},
+      {"id": "openai_net", "label": "OAI", "url": "https://api.openai.com/v1/models"},
+      {"id": "anthropic_net", "label": "ANTH", "url": "https://api.anthropic.com"},
+      {"id": "mini_gw", "label": "MINI", "url": "http://Kevins-Mac-mini.local:3000/health/liveliness"}
+    ]
   }
 }

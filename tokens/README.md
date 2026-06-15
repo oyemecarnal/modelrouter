@@ -19,7 +19,9 @@ Or from this directory:
 
 ## UI
 
-- **Square window** (~420×420) with usage bars and per-key cards (masked values)
+- **Square window** (~500×500) with usage bars and per-key cards (masked values)
+- **Receiver bar** — stereo-style connectivity LEDs (paths, API keys, network/webhooks)
+- **Theme presets** — Classic R/G (default), Marantz, McIntosh, Denon, Pioneer; choice persists in browser storage
 - **Refresh** — re-runs `fetch_usage.py` and reloads the snapshot
 - **Edit** — opens `tokens/.env.local` in TextEdit (created from `.env.local.example` if missing)
 
@@ -58,6 +60,24 @@ The fetcher also reads `modelrouter/.env`, `secrets.yaml` (1Password refs), and 
 | Path | Purpose |
 |------|---------|
 | `scripts/fetch_usage.py` | Usage + key snapshot |
+| `scripts/homelab_status.py` | Receiver LED probes |
+| `scripts/receiver_themes.py` | Five preset palettes (+ custom via config) |
+
+### Receiver themes
+
+Edit `tokens/config.json` → `receiver.default_preset` (`classic-rg`, `marantz`, `mcintosh`, `denon`, `pioneer`).
+
+Override any color infinitely:
+
+```json
+"receiver": {
+  "default_preset": "classic-rg",
+  "background": "#1a0505",
+  "led": { "ok": "#00ff55", "off": "#4a1010" }
+}
+```
+
+Add network probes under `receiver.webhooks` (reachability only, no secrets).
 | `scripts/key_inventory.py` | Scan ~/dev for API keys |
 | `widget/desktop_widget.py` | Native pywebview panel |
 | `widget/index.html` | UI |

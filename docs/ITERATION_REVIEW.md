@@ -156,3 +156,51 @@ Bugbot        → 7 findings; 4 patched in-cycle
 **Human backlog (unchanged):** Remove stray provider keys on tower agent `.env` if any remain (`CLEAN_WIRES.md`).
 
 **Next cycle 8 proposal:** Phase 2 connector MVP sketch — `docs/CONNECTOR_SPEC.md` draft, one provider paste-key flow.
+
+---
+
+## Cycle 8 checkpoint (v3.8.0)
+
+**Theme:** Phase 2 start — Groq paste-key connector.
+
+| Iter | Deliverable |
+|------|-------------|
+| 8.1 | `CONNECTOR_SPEC.md` — security model, vault rules |
+| 8.2 | `env_store.py` — atomic `.env` updates |
+| 8.3 | Groq `gsk_` validation + `test.sh` smoke |
+| 8.4 | `make connect-groq` — paste → mini deploy |
+| 8.5 | Phase 2 markers; **v3.8.0** |
+
+**Next cycle 9 proposal:** `connect-anthropic`, widget connector status row (no key display), `config/connectors.yaml` registry.
+
+---
+
+## Cycle 9 checkpoint (v3.9.0)
+
+**Theme:** Anthropic connector + stereo receiver connectivity bar.
+
+| Iter | Deliverable |
+|------|-------------|
+| 9.1 | Connector scripts + Anthropic validation in `test.sh` |
+| 9.2 | `make connect-anthropic`, `docs/ENV.md` |
+| 9.3 | Widget receiver — 5 theme presets, Classic R/G default |
+| 9.4 | `homelab_status` — paths, API keys, network LED rows |
+| 9.5 | **v3.9.0** (includes unshipped Cycle 8 Groq connector) |
+
+**Next cycle 10 proposal:** `config/connectors.yaml` registry, generic `connect-provider.sh`, optional `smoke-hermes-smart`.
+
+---
+
+## Cycle 10 checkpoint (v3.10.0)
+
+**Theme:** Connector registry SSOT + Anthropic route smoke.
+
+| Iter | Deliverable |
+|------|-------------|
+| 10.1 | `connectors.yaml` validation — no secrets, required fields |
+| 10.2 | `make smoke-hermes-smart` — hermes-smart via mini gateway |
+| 10.3 | Registry ↔ `connect-{id}.sh` mapping in `test.sh` |
+| 10.4 | `connect-provider` + smoke in README / ENV / doctor |
+| 10.5 | **v3.10.0** (ships Cycles 8–10; origin at v3.7.0) |
+
+**Next cycle 11 proposal:** Tower `.env` cleanup (`CLEAN_WIRES`), landing blurb from `POSITIONING.md`, third connector (OpenAI paste-key).
