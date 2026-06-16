@@ -59,11 +59,11 @@ Tower: `make push-client-env-tower` — gateway auth only, no provider keys.
 
 ## Purchase / download
 
-**Status:** Not for sale yet — homelab dogfood phase.
+**Status:** Not for sale yet — homelab dogfood phase. Codebase **v3.12.0** on `main`.
 
 When ready:
 
-1. Tagged release tarball (`v3.x`) + `docs/ENV.md` + `docs/CLEAN_WIRES.md`
+1. Tagged release tarball (`v3.12.0`) + `docs/ENV.md` + `docs/CLEAN_WIRES.md`
 2. Optional Gumroad / GitHub Sponsors link here
 3. License: see repository `LICENSE`
 

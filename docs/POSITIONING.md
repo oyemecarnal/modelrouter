@@ -104,16 +104,17 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 **Done enough to demo**
 
 - [x] Gateway on kc-mini, tower Tailscale, Cursor path  
-- [x] `connect-groq`, `connect-anthropic`, `docs/ENV.md`  
-- [x] Receiver bar + inventory harness  
+- [x] Paste-key connectors — Groq, Anthropic, OpenAI, Mistral (`config/connectors.yaml`)  
+- [x] `docs/ENV.md`, `docs/LANDING.md`, receiver bar + registry LEDs  
+- [x] **v3.12.0** shipped on `main`
 
 **Next wires (in order)**
 
-1. **`/ship` v3.12.0** — publish Cycles 11–12 (origin at v3.10.0)  
-2. **`make clean-tower-wires`** — fix tower agent `.env` strays (e.g. coinbot)  
-3. **`make connect-mistral`** — if Mistral routes needed on mini  
-4. **Personal tier** — `docs/LANDING.md` when ready to sell tarball  
-5. **Registry in widget** — signup links from `connectors.yaml`  
+1. **`make clean-tower-wires`** — fix tower agent `.env` strays (e.g. coinbot)  
+2. **Widget signup links** — deep-link from `connectors.yaml` in receiver UI  
+3. **Google/Gemini connector** — fifth registry entry  
+4. **Personal tier sale** — tarball + Gumroad when interviews say yes  
+5. **`make daemon-enable`** on laptop — stable Cursor → local gateway  
 
 ---
 

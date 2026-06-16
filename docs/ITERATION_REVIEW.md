@@ -235,4 +235,10 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 12.4 | `homelab_status` ← `connectors.yaml`; `docs/LANDING.md` |
 | 12.5 | **v3.12.0** |
 
-**Next cycle 13 proposal:** Ship bundle (v3.11+v3.12), Google/Gemini connector, widget signup links from registry.
+**Next cycle 13 proposal:** Google/Gemini connector, widget signup links from registry, tower coinbot `.env` cleanup.
+
+---
+
+## Ship status (2026-06-15)
+
+**Origin:** **v3.12.0** (`dc1ea7c`) — Cycles 11–12 shipped. Repo clean; laptop gateway often down without `make daemon-enable`.

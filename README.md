@@ -143,7 +143,7 @@ Includes Postgres (virtual keys, spend tracking) and Redis (shared cache).
 
 ## Hardening checklist
 
-- [x] Master key auth (`MODELROUTER_MASTER_KEY`, must start with `sk-`)
+- [x] Master key auth (`MODELROUTER_MASTER_KEY`; `crsr_*` OK for Cursor — see `docs/ENV.md`)
 - [x] Bind to localhost on laptop (`127.0.0.1`); mini LAN uses `0.0.0.0` + mDNS URL
 - [x] Rate limits per model (`rpm` in config)
 - [x] Circuit breaker (`allowed_fails`, `cooldown_time`)
@@ -165,6 +165,8 @@ litellm_settings:
 ```
 
 ## Environment variables
+
+See **`docs/ENV.md`** for the full reference (gateway, connectors, tower rules). Common vars:
 
 | Variable | Description |
 |----------|-------------|
