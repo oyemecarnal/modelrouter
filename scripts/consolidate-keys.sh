@@ -16,7 +16,9 @@ fi
 
 echo ""
 echo "── Recommended actions"
-echo "  1. make keys-sync-mini     # pull canonical .env from mini"
+echo "  1. make vault-scrape-collect  # network ingest → data/key_vault.json"
+echo "  2. make vault-export-dry      # preview centralized .env merge"
+echo "  3. make keys-sync-mini          # pull canonical .env from mini"
 echo "  2. Remove OPENAI_API_KEY from ~/.zshrc (use 1Password / mini)"
 echo "  3. Tower: config/client.env.example → gateway URL only"
 echo "  4. make push-env-mini      # after rotate-master-key"

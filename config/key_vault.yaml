@@ -1,0 +1,129 @@
+# Network key vault — permissions, multi-key per service, routing hints.
+# Secrets land in data/key_vault.json (gitignored). This file is safe to commit.
+
+version: 1
+
+# Central vault store (under data/ — never commit)
+vault_file: data/key_vault.json
+
+# Target env for export (primary + numbered alternates)
+export_target: .env
+
+hosts:
+  laptop:
+    type: local
+    inventory_config: config/inventory.yaml
+    collect: true
+
+  kc-mini:
+    type: ssh
+    ssh: kc-mini-lan
+    collect: true
+    env_files:
+      - ~/dev/modelrouter/.env
+      - ~/dev/smalshi/.env
+      - ~/dev/coinbot/.env
+      - ~/dev/Kalshi_bot/.env
+      - ~/dev/openclaw/.env
+
+  kc-tower:
+    type: ssh
+    ssh: kc-tower-lan
+    collect: false  # discover only unless you set collect: true
+    env_files:
+      - /root/dev/coinbot/.env
+      - /root/dev/modelrouter/.env
+
+permissions:
+  # Master switch — scrape without --collect stays masked-only (inventory mode)
+  collect_values: true
+
+  # Never centralize these (wallet material, exchange secrets)
+  deny_vars:
+    - MNEMONIC
+    - SEED_PHRASE
+    - PRIVATE_KEY
+    - WALLET_PRIVATE_KEY
+    - ETH_PRIVATE_KEY
+    - SOLANA_PRIVATE_KEY
+    - KRAKEN_API_SECRET
+    - COINBASE_API_SECRET
+    - LITELLM_SALT_KEY
+    - MODELROUTER_MASTER_KEY
+
+  # Hosts blocked from value collection (override per-host collect: true cautiously)
+  deny_collect_hosts: []
+
+  # Vars that require explicit opt_in below before collection
+  require_opt_in:
+    - KRAKEN_API_KEY
+    - COINBASE_API_KEY
+    - TELEGRAM_BOT_TOKEN
+
+  # Set true per var to allow collection despite require_opt_in
+  opt_in: {}
+
+services:
+  groq:
+    env_var: GROQ_API_KEY
+    tags: [fast, cheap]
+    strategy: round_robin
+    max_keys: 4
+
+  openai:
+    env_var: OPENAI_API_KEY
+    tags: [smart, code]
+    strategy: prefer_primary
+    max_keys: 3
+
+  anthropic:
+    env_var: ANTHROPIC_API_KEY
+    tags: [smart, review]
+    strategy: prefer_primary
+    max_keys: 3
+
+  google:
+    env_var: GOOGLE_API_KEY
+    aliases: [GEMINI_API_KEY]
+    tags: [smart, multimodal]
+    strategy: prefer_primary
+    max_keys: 2
+
+  mistral:
+    env_var: MISTRAL_API_KEY
+    tags: [fast, cheap]
+    strategy: round_robin
+    max_keys: 3
+
+  deepseek:
+    env_var: DEEPSEEK_API_KEY
+    tags: [cheap, code]
+    strategy: prefer_primary
+    max_keys: 2
+
+  together:
+    env_var: TOGETHER_API_KEY
+    tags: [cheap]
+    strategy: prefer_primary
+    max_keys: 2
+
+  openrouter:
+    env_var: OPENROUTER_API_KEY
+    tags: [fallback]
+    strategy: prefer_primary
+    max_keys: 2
+
+# Map presets / projects → preferred service keys (used by select)
+routing:
+  hermes-fast:
+    prefer: [GROQ_API_KEY, MISTRAL_API_KEY]
+    strategy: round_robin
+  hermes-smart:
+    prefer: [OPENAI_API_KEY, ANTHROPIC_API_KEY, GOOGLE_API_KEY]
+    strategy: prefer_primary
+  cheap:
+    prefer: [GROQ_API_KEY, DEEPSEEK_API_KEY, MISTRAL_API_KEY]
+    strategy: round_robin
+  code:
+    prefer: [OPENAI_API_KEY, ANTHROPIC_API_KEY]
+    strategy: prefer_primary

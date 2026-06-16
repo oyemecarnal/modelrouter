@@ -11,7 +11,8 @@ from pathlib import Path
 from typing import Any
 
 from fetch_usage import resolve_secret
-from wallet_store import get_wallet, list_enabled, load_wallets, mask_address
+from price_oracle import spot_usd
+from wallet_store import get_wallet, list_enabled, load_wallets, mask_address, sync_presets_from_config
 
 TIMEOUT = 15
 CACHE_FILE = Path.home() / "Library/Application Support/TokenWidget/wallet_cache.json"
@@ -256,6 +257,12 @@ def fetch_wallet_balance(wallet: dict[str, Any], cfg: dict[str, Any]) -> dict[st
         "fetched_at": int(time.time() * 1000),
         **bal,
     }
+    sym = bal.get("native_symbol") or ""
+    if bal.get("status") == "ok" and bal.get("native_amount") is not None:
+        px = spot_usd(sym)
+        if px is not None:
+            row["price_usd"] = round(px, 2)
+            row["value_usd"] = round(float(bal["native_amount"]) * px, 2)
     if bal.get("status") == "ok":
         _write_cache(wallet_id, row)
     return row
@@ -296,6 +303,40 @@ def fetch_wallet_transactions(wallet_id: str, cfg: dict[str, Any]) -> dict[str, 
     }
 
 
+def wallet_equity_rows(cfg: dict[str, Any]) -> list[dict[str, Any]]:
+    """On-chain watch wallets as equity broker rows (Tangem, etc.)."""
+    wallets_cfg = cfg.get("wallets") or {}
+    if not wallets_cfg.get("enabled", True) or not wallets_cfg.get("include_in_equity", True):
+        return []
+    sync_presets_from_config(cfg)
+    rows = []
+    for w in fetch_all_wallets(cfg).get("wallets") or []:
+        assets = []
+        if w.get("native_amount") is not None:
+            assets.append(
+                {
+                    "asset": w.get("native_symbol") or w.get("chain", "").upper(),
+                    "amount": w.get("native_amount"),
+                    "price_usd": w.get("price_usd"),
+                    "value_usd": w.get("value_usd"),
+                }
+            )
+        rows.append(
+            {
+                "broker": (w.get("label") or w.get("chain") or "wallet").lower().replace(" ", "-"),
+                "display_name": w.get("label") or "Wallet",
+                "type": "cold_wallet" if w.get("kind") == "cold" else "hot_wallet",
+                "host": "on-chain",
+                "status": w.get("status") or "ok",
+                "equity_usd": w.get("value_usd"),
+                "assets": assets,
+                "address_masked": w.get("address_masked"),
+                "error": w.get("error"),
+            }
+        )
+    return rows
+
+
 def fetch_all_wallets(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
     from fetch_usage import load_config
 
@@ -304,11 +345,14 @@ def fetch_all_wallets(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
     if not wallets_cfg.get("enabled", True):
         return {"enabled": False, "wallets": []}
 
+    sync_presets_from_config(cfg)
     enabled = list_enabled()
     rows = [fetch_wallet_balance(w, cfg) for w in enabled]
+    total_usd = sum(r.get("value_usd") or 0 for r in rows if r.get("status") == "ok")
     return {
         "enabled": True,
         "updated_at": int(time.time() * 1000),
         "wallets": rows,
         "count": len(rows),
+        "total_value_usd": round(total_usd, 2) if total_usd else None,
     }

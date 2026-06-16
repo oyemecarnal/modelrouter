@@ -1,5 +1,20 @@
 # Changelog
 
+## [3.23.0] — 2026-06-16 (Cycle 23 — portfolio equity + key vault + themes)
+
+### Added
+- **Network key vault** — `modelrouter/key_vault.py`, `config/key_vault.yaml`, `make vault-scrape` / `vault-scrape-collect` / `vault-export`
+- `docs/KEY_VAULT.md` — permissions, multi-key per service, routing-aware select
+- **Portfolio equity** — Kraken/Coinbase broker routes, Kalshi live balance (`equity_kalshi.py`), cold-wallet USD (`price_oracle.py`)
+- **Widget themes** — 11 receiver presets, discreet header Theme dropdown; `docs/THEME_DESIGN.md`
+- Tangem wallet presets via `TANGEM_*` env or `wallets.presets` in config
+
+### Changed
+- `fetch_equity` — per-broker SSH routes, unified portfolio total + breakdown
+- `equity_remote_runner` — Fernet-only encrypted-key detect; full multi-asset USD pricing
+- `fetch_wallets` — CoinGecko USD valuation; `include_in_equity` rolls into portfolio
+- Widget — Portfolio section (exchange + prediction + cold wallet cards)
+
 ## [3.22.0] — 2026-06-16 (Cycle 22 — ship gate + ensure-gateway + OAuth stub)
 
 ### Added

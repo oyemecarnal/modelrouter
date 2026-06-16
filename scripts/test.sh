@@ -165,6 +165,42 @@ oauth_out="$("$ROOT/scripts/oauth-start.sh" google 2>&1 || true)"
 echo "$oauth_out" | grep -q "connect-google" || { echo "  FAIL oauth-start hint" >&2; exit 1; }
 echo "  ok oauth-start stub"
 
+echo "── Equity config"
+PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+from fetch_equity import _broker_route, _default_cfg, _provider_for
+from equity_remote_runner import _looks_encrypted
+base = _default_cfg()
+base['broker_routes'] = {
+    'kraken': {'host': 'local', 'remote': False, 'instance_id': 'paper_kraken'},
+    'coinbase': {'host': 'kc-mini-lan', 'remote': True},
+    'kalshi': {'provider': 'kalshi'},
+}
+k = _broker_route('kraken', base)
+assert k['host'] == 'local' and k.get('instance_id') == 'paper_kraken'
+assert _provider_for('kalshi', base) == 'kalshi'
+assert not _looks_encrypted('F8D/1+z5rV0kBPipp56cFT5cHbPkVS' + 'x'*40)
+assert _looks_encrypted('gAAAAABpejRA6hEpOAuD')
+print('  ok fetch_equity broker_routes + encrypted detect')
+"
+
+echo "── Price oracle"
+PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+from price_oracle import spot_usd
+p = spot_usd('BTC')
+assert p is None or p > 0
+print('  ok price_oracle')
+"
+
+echo "── Key vault"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+from modelrouter.key_vault import load_vault_config, merge_entries
+cfg = load_vault_config()
+assert cfg.get('permissions', {}).get('deny_vars')
+merged = merge_entries({'keys': []}, [], cfg)
+assert 'keys' in merged
+print('  ok key_vault config + merge')
+"
+
 echo "── Health (optional)"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/lib.sh" 2>/dev/null || true

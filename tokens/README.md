@@ -21,7 +21,7 @@ Or from this directory:
 
 - **Square window** (~500×500) with usage bars and per-key cards (masked values)
 - **Receiver bar** — stereo-style connectivity LEDs (paths, API keys, network/webhooks)
-- **Theme presets** — Classic R/G (default), Marantz, McIntosh, Denon, Pioneer; choice persists in browser storage
+- **Theme presets** — Classic R/G (default), Marantz, McIntosh, Denon, Pioneer, Tube Amp, Tek Scope, Luxman, Nakamichi, Fuse Panel, Vintage Radio; choice persists in browser storage. Header **Theme** dropdown (discreet). See `docs/THEME_DESIGN.md`.
 - **Refresh** — re-runs `fetch_usage.py` and reloads the snapshot
 - **Edit** — opens `tokens/.env.local` in TextEdit (created from `.env.local.example` if missing)
 
@@ -54,12 +54,39 @@ The fetcher also reads `modelrouter/.env`, `secrets.yaml` (1Password refs), and 
 - `widget_size`: square dimensions (default 420)
 - `modelrouter_root`: path to modelrouter repo for `.env` scan
 - `show_configured_keys`: per-key inventory cards
+- `equity`: live broker balances via coinbot (see below)
+
+### Live equity (`equity`)
+
+Unified **portfolio** across exchanges (coinbot), Kalshi, and watch-only cold wallets (Tangem):
+
+```json
+"equity": {
+  "brokers": ["kraken", "coinbase", "kalshi"],
+  "include_wallets": true,
+  "broker_routes": {
+    "kraken": { "remote": false, "host": "local", "coinbot_root": "~/dev/coinbot" },
+    "coinbase": { "remote": true, "host": "kc-mini-lan" },
+    "kalshi": { "provider": "kalshi" }
+  }
+},
+"wallets": {
+  "include_in_equity": true,
+  "presets": [{ "label": "Tangem BTC", "chain": "bitcoin", "address": "bc1…", "kind": "cold" }]
+}
+```
+
+Set `TANGEM_BTC_ADDRESS` / `TANGEM_ETH_ADDRESS` in `modelrouter/.env` or add presets — watch-only public addresses, no keys. Cold wallets refresh on a slower cache (`cold_cache_seconds`).
+
+Kalshi reads `POLYMARKET_KALSHI_*` from `~/dev/Kalshi_bot/.env`. Kraken on laptop coinbot uses plaintext or encrypted keys (`~/.coinbot/master_{instance_id}.key` on the fetch host).
 
 ## Files
 
 | Path | Purpose |
 |------|---------|
 | `scripts/fetch_usage.py` | Usage + key snapshot |
+| `scripts/fetch_equity.py` | Live broker equity (coinbot SSH) |
+| `scripts/equity_remote_runner.py` | Remote coinbot balance runner |
 | `scripts/homelab_status.py` | Receiver LED probes |
 | `scripts/receiver_themes.py` | Five preset palettes (+ custom via config) |
 

@@ -24,17 +24,39 @@
     "enabled": true,
     "remote_host": "kc-mini-lan",
     "coinbot_root": "/Users/kevinreed/dev/coinbot",
-    "brokers": ["coinbase", "kraken"],
-    "prefer_remote": true,
+    "dev_root": "/Users/kevinreed/dev",
+    "brokers": ["kraken", "coinbase", "kalshi"],
+    "include_wallets": true,
     "force_live": true,
-    "local_brokers": ["kraken"],
-    "remote_brokers": ["coinbase"]
+    "cache_ttl_seconds": 300,
+    "timeout_seconds": 90,
+    "broker_timeouts": { "kraken": 120 },
+    "kraken_market_symbols": "BTC/USD,ETH/USD,SOL/USD,USD,USDC,USDT",
+    "broker_routes": {
+      "kraken": {
+        "remote": false,
+        "host": "local",
+        "coinbot_root": "/Users/kevinreed/dev/coinbot",
+        "instance_id": "paper_kraken_prop_starter_5k"
+      },
+      "coinbase": {
+        "remote": true,
+        "host": "kc-mini-lan",
+        "coinbot_root": "/Users/kevinreed/dev/coinbot"
+      },
+      "kalshi": {
+        "provider": "kalshi",
+        "host": "local"
+      }
+    }
   },
   "wallets": {
     "enabled": true,
+    "include_in_equity": true,
     "hot_cache_seconds": 90,
     "cold_cache_seconds": 600,
-    "tx_limit": 12
+    "tx_limit": 12,
+    "presets": []
   },
   "api_catalog": {
     "enabled": true

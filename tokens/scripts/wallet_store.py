@@ -124,6 +124,38 @@ def get_wallet(wallet_id: str) -> dict[str, Any] | None:
     return None
 
 
+def sync_presets_from_config(cfg: dict[str, Any]) -> None:
+    """Ensure config/env wallet presets exist in the local store (watch-only addresses)."""
+    from fetch_usage import resolve_secret
+
+    wallets_cfg = cfg.get("wallets") or {}
+    dev_root = Path(cfg.get("dev_root") or Path.home() / "dev")
+    presets: list[dict[str, Any]] = list(wallets_cfg.get("presets") or [])
+
+    env_presets = [
+        ("Tangem BTC", "bitcoin", resolve_secret("TANGEM_BTC_ADDRESS", dev_root) or resolve_secret("EXTERNAL_WALLET_BTC_ADDRESS", dev_root)),
+        ("Tangem ETH", "ethereum", resolve_secret("TANGEM_ETH_ADDRESS", dev_root) or resolve_secret("EXTERNAL_WALLET_ETH_ADDRESS", dev_root)),
+        ("Tangem SOL", "solana", resolve_secret("TANGEM_SOL_ADDRESS", dev_root)),
+    ]
+    for label, chain, address in env_presets:
+        if address:
+            presets.append({"label": label, "chain": chain, "address": address, "kind": "cold"})
+
+    for preset in presets:
+        label = str(preset.get("label") or "Wallet")
+        chain = normalize_chain(str(preset.get("chain") or ""))
+        address = str(preset.get("address") or "").strip()
+        kind = str(preset.get("kind") or "cold")
+        if not chain or not address:
+            continue
+        if validate_address(chain, address):
+            continue
+        try:
+            add_wallet(label=label, chain=chain, address=address, kind=kind)
+        except ValueError:
+            pass
+
+
 def mask_address(address: str) -> str:
     if len(address) <= 12:
         return address

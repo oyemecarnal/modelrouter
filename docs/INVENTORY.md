@@ -63,3 +63,5 @@ Edit `allowed_roots` to add paths — never scan whole `$HOME` by default.
 ## Product path
 
 Phase 2 **Connector harness** (`docs/PRODUCT_VISION.md`) builds on this: login at provider → vault write, instead of scattered `.env` files.
+
+**Network key vault** (`docs/KEY_VAULT.md`): `make vault-scrape-collect` ingests allowed hosts into `data/key_vault.json`, then `make vault-export` merges primary + alternate keys into `.env` with opt-out permissions.
