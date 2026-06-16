@@ -1,6 +1,6 @@
 # Connector spec (Phase 2)
 
-**Status:** Four paste-key connectors (Groq, Anthropic, OpenAI, Mistral) + `config/connectors.yaml` registry. OAuth deferred.  
+**Status:** Nine paste-key connectors in `config/connectors.yaml`. OAuth deferred — draft: `docs/OAUTH_CONNECTOR_SPEC.md`.  
 **SSOT for signup links:** `config/api_catalog.yaml` (registry mirrors in `config/connectors.yaml`)  
 **Vault write:** `modelrouter/env_store.py` → local `.env` only; never repo or chat.
 

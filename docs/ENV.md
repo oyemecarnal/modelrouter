@@ -66,6 +66,8 @@ Used by LiteLLM routing in `config/modelrouter*.yaml`:
 Template: `config/client.env.example`  
 Deploy: `make push-client-env-tower`
 
+Widget: **＋ Provider** menu opens paste modal (validates → `.env` → mini push). Terminal fallback: `make connect-<provider>`.
+
 Tower gets **gateway URL + project keys only** — no provider `*_API_KEY`.
 
 ## Widget / tokens

@@ -45,6 +45,23 @@ if ! host="$(tower_ssh_host)"; then
 fi
 ok "kc-tower SSH (${host})"
 
+is_wire_exception() {
+  local file="$1" var="$2"
+  PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+import yaml
+from pathlib import Path
+file_path = '''$file'''
+var = '''$var'''
+data = yaml.safe_load(Path('$ROOT/config/wire_exceptions.yaml').read_text()) or {}
+for ex in data.get('exceptions') or []:
+    suffix = (ex or {}).get('path_suffix') or ''
+    if suffix and suffix in file_path and var in ((ex or {}).get('vars') or []):
+        print((ex or {}).get('reason') or 'documented exception')
+        raise SystemExit(0)
+raise SystemExit(1)
+" 2>/dev/null
+}
+
 # Remote: scan common env files; print only path + var name when set.
 REMOTE_SCRIPT='set -euo pipefail
 vars="'"${PROVIDER_VARS[*]}"'"
@@ -58,6 +75,15 @@ paths=(
 while IFS= read -r -d "" d; do
   for f in "$d"/.env "$d"/.env.local; do
     [[ -f "$f" ]] && paths+=("$f")
+  done
+  for f in "$d"/.env.*; do
+    [[ -f "$f" ]] || continue
+    base="$(basename "$f")"
+    case "$base" in
+      .env.example|.env.local.example|.env.sample) continue ;;
+    esac
+    [[ "$base" == *".bak"* ]] && continue
+    paths+=("$f")
   done
 done < <(find "$HOME/dev" -maxdepth 3 -type d -print0 2>/dev/null || true)
 
@@ -88,26 +114,35 @@ out="$(ssh -o ConnectTimeout=8 "$host" "bash -s" <<<"$REMOTE_SCRIPT" 2>/dev/null
 }
 
 strays=0
+exceptions=0
 while IFS= read -r line; do
   case "$line" in
     STRAY:*)
       path="${line#STRAY:}"
       var="${path##*:}"
       file="${path%:*}"
+      if reason="$(is_wire_exception "$file" "$var")"; then
+        warn "exception ${var} in ${file} — ${reason}"
+        exceptions=$((exceptions + 1))
+        continue
+      fi
       fail "stray ${var} in ${file}"
       if [[ "$file" == *coinbot* ]]; then
         warn "coinbot: remove ${var} from .env; use source ~/.config/modelrouter/client.env"
+        warn "  or document in config/wire_exceptions.yaml — docs/WHY_MODELROUTER.md"
       fi
       strays=$((strays + 1))
       ;;
     HITS:*)
-      total="${line#HITS:}"
       ;;
   esac
 done <<<"$out"
 
-if [[ "${total:-0}" -eq 0 ]]; then
-  ok "no provider keys found on tower agent paths"
+if [[ "$strays" -eq 0 ]]; then
+  ok "no undocumented provider keys on tower agent paths"
+  if [[ "$exceptions" -gt 0 ]]; then
+    ok "documented exceptions: ${exceptions} (config/wire_exceptions.yaml)"
+  fi
   if ssh -o ConnectTimeout=5 "$host" 'test -f ~/.config/modelrouter/client.env' 2>/dev/null; then
     ok "client.env present (gateway auth only)"
   else
@@ -121,5 +156,5 @@ fi
 echo ""
 echo "Action: remove provider keys from tower; use gateway presets via client.env"
 echo "  make clean-tower-wires && make smoke-tower"
-echo "  docs/TOWER_CLEANUP.md  (coinbot and other agent .env files)"
+echo "  docs/TOWER_CLEANUP.md · docs/WHY_MODELROUTER.md"
 exit 1

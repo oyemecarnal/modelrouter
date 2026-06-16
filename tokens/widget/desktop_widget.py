@@ -156,6 +156,13 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(body).encode())
             return
+        if self.path == "/connectors/paste":
+            status, body = connector_paste_response(self)
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(body).encode())
+            return
         if self.path == "/api-assess":
             status, body = api_assess_response()
             self.send_response(status)
@@ -237,6 +244,30 @@ def key_add_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
         return 400, {"ok": False, "error": str(exc)}
     except Exception as exc:
         logger.exception("key add failed")
+        return 500, {"ok": False, "error": str(exc)}
+
+
+def connector_paste_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
+    try:
+        from connector_paste import paste_connector
+        from fetch_usage import load_config
+
+        body = _read_post_json(handler)
+        provider = str(body.get("provider") or "").strip()
+        value = str(body.get("value") or "")
+        if not provider:
+            return 400, {"ok": False, "error": "provider required"}
+        cfg = load_widget_config()
+        cfg.update(load_config())
+        push = body.get("push", True) is not False
+        restart = body.get("restart", True) is not False
+        result = paste_connector(cfg, provider, value, push=push, restart=restart)
+        run_fetch(reason="connector_pasted")
+        return 200, {"ok": True, **result}
+    except ValueError as exc:
+        return 400, {"ok": False, "error": str(exc)}
+    except Exception as exc:
+        logger.exception("connector paste failed")
         return 500, {"ok": False, "error": str(exc)}
 
 

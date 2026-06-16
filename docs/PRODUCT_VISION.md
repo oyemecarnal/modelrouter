@@ -170,4 +170,4 @@ Run `make cost-review`. If the answer is “use grep not GPT,” the product sho
 - `docs/POSITIONING.md` — market wedge vs LiteLLM / Portkey / key wallets ✓
 - `docs/LANDING.md` — Personal tier landing stub ✓
 
-Phase 0/1 complete at **v3.7.0**. Phase 2 connectors through **v3.18.0** (9 paste-key flows, Personal tarball, tower guides). OAuth and widget paste UI next.
+Phase 0/1 complete at **v3.7.0**. Phase 2 through **v3.22.0** local: 9 paste-key connectors, widget paste modal, tower wire audit/strip, ship gate (`make ship-check`). OAuth spec drafted; exchange not built.

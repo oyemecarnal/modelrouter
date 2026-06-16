@@ -14,6 +14,7 @@ Exits 0 when clean. Skips `OPENAI_API_KEY` in `client.env` when it is the **gate
 
 ```bash
 make clean-tower-wires    # rewrite client.env + re-audit
+make strip-tower-llm-keys # remove LLM keys from ~/dev/*/.env* (Option A)
 make smoke-tower
 ```
 

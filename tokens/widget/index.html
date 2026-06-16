@@ -156,6 +156,23 @@
       cursor: pointer;
     }
     .receiver-add-btn:hover { border-color: var(--led-warn); color: var(--led-warn); }
+    .receiver-hints {
+      font-size: 9px;
+      line-height: 1.4;
+      color: var(--led-warn);
+      text-align: center;
+      padding: 4px 8px 0;
+      max-width: 100%;
+    }
+    .receiver-hints:empty { display: none; }
+    .provider-options {
+      display: flex;
+      gap: 12px;
+      margin: 8px 0 4px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+    .provider-options label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
     .add-provider-menu {
       position: absolute;
       top: 100%;
@@ -179,6 +196,18 @@
       text-decoration: none;
     }
     .add-provider-menu a:hover { background: rgba(255,255,255,0.05); }
+    .add-provider-menu button.add-provider-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 5px 12px;
+      font-size: 10px;
+      color: var(--led-warn);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .add-provider-menu button.add-provider-item:hover { background: rgba(255,255,255,0.05); }
     .add-provider-menu .make-hint {
       display: block;
       font-size: 8px;
@@ -459,6 +488,7 @@
       <div class="receiver-brand">C O N N E C T I V I T Y</div>
       <div id="receiver-rows"></div>
       <div id="receiver-signups" class="receiver-signups" aria-label="Provider signup links"></div>
+      <div id="receiver-hints" class="receiver-hints" aria-live="polite"></div>
       <div class="receiver-add-row">
         <button type="button" id="btn-add-provider" class="receiver-add-btn" title="Add provider via paste-key connector">＋ Provider</button>
         <div id="add-provider-menu" class="add-provider-menu hidden" role="menu"></div>
@@ -518,6 +548,26 @@
         <button id="w-save" type="button">Save</button>
       </div>
       <div id="w-error" class="error" style="margin-top:8px;display:none"></div>
+    </div>
+  </div>
+  <div id="provider-modal" class="modal-backdrop" aria-hidden="true">
+    <div class="modal wide">
+      <h2 id="p-title">Connect provider</h2>
+      <p class="detail">Paste key → validate → save to modelrouter <code>.env</code> → push to kc-mini.</p>
+      <p class="detail"><a id="p-signup" href="#" target="_blank" rel="noopener noreferrer">Get API key</a></p>
+      <label for="p-env">Env variable</label>
+      <input id="p-env" type="text" readonly />
+      <label for="p-value">API key</label>
+      <input id="p-value" type="password" placeholder="Paste key…" autocomplete="off" />
+      <div class="provider-options">
+        <label><input type="checkbox" id="p-push" checked /> Push to kc-mini</label>
+        <label><input type="checkbox" id="p-restart" checked /> Restart mini gateway</label>
+      </div>
+      <div class="modal-actions">
+        <button id="p-cancel" type="button">Cancel</button>
+        <button id="p-save" type="button">Save</button>
+      </div>
+      <div id="p-error" class="error" style="margin-top:8px;display:none"></div>
     </div>
   </div>
   <script>
@@ -654,6 +704,20 @@
       ).join(' · ');
     }
 
+    function renderHints(status) {
+      const el = document.getElementById('receiver-hints');
+      if (!el) return;
+      const hints = status.hints || [];
+      if (!hints.length) {
+        el.innerHTML = '';
+        return;
+      }
+      el.innerHTML = hints.map(h => {
+        const alt = h.alt ? ` · ${h.alt}` : '';
+        return `${h.text} → <code>${h.fix}</code>${alt}`;
+      }).join('<br>');
+    }
+
     function renderAddProviderMenu(status) {
       const menu = document.getElementById('add-provider-menu');
       const btn = document.getElementById('btn-add-provider');
@@ -666,10 +730,18 @@
       }
       btn.style.display = '';
       menu.innerHTML = items.map(c => `
-        <a href="${c.signup}" target="_blank" rel="noopener noreferrer" role="menuitem">
+        <button type="button" class="add-provider-item" data-provider-id="${c.id}" role="menuitem">
           ${c.label}${c.state === 'ok' ? ' ✓' : ''}
-        </a>
+        </button>
         <span class="make-hint">${c.make}</span>`).join('');
+      menu.querySelectorAll('.add-provider-item').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const conn = items.find(x => x.id === btn.dataset.providerId);
+          if (conn) openProviderModal(conn);
+          menu.classList.add('hidden');
+        });
+      });
     }
 
     function setupAddProviderMenu() {
@@ -742,6 +814,7 @@
         rowsRoot.innerHTML = renderLedRow(status.leds);
       }
       renderSignupHints(status);
+      renderHints(status);
       renderAddProviderMenu(status);
     }
 
@@ -1061,6 +1134,63 @@
 
     const keyModal = document.getElementById('key-modal');
     const kError = document.getElementById('k-error');
+    const providerModal = document.getElementById('provider-modal');
+    const pError = document.getElementById('p-error');
+    let activeConnector = null;
+
+    function openProviderModal(conn) {
+      activeConnector = conn;
+      pError.style.display = 'none';
+      document.getElementById('p-title').textContent = `Connect ${conn.label || conn.id}`;
+      document.getElementById('p-env').value = conn.env || '';
+      const signup = document.getElementById('p-signup');
+      if (conn.signup) {
+        signup.href = conn.signup;
+        signup.style.display = '';
+      } else {
+        signup.style.display = 'none';
+      }
+      const hint = conn.prefix ? `${conn.prefix}…` : 'Paste key…';
+      document.getElementById('p-value').placeholder = hint;
+      document.getElementById('p-value').value = '';
+      document.getElementById('p-push').checked = true;
+      document.getElementById('p-restart').checked = true;
+      providerModal.classList.add('show');
+    }
+    function closeProviderModal() {
+      providerModal.classList.remove('show');
+      activeConnector = null;
+    }
+    async function saveProviderConnector() {
+      pError.style.display = 'none';
+      if (!activeConnector) return;
+      const value = document.getElementById('p-value').value.trim();
+      if (!value) {
+        pError.textContent = 'Paste an API key';
+        pError.style.display = 'block';
+        return;
+      }
+      try {
+        const res = await postJson('/connectors/paste', {
+          provider: activeConnector.id,
+          value,
+          push: document.getElementById('p-push').checked,
+          restart: document.getElementById('p-restart').checked,
+        });
+        const data = await res.json();
+        if (!data.ok) {
+          pError.textContent = data.error || 'Save failed';
+          pError.style.display = 'block';
+          return;
+        }
+        closeProviderModal();
+        await refreshAll();
+      } catch (e) {
+        pError.textContent = 'Save failed — is kc-mini reachable?';
+        pError.style.display = 'block';
+      }
+    }
+
     function openKeyModal() {
       kError.style.display = 'none';
       populateKeyFamilies(lastSnapshot && lastSnapshot.apiCatalog);
@@ -1120,6 +1250,10 @@
     document.getElementById('k-cancel').addEventListener('click', closeKeyModal);
     document.getElementById('k-save').addEventListener('click', saveKey);
     keyModal.addEventListener('click', (e) => { if (e.target === keyModal) closeKeyModal(); });
+
+    document.getElementById('p-cancel').addEventListener('click', closeProviderModal);
+    document.getElementById('p-save').addEventListener('click', saveProviderConnector);
+    providerModal.addEventListener('click', (e) => { if (e.target === providerModal) closeProviderModal(); });
 
     document.getElementById('btn-assess').addEventListener('click', runAssess);
     document.getElementById('a-close').addEventListener('click', () => assessModal.classList.remove('show'));

@@ -79,6 +79,8 @@ Override any color infinitely:
 
 Add network probes under `receiver.webhooks` (reachability only, no secrets). Paste-key connectors from `config/connectors.yaml` drive the API KEYS row; missing keys show signup links in the widget.
 
+**＋ Provider** menu opens a paste modal (`POST /connectors/paste`) — validates, writes modelrouter `.env`, pushes to kc-mini. Terminal fallback: `make connect-<provider>`.
+
 | `scripts/key_inventory.py` | Scan ~/dev for API keys |
 | `widget/desktop_widget.py` | Native pywebview panel |
 | `widget/index.html` | UI |

@@ -22,6 +22,12 @@ git diff
 ## Validation (required)
 
 ```bash
+make ship-check   # test + lint + VERSION/CHANGELOG + tower audit
+```
+
+Or manually:
+
+```bash
 make test
 make lint
 ```
@@ -43,6 +49,8 @@ make check-presets && make check-catalog
 - Commit only when the human asked, or this `/ship` command explicitly includes commit.
 - Message reflects **why** (homelab ops, preset SSOT, widget, reliability, docs capstone).
 - Capstone cycles: `VERSION` + `CHANGELOG` + `docs/iterations/X.Y.md` included.
+
+See `docs/SHIP_CHECKLIST.md` for reject list and post-ship steps.
 
 ## Post-commit homelab
 

@@ -1,7 +1,7 @@
 .PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider audit-tower-wires clean-tower-wires guide-tower-strays check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal
 
 install:
 	./scripts/install.sh
@@ -189,6 +189,18 @@ clean-tower-wires:
 
 guide-tower-strays:
 	./scripts/guide-tower-strays.sh
+
+strip-tower-llm-keys:
+	./scripts/strip-tower-llm-keys.sh
+
+ensure-gateway:
+	./scripts/ensure-gateway.sh
+
+ship-check:
+	./scripts/ship-check.sh
+
+oauth-start:
+	./scripts/oauth-start.sh $(or $(PROVIDER),)
 
 core-apis:
 	./scripts/update-core-api-list.sh

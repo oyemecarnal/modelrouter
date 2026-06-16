@@ -284,6 +284,70 @@ Bugbot        → 7 findings; 4 patched in-cycle
 
 ---
 
-## Ship status (2026-06-15)
+## Cycle 19 checkpoint (v3.19.0)
 
-**Origin:** **v3.13.0** (`97428ce`). **Local:** **v3.18.0** unshipped (Cycles 14–18).
+**Theme:** Explain value + optional tower exceptions (coinbot clarity).
+
+| Iter | Deliverable |
+|------|-------------|
+| 19.1 | `docs/WHY_MODELROUTER.md` |
+| 19.2 | `config/wire_exceptions.yaml` + audit filter |
+| 19.3 | `test.sh` wire_exceptions smoke |
+| 19.4 | README / HOMELAB_GOALS links |
+| 19.5 | `OAUTH_CONNECTOR_STUB.md` · **v3.19.0** |
+
+**Next cycle 20 proposal:** Widget paste modal, `make daemon-enable` one-liner in doctor when gateway down, coinbot gateway wiring script.
+
+---
+
+## Cycle 20 checkpoint (v3.20.0)
+
+**Theme:** Widget paste-key UX + tower hygiene automation.
+
+| Iter | Deliverable |
+|------|-------------|
+| 20.1 | Audit `.env.*` · `make strip-tower-llm-keys` |
+| 20.2 | Doctor gateway-down fix block |
+| 20.3 | Widget paste modal · `/connectors/paste` |
+| 20.4 | `connector_paste.py` + tests |
+| 20.5 | Tower `.env.cursor` cleaned · **v3.20.0** |
+
+**Next cycle 21 proposal:** OAuth spec draft, widget push/restart toggle, laptop `make daemon-enable` one-shot in homelab-status when gateway down.
+
+---
+
+## Cycle 21 checkpoint (v3.21.0)
+
+**Theme:** OAuth roadmap + gateway-down visibility.
+
+| Iter | Deliverable |
+|------|-------------|
+| 21.1 | `docs/OAUTH_CONNECTOR_SPEC.md` |
+| 21.2 | `homelab_status.hints` · homelab-status fix lines |
+| 21.3 | Widget push/restart toggles |
+| 21.4 | Receiver bar hints + tests |
+| 21.5 | **v3.21.0** |
+
+**Next cycle 22 proposal:** Ship v3.21.0, `make daemon-enable` run on laptop, OAuth pilot spike (google callback stub only).
+
+---
+
+## Cycle 22 checkpoint (v3.22.0)
+
+**Theme:** Ship readiness + laptop gateway auto-fix + OAuth dev stub.
+
+| Iter | Deliverable |
+|------|-------------|
+| 22.1 | `make ensure-gateway` |
+| 22.2 | `make oauth-start` · callback stub |
+| 22.3 | `make ship-check` |
+| 22.4 | `docs/SHIP_CHECKLIST.md` |
+| 22.5 | **v3.22.0** ship-ready |
+
+**Next cycle 23 proposal:** Run `/ship v3.22.0`, `make deploy-mini`, implement first OAuth exchange (google) behind feature flag.
+
+---
+
+## Ship status (2026-06-16)
+
+**Origin:** **v3.18.0** (`d70ba59`). **Local:** **v3.22.0** unshipped (Cycles 19–22). **Tower:** audit ✓. **Gate:** `make ship-check` ✓

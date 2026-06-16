@@ -20,6 +20,8 @@ if MODELROUTER_ROOT="$ROOT" "$ROOT/scripts/healthcheck.sh" &>/dev/null; then
   echo "  Gateway: up"
 else
   echo "  Gateway: DOWN (fix before optimizing spend)"
+  echo "    make ensure-gateway  # restart if down"
+  echo "    make daemon-enable   # auto-start at login — docs/LAPTOP_DAEMON.md"
 fi
 
 echo ""

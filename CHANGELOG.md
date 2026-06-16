@@ -1,5 +1,50 @@
 # Changelog
 
+## [3.22.0] — 2026-06-16 (Cycle 22 — ship gate + ensure-gateway + OAuth stub)
+
+### Added
+- `make ensure-gateway` — restart laptop gateway if healthcheck fails
+- `make ship-check` — pre-ship validation (test, lint, VERSION/CHANGELOG, tower audit)
+- `make oauth-start` — Phase 3 OAuth stub + dev callback listener (`OAUTH_STUB_LISTEN=1`)
+- `docs/SHIP_CHECKLIST.md` — human + automated ship gate
+
+### Changed
+- Gateway-down hints → `make ensure-gateway` (homelab_status, homelab-status, cost-review, doctor)
+
+## [3.21.0] — 2026-06-16 (Cycle 21 — OAuth draft + gateway hints)
+
+### Added
+- `docs/OAUTH_CONNECTOR_SPEC.md` — Phase 3 OAuth draft (security, flow, acceptance criteria)
+- `homelab_status` `hints` — laptop/mini gateway fix commands for widget receiver bar
+
+### Changed
+- Widget provider modal — optional **Push to mini** / **Restart gateway** checkboxes
+- `homelab-status`, `cost-review` — gateway-down fix lines (`make restart` / `make daemon-enable`)
+- `OAUTH_CONNECTOR_STUB.md` — links to OAuth spec
+
+## [3.20.0] — 2026-06-16 (Cycle 20 — paste modal + tower strip + doctor)
+
+### Added
+- Widget **＋ Provider** paste modal — `/connectors/paste` validates, saves `.env`, pushes to mini
+- `make strip-tower-llm-keys` — remove stray LLM keys from tower `~/dev/*/.env*` (Option A)
+- `tokens/scripts/connector_paste.py` — shared paste-key logic for widget
+
+### Changed
+- `audit-tower-wires` — scans `.env.*` (e.g. `.env.cursor`); skips `*.bak*` backups
+- `doctor` — prominent fix block when gateway is down (`make restart` / `make daemon-enable`)
+- `homelab_status` — `registryConnectors` includes `env` + prefix for widget modal
+
+## [3.19.0] — 2026-06-15 (Cycle 19 — why doc + wire exceptions)
+
+### Added
+- `docs/WHY_MODELROUTER.md` — plain-English value story (gateway vs direct keys, coinbot)
+- `config/wire_exceptions.yaml` — documented tower audit exemptions
+- `docs/OAUTH_CONNECTOR_STUB.md` — Phase 3 OAuth placeholder
+
+### Changed
+- `audit-tower-wires` — respects `wire_exceptions.yaml`; links WHY doc
+- `README`, `HOMELAB_GOALS`, `CLEAN_WIRES` — point at WHY doc
+
 ## [3.18.0] — 2026-06-15 (Cycle 18 — capstone: 9 connectors + Personal pack)
 
 ### Changed

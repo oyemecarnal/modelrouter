@@ -69,6 +69,18 @@ for name, data in [('policyPresets', load_preset_catalog(cfg)), ('consoleGrid', 
 print('  ok snapshot exports (no raw key prefixes)')
 "
 
+echo "── Wire exceptions config"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+import yaml
+from pathlib import Path
+p = Path('$ROOT/config/wire_exceptions.yaml')
+data = yaml.safe_load(p.read_text()) or {}
+assert 'exceptions' in data, 'wire_exceptions.yaml needs exceptions list'
+for ex in data.get('exceptions') or []:
+    assert ex.get('path_suffix') and ex.get('vars'), ex
+print('  ok wire_exceptions.yaml', len(data.get('exceptions') or []), 'entries')
+"
+
 echo "── Connector validation"
 PYTHONPATH="$ROOT" .venv/bin/python -c "
 from modelrouter.env_store import validate_provider_key
@@ -125,8 +137,33 @@ assert len(api_row.get('leds', [])) >= 4, 'registry-driven API KEY LEDs'
 signup = [l for l in api_row.get('leds', []) if l.get('signup')]
 assert len(signup) >= 5, 'connector signup URLs from registry'
 assert len(d.get('registryConnectors', [])) >= 6, 'registryConnectors for widget menu'
-print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'presets')
+rc = d['registryConnectors'][0]
+assert rc.get('env'), 'registryConnectors need env for paste modal'
+assert 'hints' in d, 'homelab_status should expose hints list'
+print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'presets, hints=', len(d.get('hints', [])))
 "
+
+echo "── Connector paste (widget)"
+PYTHONPATH="$ROOT/tokens/scripts:$ROOT" .venv/bin/python -c "
+from connector_paste import _load_connector
+from pathlib import Path
+root = Path('$ROOT')
+c = _load_connector(root, 'groq')
+assert c['env'] == 'GROQ_API_KEY', c
+print('  ok connector_paste registry lookup')
+"
+
+echo "── Tower scripts"
+test -x "$ROOT/scripts/strip-tower-llm-keys.sh" || { echo "  FAIL strip-tower-llm-keys.sh not executable" >&2; exit 1; }
+test -x "$ROOT/scripts/ensure-gateway.sh" || { echo "  FAIL ensure-gateway.sh" >&2; exit 1; }
+test -x "$ROOT/scripts/ship-check.sh" || { echo "  FAIL ship-check.sh" >&2; exit 1; }
+test -x "$ROOT/scripts/oauth-start.sh" || { echo "  FAIL oauth-start.sh" >&2; exit 1; }
+echo "  ok tower + ship scripts"
+
+echo "── OAuth stub"
+oauth_out="$("$ROOT/scripts/oauth-start.sh" google 2>&1 || true)"
+echo "$oauth_out" | grep -q "connect-google" || { echo "  FAIL oauth-start hint" >&2; exit 1; }
+echo "  ok oauth-start stub"
 
 echo "── Health (optional)"
 # shellcheck disable=SC1091

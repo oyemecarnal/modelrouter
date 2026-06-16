@@ -1,0 +1,12 @@
+# Documented exceptions to "no provider keys on tower"
+# Used by scripts/audit-tower-wires.sh — never put secret values here.
+#
+# Example (uncomment if coinbot LLM stays direct on purpose):
+# exceptions:
+#   - id: coinbot-direct-openai
+#     path_suffix: dev/coinbot/.env
+#     vars: [OPENAI_API_KEY]
+#     reason: coinbot LLM bypasses gateway intentionally — see docs/WHY_MODELROUTER.md
+
+version: 1
+exceptions: []

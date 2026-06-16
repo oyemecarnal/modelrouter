@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.18.0** — Self-hosted AI control plane ([landing](docs/LANDING.md) · [daemon](docs/LAPTOP_DAEMON.md) · [env](docs/ENV.md))
+**v3.22.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
 
 One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 
@@ -131,6 +131,9 @@ make connect-together    # paste Together key → mini
 make connect-provider PROVIDER=anthropic  # generic registry dispatch
 make audit-tower-wires   # scan kc-tower for stray provider keys
 make clean-tower-wires   # push client.env + re-audit tower
+make strip-tower-llm-keys  # remove stray LLM keys from tower ~/dev/*/.env*
+make ensure-gateway        # restart laptop gateway if down
+make ship-check            # pre-ship validation (test + lint + VERSION)
 make package-personal    # dist/modelrouter-*-personal.tar.gz (no secrets)
 ```
 

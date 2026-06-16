@@ -105,16 +105,17 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 
 - [x] Gateway on kc-mini, tower Tailscale, Cursor path  
 - [x] Paste-key connectors — 9 registry entries (`config/connectors.yaml`)  
-- [x] `docs/ENV.md`, `docs/LANDING.md`, receiver bar + registry LEDs  
-- [x] **v3.12.0** shipped on `main`
+- [x] Widget paste modal + receiver hints (`make ensure-gateway`)  
+- [x] Tower wire audit/strip — coinbot Option A (`docs/WHY_MODELROUTER.md`)  
+- [x] `docs/ENV.md`, `docs/LANDING.md`, `make ship-check`  
+- [ ] **v3.22.0** shipped on `main` (local ready — run `/ship`)
 
 **Next wires (in order)**
 
-1. **`make clean-tower-wires`** — fix tower agent `.env` strays (`docs/TOWER_CLEANUP.md`)  
-2. **`make connect-google`** — Gemini routes on mini when needed  
-3. **Widget “Add provider”** — button wired to registry signup URLs  
-4. **Personal tier sale** — tarball + Gumroad when interviews say yes  
-5. **`make daemon-enable`** on laptop — `docs/LAPTOP_DAEMON.md`  
+1. **`/ship v3.22.0`** + `make deploy-mini`  
+2. **`make daemon-enable`** on laptop — `docs/LAPTOP_DAEMON.md`  
+3. **Personal tier sale** — tarball + Gumroad when interviews say yes  
+4. **OAuth exchange** — Phase 3 (`docs/OAUTH_CONNECTOR_SPEC.md`)
 
 ---
 

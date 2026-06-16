@@ -38,4 +38,4 @@ Versions `1.1` → `1.5` per cycle. See `docs/iterations/`. Agent playbook: `doc
 - [x] `kc-tower` SSH aliases in `~/.ssh/config` + `config/hosts.yaml`
 - [x] **kc-tower Tailscale** — up (`kc-tower` @ `100.116.94.38`)
 - [x] `make push-client-env-tower` — client.env uses mini Tailscale URL (`100.85.245.23:3000`)
-- [ ] Tower agent `.env` cleanup — `make audit-tower-wires` (e.g. remove vendor keys from `~/dev/coinbot/.env`)
+- [x] Tower agent `.env` cleanup — coinbot `OPENAI_API_KEY` removed; gateway via `client.env` (`docs/WHY_MODELROUTER.md`)

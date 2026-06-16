@@ -141,3 +141,43 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 14.3 | `connect-deepseek`, `connect-together` | [14.3.md](14.3.md) |
 | 14.4 | Widget **＋ Provider** menu | [14.4.md](14.4.md) |
 | 14.5 | Capstone → **v3.14.0** | [14.5.md](14.5.md) |
+
+## Cycle 19 (why doc + wire exceptions)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 19.1 | `docs/WHY_MODELROUTER.md` | [19.1.md](19.1.md) |
+| 19.2 | `config/wire_exceptions.yaml` | [19.2.md](19.2.md) |
+| 19.3 | Exception schema in `test.sh` | [19.3.md](19.3.md) |
+| 19.4 | README / backlog links | [19.4.md](19.4.md) |
+| 19.5 | OAuth stub + **v3.19.0** | [19.5.md](19.5.md) |
+
+## Cycle 20 (paste modal + tower strip)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 20.1 | Audit `.env.*` + `strip-tower-llm-keys` | [20.1.md](20.1.md) |
+| 20.2 | Doctor gateway-down fix block | [20.2.md](20.2.md) |
+| 20.3 | Widget paste modal + API | [20.3.md](20.3.md) |
+| 20.4 | `connector_paste` tests | [20.4.md](20.4.md) |
+| 20.5 | Capstone **v3.20.0** | [20.5.md](20.5.md) |
+
+## Cycle 21 (OAuth draft + gateway hints)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 21.1 | `OAUTH_CONNECTOR_SPEC.md` | [21.1.md](21.1.md) |
+| 21.2 | Gateway-down hints (homelab + cost) | [21.2.md](21.2.md) |
+| 21.3 | Widget push/restart toggles | [21.3.md](21.3.md) |
+| 21.4 | Widget hints render + tests | [21.4.md](21.4.md) |
+| 21.5 | Capstone **v3.21.0** | [21.5.md](21.5.md) |
+
+## Cycle 22 (ship gate + ensure-gateway)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 22.1 | `make ensure-gateway` | [22.1.md](22.1.md) |
+| 22.2 | OAuth stub + callback listener | [22.2.md](22.2.md) |
+| 22.3 | `make ship-check` | [22.3.md](22.3.md) |
+| 22.4 | `SHIP_CHECKLIST.md` | [22.4.md](22.4.md) |
+| 22.5 | Capstone **v3.22.0** | [22.5.md](22.5.md) |

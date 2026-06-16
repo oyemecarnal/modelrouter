@@ -210,8 +210,9 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
 
     infra: list[dict[str, str]] = []
     laptop_up = _probe_url(local_url)
+    laptop_detail = "Local gateway" if laptop_up else "down — make ensure-gateway"
     infra.append(
-        _led("laptop", "LAPTOP", "ok" if laptop_up else "down", "Local gateway", "path")
+        _led("laptop", "LAPTOP", "ok" if laptop_up else "down", laptop_detail, "path")
     )
 
     mini_up = False
@@ -308,9 +309,33 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             {
                 "id": conn["id"],
                 "label": conn["label"],
+                "env": conn.get("env") or "",
+                "prefix": conn.get("prefix") or "",
                 "signup": conn.get("signup") or "",
                 "make": f"make {conn.get('make') or 'connect-' + conn['id']}",
                 "state": led.get("state") or "down",
+            }
+        )
+
+    hints: list[dict[str, str]] = []
+    if not laptop_up:
+        hints.append(
+            {
+                "id": "laptop_gateway",
+                "text": "Laptop gateway down — Cursor may bypass ModelRouter",
+                "fix": "make ensure-gateway",
+                "alt": "make daemon-enable",
+                "doc": "docs/LAPTOP_DAEMON.md",
+            }
+        )
+    if not mini_up:
+        hints.append(
+            {
+                "id": "mini_gateway",
+                "text": "kc-mini gateway unreachable",
+                "fix": "ssh kc-mini-lan 'cd ~/dev/modelrouter && make restart'",
+                "alt": "",
+                "doc": "docs/HOMELAB_GOALS.md",
             }
         )
 
@@ -323,4 +348,5 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
         "rows": rows,
         "leds": flat,
         "registryConnectors": registry_connectors,
+        "hints": hints,
     }

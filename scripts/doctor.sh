@@ -40,10 +40,17 @@ fi
 
 echo ""
 echo "── Health"
+GATEWAY_UP=0
 if MODELROUTER_ROOT="$ROOT" "$ROOT/scripts/healthcheck.sh" &>/dev/null; then
+  GATEWAY_UP=1
   ok "Healthcheck passed"
 else
-  fail "Healthcheck failed — run: make restart"
+  fail "Healthcheck failed — gateway not responding"
+  echo ""
+  echo "── Fix gateway (Cursor + widget need this)"
+  echo "  make ensure-gateway       # restart if down"
+  echo "  make daemon-enable        # auto-start at login — docs/LAPTOP_DAEMON.md"
+  echo ""
 fi
 
 echo ""
@@ -106,7 +113,8 @@ echo "  make restart              # if unhealthy"
 echo "  make route-hints          # refresh widget → routing hints"
 echo "  make push-client-env-tower  # when tower SSH is up"
 echo "  make rotate-master-key    # if master key placeholder"
-echo "  make daemon-enable        # laptop launchd — docs/LAPTOP_DAEMON.md"
+  echo "  make ensure-gateway       # restart gateway if down"
+  echo "  make daemon-enable        # laptop launchd — docs/LAPTOP_DAEMON.md"
 echo "  make deploy-mini          # sync this tree to kc-mini"
 echo "  make core-apis            # refresh gitignored data/CORE_APIS.md (masked)"
 echo "  make check-key-hygiene    # salt distinct, provider keys, Groq rotate reminder"

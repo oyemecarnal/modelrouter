@@ -14,6 +14,12 @@ echo "Docs: docs/HOMELAB_GOALS.md"
 echo ""
 
 "$ROOT/scripts/doctor.sh" 2>/dev/null | sed -n '1,25p' || true
+if ! MODELROUTER_ROOT="$ROOT" "$ROOT/scripts/healthcheck.sh" &>/dev/null; then
+  echo ""
+  echo "── Laptop gateway fix"
+  echo "  make ensure-gateway       # restart if down"
+  echo "  make daemon-enable        # auto-start at login — docs/LAPTOP_DAEMON.md"
+fi
 echo ""
 "$ROOT/scripts/remote-health.sh" 2>/dev/null || true
 echo ""
