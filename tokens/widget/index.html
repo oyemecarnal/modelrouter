@@ -139,6 +139,53 @@
       text-decoration: none;
     }
     .receiver-signups a:hover { text-decoration: underline; }
+    .receiver-add-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 4px;
+      position: relative;
+    }
+    .receiver-add-btn {
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      padding: 3px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--rx-bezel);
+      background: color-mix(in srgb, var(--rx-panel) 80%, #000);
+      color: var(--rx-label);
+      cursor: pointer;
+    }
+    .receiver-add-btn:hover { border-color: var(--led-warn); color: var(--led-warn); }
+    .add-provider-menu {
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      min-width: 200px;
+      margin-top: 4px;
+      padding: 6px 0;
+      border-radius: 6px;
+      border: 1px solid var(--rx-bezel);
+      background: var(--rx-panel);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+    }
+    .add-provider-menu.hidden { display: none; }
+    .add-provider-menu a {
+      display: block;
+      padding: 5px 12px;
+      font-size: 10px;
+      color: var(--led-warn);
+      text-decoration: none;
+    }
+    .add-provider-menu a:hover { background: rgba(255,255,255,0.05); }
+    .add-provider-menu .make-hint {
+      display: block;
+      font-size: 8px;
+      color: var(--rx-label);
+      opacity: 0.8;
+      padding: 0 12px 2px;
+    }
     .receiver-bar.mode-classic-rg .led-lamp.down,
     .receiver-bar.mode-classic-rg .led-lamp.off,
     .receiver-bar.mode-classic-rg .led-lamp.skip {
@@ -412,6 +459,10 @@
       <div class="receiver-brand">C O N N E C T I V I T Y</div>
       <div id="receiver-rows"></div>
       <div id="receiver-signups" class="receiver-signups" aria-label="Provider signup links"></div>
+      <div class="receiver-add-row">
+        <button type="button" id="btn-add-provider" class="receiver-add-btn" title="Add provider via paste-key connector">＋ Provider</button>
+        <div id="add-provider-menu" class="add-provider-menu hidden" role="menu"></div>
+      </div>
     </div>
   </div>
   <div id="scroll">
@@ -603,6 +654,35 @@
       ).join(' · ');
     }
 
+    function renderAddProviderMenu(status) {
+      const menu = document.getElementById('add-provider-menu');
+      const btn = document.getElementById('btn-add-provider');
+      if (!menu || !btn) return;
+      const items = status.registryConnectors || [];
+      if (!items.length) {
+        menu.innerHTML = '';
+        btn.style.display = 'none';
+        return;
+      }
+      btn.style.display = '';
+      menu.innerHTML = items.map(c => `
+        <a href="${c.signup}" target="_blank" rel="noopener noreferrer" role="menuitem">
+          ${c.label}${c.state === 'ok' ? ' ✓' : ''}
+        </a>
+        <span class="make-hint">${c.make}</span>`).join('');
+    }
+
+    function setupAddProviderMenu() {
+      const btn = document.getElementById('btn-add-provider');
+      const menu = document.getElementById('add-provider-menu');
+      if (!btn || !menu) return;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        menu.classList.toggle('hidden');
+      });
+      document.addEventListener('click', () => menu.classList.add('hidden'));
+    }
+
     function selectReceiverPreset(presetId) {
       const preset = themePresetsCache[presetId];
       if (!preset) return;
@@ -662,6 +742,7 @@
         rowsRoot.innerHTML = renderLedRow(status.leds);
       }
       renderSignupHints(status);
+      renderAddProviderMenu(status);
     }
 
     function renderConsole(grid) {
@@ -1051,6 +1132,7 @@
 
     document.getElementById('btn-refresh').addEventListener('click', refreshAll);
     document.getElementById('btn-edit').addEventListener('click', openEdit);
+    setupAddProviderMenu();
 
     fetch('/meta.json').then(r => r.json()).then(m => {
       if (m.appName) document.getElementById('app-title').textContent = m.appName;

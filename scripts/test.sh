@@ -82,7 +82,11 @@ assert validate_provider_key('MISTRAL_API_KEY', 'a' * 32) is None
 assert validate_provider_key('MISTRAL_API_KEY', 'short') is not None
 assert validate_provider_key('GOOGLE_API_KEY', 'AIza' + 'x' * 35) is None
 assert validate_provider_key('GOOGLE_API_KEY', 'bad') is not None
-print('  ok env_store key validation (groq + anthropic + openai + mistral + google)')
+assert validate_provider_key('DEEPSEEK_API_KEY', 'sk-' + 'x' * 40) is None
+assert validate_provider_key('TOGETHER_API_KEY', 'a' * 32) is None
+assert validate_provider_key('FIREWORKS_API_KEY', 'fw_' + 'x' * 40) is None
+assert validate_provider_key('COHERE_API_KEY', 'b' * 32) is None
+print('  ok env_store key validation (9 provider patterns)')
 "
 
 echo "── Connector registry"
@@ -119,7 +123,8 @@ assert len(d.get('rows', [])) >= 3, d
 api_row = next((r for r in d['rows'] if r.get('id') == 'connectors'), {})
 assert len(api_row.get('leds', [])) >= 4, 'registry-driven API KEY LEDs'
 signup = [l for l in api_row.get('leds', []) if l.get('signup')]
-assert len(signup) >= 4, 'connector signup URLs from registry'
+assert len(signup) >= 5, 'connector signup URLs from registry'
+assert len(d.get('registryConnectors', [])) >= 6, 'registryConnectors for widget menu'
 print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'presets')
 "
 

@@ -131,3 +131,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 13.3 | `make connect-google` | [13.3.md](13.3.md) |
 | 13.4 | Widget signup links from registry | [13.4.md](13.4.md) |
 | 13.5 | Capstone → **v3.13.0** | [13.5.md](13.5.md) |
+
+## Cycle 14 (DeepSeek/Together + Add Provider + daemon docs)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 14.1 | DeepSeek/Together key validation | [14.1.md](14.1.md) |
+| 14.2 | `docs/LAPTOP_DAEMON.md` | [14.2.md](14.2.md) |
+| 14.3 | `connect-deepseek`, `connect-together` | [14.3.md](14.3.md) |
+| 14.4 | Widget **＋ Provider** menu | [14.4.md](14.4.md) |
+| 14.5 | Capstone → **v3.14.0** | [14.5.md](14.5.md) |

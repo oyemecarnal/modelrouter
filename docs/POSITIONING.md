@@ -75,7 +75,7 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 - Policy-based routing, not vendor lock-in per app  
 - Self-hosted gateway on your hardware  
 - Masked inventory — find keys, don’t exfiltrate them  
-- Paste-key connectors with validation (Groq, Anthropic, OpenAI, Mistral)  
+- Paste-key connectors with validation (7 registry entries — Groq through Together)  
 - Stereo-receiver ops UI — distinctive, memorable  
 
 ## What we do not claim (yet)
@@ -104,7 +104,7 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 **Done enough to demo**
 
 - [x] Gateway on kc-mini, tower Tailscale, Cursor path  
-- [x] Paste-key connectors — Groq, Anthropic, OpenAI, Mistral, Google (`config/connectors.yaml`)  
+- [x] Paste-key connectors — 9 registry entries (`config/connectors.yaml`)  
 - [x] `docs/ENV.md`, `docs/LANDING.md`, receiver bar + registry LEDs  
 - [x] **v3.12.0** shipped on `main`
 
@@ -114,7 +114,7 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 2. **`make connect-google`** — Gemini routes on mini when needed  
 3. **Widget “Add provider”** — button wired to registry signup URLs  
 4. **Personal tier sale** — tarball + Gumroad when interviews say yes  
-5. **`make daemon-enable`** on laptop — stable Cursor → local gateway  
+5. **`make daemon-enable`** on laptop — `docs/LAPTOP_DAEMON.md`  
 
 ---
 

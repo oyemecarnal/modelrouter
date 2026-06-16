@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.13.0** — Self-hosted AI control plane ([landing](docs/LANDING.md) · [positioning](docs/POSITIONING.md) · [env](docs/ENV.md))
+**v3.18.0** — Self-hosted AI control plane ([landing](docs/LANDING.md) · [daemon](docs/LAPTOP_DAEMON.md) · [env](docs/ENV.md))
 
 One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 
@@ -115,7 +115,7 @@ make homelab-status   # doctor + remote-health + cost-review
 make deploy-mini      # rsync + restart on kc-mini
 make push-env-mini    # sync selected secrets to mini
 make push-client-env-tower  # tower client.env (gateway key only)
-make daemon-enable    # auto-start at login (macOS launchd)
+make daemon-enable    # auto-start at login — docs/LAPTOP_DAEMON.md
 make daemon-disable
 make smoke-cursor        # verify Cursor gateway path
 make smoke-tower         # verify tower→mini presets
@@ -126,10 +126,12 @@ make connect-anthropic   # paste Anthropic key → mini (hermes-smart / review)
 make connect-openai      # paste OpenAI key → mini (smart / code)
 make connect-mistral     # paste Mistral key → mini (code / fallbacks)
 make connect-google      # paste Google AI key → mini (Gemini routes)
+make connect-deepseek    # paste DeepSeek key → mini
+make connect-together    # paste Together key → mini
 make connect-provider PROVIDER=anthropic  # generic registry dispatch
 make audit-tower-wires   # scan kc-tower for stray provider keys
 make clean-tower-wires   # push client.env + re-audit tower
-make usage-rollup        # log-based usage by model
+make package-personal    # dist/modelrouter-*-personal.tar.gz (no secrets)
 ```
 
 ## Docker (production)

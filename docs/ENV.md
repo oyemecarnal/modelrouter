@@ -14,6 +14,8 @@
 | OpenAI    | `make connect-openai`    | `OPENAI_API_KEY`    | `sk-…`     |
 | Mistral   | `make connect-mistral`   | `MISTRAL_API_KEY`   | alphanumeric |
 | Google    | `make connect-google`    | `GOOGLE_API_KEY`    | `AIza…`      |
+| DeepSeek  | `make connect-deepseek`  | `DEEPSEEK_API_KEY`  | `sk-…`       |
+| Together  | `make connect-together`  | `TOGETHER_API_KEY`  | alphanumeric |
 
 
 Generic registry: `make connect-provider PROVIDER=<id>` (see `config/connectors.yaml`).

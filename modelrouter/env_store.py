@@ -13,6 +13,10 @@ _KEY_PATTERNS: dict[str, re.Pattern[str]] = {
     "OPENAI_API_KEY": re.compile(r"^sk-[A-Za-z0-9_-]{20,}$"),
     "MISTRAL_API_KEY": re.compile(r"^[A-Za-z0-9]{20,}$"),
     "GOOGLE_API_KEY": re.compile(r"^AIza[A-Za-z0-9_-]{20,}$"),
+    "DEEPSEEK_API_KEY": re.compile(r"^sk-[A-Za-z0-9_-]{20,}$"),
+    "TOGETHER_API_KEY": re.compile(r"^[A-Za-z0-9]{20,}$"),
+    "FIREWORKS_API_KEY": re.compile(r"^fw_[A-Za-z0-9_-]{20,}$"),
+    "COHERE_API_KEY": re.compile(r"^[A-Za-z0-9]{20,}$"),
 }
 
 

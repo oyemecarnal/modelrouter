@@ -54,3 +54,43 @@ connectors:
     signup: https://aistudio.google.com/apikey
     presets: [smart, cheap]
     make_target: connect-google
+
+  deepseek:
+    label: DeepSeek
+    env: DEEPSEEK_API_KEY
+    mode: paste_key
+    validate: deepseek
+    script: connect-deepseek.sh
+    signup: https://platform.deepseek.com
+    presets: [cheap, fast]
+    make_target: connect-deepseek
+
+  together:
+    label: Together
+    env: TOGETHER_API_KEY
+    mode: paste_key
+    validate: together
+    script: connect-together.sh
+    signup: https://api.together.xyz
+    presets: [cheap, fast]
+    make_target: connect-together
+
+  fireworks:
+    label: Fireworks
+    env: FIREWORKS_API_KEY
+    mode: paste_key
+    validate: fireworks
+    script: connect-fireworks.sh
+    signup: https://fireworks.ai
+    presets: [cheap, fast]
+    make_target: connect-fireworks
+
+  cohere:
+    label: Cohere
+    env: COHERE_API_KEY
+    mode: paste_key
+    validate: cohere
+    script: connect-cohere.sh
+    signup: https://dashboard.cohere.com
+    presets: [cheap, code]
+    make_target: connect-cohere

@@ -132,6 +132,9 @@ _PREFIX_HINTS: dict[str, str] = {
     "OPENAI_API_KEY": "sk-",
     "MISTRAL_API_KEY": "",
     "GOOGLE_API_KEY": "AIza",
+    "DEEPSEEK_API_KEY": "sk-",
+    "TOGETHER_API_KEY": "",
+    "FIREWORKS_API_KEY": "fw_",
 }
 
 # Non-registry keys shown on receiver bar (laptop / stub providers)
@@ -162,6 +165,7 @@ def _load_registry_connectors(root: Path) -> list[dict[str, str]]:
                     "env": env_var,
                     "prefix": prefix,
                     "signup": (c or {}).get("signup") or "",
+                    "make": (c or {}).get("make_target") or f"connect-{cid}",
                 }
             )
         return out
@@ -296,6 +300,20 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
     ]
     flat = infra + connectors + webhooks
 
+    led_by_id = {l["id"]: l for l in connectors}
+    registry_connectors: list[dict[str, str]] = []
+    for conn in _load_registry_connectors(root):
+        led = led_by_id.get(conn["id"], {})
+        registry_connectors.append(
+            {
+                "id": conn["id"],
+                "label": conn["label"],
+                "signup": conn.get("signup") or "",
+                "make": f"make {conn.get('make') or 'connect-' + conn['id']}",
+                "state": led.get("state") or "down",
+            }
+        )
+
     return {
         "enabled": True,
         "host": socket.gethostname(),
@@ -304,4 +322,5 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
         "theme": theme,
         "rows": rows,
         "leds": flat,
+        "registryConnectors": registry_connectors,
     }

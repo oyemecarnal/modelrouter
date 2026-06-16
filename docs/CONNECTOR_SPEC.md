@@ -39,6 +39,8 @@ make connect-anthropic   # paste sk-ant-… → mini (hermes-smart / review)
 make connect-openai      # paste sk-… → mini (smart / code)
 make connect-mistral     # paste Mistral key → mini
 make connect-google      # paste Google AI key → mini
+make connect-deepseek    # paste DeepSeek key → mini
+make connect-together    # paste Together key → mini
 make connect-provider PROVIDER=<id>
 make audit-tower-wires   # stray provider keys on kc-tower
 make clean-tower-wires   # push client.env + re-audit

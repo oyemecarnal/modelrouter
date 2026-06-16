@@ -255,6 +255,35 @@ Bugbot        → 7 findings; 4 patched in-cycle
 
 ---
 
+## Cycle 14 checkpoint (v3.14.0)
+
+**Theme:** More connectors, widget Add Provider, laptop daemon SSOT.
+
+| Iter | Deliverable |
+|------|-------------|
+| 14.1 | DeepSeek + Together validation |
+| 14.2 | `docs/LAPTOP_DAEMON.md` |
+| 14.3 | 7 registry connectors |
+| 14.4 | Widget **＋ Provider** menu |
+| 14.5 | **v3.14.0** |
+
+**Next cycle 15 proposal:** Fireworks/Cohere connectors, tower coinbot cleanup automation, Personal tier tarball script.
+
+---
+
+## Cycles 15–18 batch (v3.15.0 → v3.18.0)
+
+| Cycle | Theme | Version |
+|-------|--------|---------|
+| 15 | Fireworks + `make package-personal` | v3.15.0 |
+| 16 | Cohere connector (9 registry) | v3.16.0 |
+| 17 | `make guide-tower-strays` | v3.17.0 |
+| 18 | Capstone docs + ship bundle | v3.18.0 |
+
+**Next cycle 19 proposal:** OAuth spec stub, widget paste modal, `make daemon-enable` runbook on laptop.
+
+---
+
 ## Ship status (2026-06-15)
 
-**Origin:** **v3.12.0** + docs patch (`6840cd3`). Cycle 13 local (**v3.13.0** unshipped).
+**Origin:** **v3.13.0** (`97428ce`). **Local:** **v3.18.0** unshipped (Cycles 14–18).

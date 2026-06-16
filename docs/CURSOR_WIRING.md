@@ -23,6 +23,7 @@ Keep `crsr_*` as the master key unless you intentionally rewire Cursor after `ma
 ## Verify (automated)
 
 ```bash
+make daemon-enable    # optional: auto-start at login (see docs/LAPTOP_DAEMON.md)
 make restart          # if gateway down
 make smoke-cursor     # models + chat + log check
 ```

@@ -1,5 +1,46 @@
 # Changelog
 
+## [3.18.0] — 2026-06-15 (Cycle 18 — capstone: 9 connectors + Personal pack)
+
+### Changed
+- `README`, `LANDING`, `PRODUCT_VISION` — v3.18.0, `make package-personal`
+- Cycles 14–18 bundle ready to ship (origin at v3.13.0)
+
+## [3.17.0] — 2026-06-15 (Cycle 17 — tower stray-key guide)
+
+### Added
+- `make guide-tower-strays` — audit + human cleanup steps (coinbot pattern)
+
+### Changed
+- `homelab-status` — tower row links guide command
+
+## [3.16.0] — 2026-06-15 (Cycle 16 — Cohere connector)
+
+### Added
+- `make connect-cohere` — ninth registry paste-key connector
+
+## [3.15.0] — 2026-06-15 (Cycle 15 — Fireworks + Personal tarball)
+
+### Added
+- `make connect-fireworks` — paste `fw_…` → mini
+- `make package-personal` — tarball for Personal tier (`dist/modelrouter-*-personal.tar.gz`)
+
+### Changed
+- Registry: 8 paste-key connectors
+
+## [3.14.0] — 2026-06-15 (Cycle 14 — DeepSeek/Together + Add Provider + daemon docs)
+
+### Added
+- `make connect-deepseek`, `make connect-together` — paste-key connectors (7 registry entries)
+- `docs/LAPTOP_DAEMON.md` — launchd auto-start for stable Cursor gateway
+- Widget **＋ Provider** menu — registry signup links + `make connect-*` hints
+
+### Changed
+- `homelab_status` — `registryConnectors` for widget menu
+- `env_store` — DeepSeek (`sk-…`) and Together key validation
+- `push-env-mini` — includes `DEEPSEEK_API_KEY`, `TOGETHER_API_KEY`
+- `docs/CURSOR_WIRING.md` — points at laptop daemon doc
+
 ## [3.13.0] — 2026-06-15 (Cycle 13 — Google connector + widget signup links)
 
 ### Added

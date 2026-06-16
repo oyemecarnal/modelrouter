@@ -1,7 +1,7 @@
 .PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-provider audit-tower-wires clean-tower-wires check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider audit-tower-wires clean-tower-wires guide-tower-strays check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal
 
 install:
 	./scripts/install.sh
@@ -90,11 +90,26 @@ connect-mistral:
 connect-google:
 	./scripts/connect-google.sh
 
+connect-deepseek:
+	./scripts/connect-deepseek.sh
+
+connect-together:
+	./scripts/connect-together.sh
+
+connect-fireworks:
+	./scripts/connect-fireworks.sh
+
+connect-cohere:
+	./scripts/connect-cohere.sh
+
 connect-provider:
 	./scripts/connect-provider.sh $(or $(PROVIDER),)
 
 push-env-mini:
-	./scripts/push-env-to-mini.sh MISTRAL_API_KEY GROQ_API_KEY OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GEMINI_API_KEY OPENROUTER_API_KEY POLYGON_API_KEY MODELROUTER_MASTER_KEY LITELLM_SALT_KEY
+	./scripts/push-env-to-mini.sh MISTRAL_API_KEY GROQ_API_KEY OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GEMINI_API_KEY DEEPSEEK_API_KEY TOGETHER_API_KEY FIREWORKS_API_KEY COHERE_API_KEY OPENROUTER_API_KEY POLYGON_API_KEY MODELROUTER_MASTER_KEY LITELLM_SALT_KEY
+
+package-personal:
+	./scripts/package-personal.sh
 
 push-client-env-tower:
 	./scripts/push-client-env-to-tower.sh
@@ -171,6 +186,9 @@ audit-tower-wires:
 
 clean-tower-wires:
 	./scripts/clean-tower-wires.sh
+
+guide-tower-strays:
+	./scripts/guide-tower-strays.sh
 
 core-apis:
 	./scripts/update-core-api-list.sh

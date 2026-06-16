@@ -35,7 +35,7 @@ if [[ -n "$TOWER_SSH" ]]; then
   ssh -o ConnectTimeout=4 "$TOWER_SSH" \
     'test -f ~/.config/modelrouter/client.env && echo "  client.env: ok" || echo "  client.env: missing — make push-client-env-tower"' 2>/dev/null \
     || echo "  client.env: check failed"
-  echo "  wires: make audit-tower-wires  ·  make clean-tower-wires"
+  echo "  wires: make audit-tower-wires  ·  make clean-tower-wires  ·  make guide-tower-strays"
 else
   echo "  skip SSH — set KC_TOWER_SSH when tower is online"
   echo "  LAN path: make smoke-tower  (hermes-fast / cheap via Kevins-Mac-mini.local)"
