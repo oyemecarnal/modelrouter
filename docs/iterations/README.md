@@ -181,3 +181,9 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 22.3 | `make ship-check` | [22.3.md](22.3.md) |
 | 22.4 | `SHIP_CHECKLIST.md` | [22.4.md](22.4.md) |
 | 22.5 | Capstone **v3.22.0** | [22.5.md](22.5.md) |
+
+## Cycle 23 (portfolio + key vault + themes)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 23.1 | Portfolio equity + Kalshi + key vault + themes → **v3.23.0** | [23.1.md](23.1.md) |

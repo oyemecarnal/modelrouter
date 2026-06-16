@@ -350,4 +350,16 @@ Bugbot        → 7 findings; 4 patched in-cycle
 
 ## Ship status (2026-06-16)
 
-**Origin:** **v3.18.0** (`d70ba59`). **Local:** **v3.22.0** unshipped (Cycles 19–22). **Tower:** audit ✓. **Gate:** `make ship-check` ✓
+**Origin:** **v3.23.0** (`8535c3d`). **Tower:** audit ✓. **Mini:** deploy ✓. **Gate:** `make ship-check` ✓
+
+---
+
+## Cycle 23 checkpoint (v3.23.0)
+
+**Theme:** Portfolio equity, network key vault, widget themes.
+
+| Iter | Deliverable |
+|------|-------------|
+| 23.1 | `fetch_equity` portfolio · Kalshi · Tangem USD · `key_vault.py` · 11 themes · **v3.23.0** |
+
+**Next cycle 24 proposal:** Gateway key cycling on 429, OAuth google exchange stub, widget vault UI.

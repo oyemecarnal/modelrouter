@@ -93,8 +93,13 @@ make connect-groq          # paste gsk_… → mini
 make push-env-mini         # sync selected vars to mini
 make keys-sync-mini        # pull mini .env → laptop
 make check-key-hygiene     # laptop + mini key audit
+make vault-scrape          # masked network key discovery
+make vault-scrape-collect  # ingest → data/key_vault.json (policy-gated)
+make vault-export          # merge vault → .env
 make doctor                # masked provider key status
 ```
+
+Network vault: `docs/KEY_VAULT.md`. Machine inventory: `make inventory`.
 
 ## Verify Anthropic
 

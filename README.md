@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.22.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
+**v3.23.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
 
 One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 
@@ -234,14 +234,16 @@ Plain-language guide: `docs/POLICY_ROUTER.md`. OpenRouter is **stubbed** (`confi
 
 ## Keys widget
 
-Square desktop panel for live API usage and masked key inventory (`tokens/` — ingested from Mac mini `~/dev/tokens`):
+Square desktop panel for live API usage, **portfolio equity** (exchanges + Kalshi + cold wallets), and masked key inventory (`tokens/`):
 
 ```bash
 make keys-widget-install   # venv + background refresh
 make keys-widget           # open panel (Refresh + Edit buttons)
+make vault-scrape-collect  # network key ingest → data/key_vault.json
+make vault-export          # merge vault → .env (see docs/KEY_VAULT.md)
 ```
 
-See `tokens/README.md` for provider details.
+See `tokens/README.md` for providers, equity routes, and theme presets.
 
 ## Roadmap
 

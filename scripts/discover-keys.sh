@@ -64,6 +64,8 @@ else
 fi
 
 echo ""
+echo "Network vault: make vault-scrape          # masked discovery"
+echo "               make vault-scrape-collect  # ingest (see config/key_vault.yaml)"
 echo "Full machine scan (allowed paths + crypto surfaces): make inventory"
 echo "Run: ./scripts/sync-keys.sh --dry-run   # preview fill for modelrouter/.env"
 echo "Run: ./scripts/sync-keys.sh             # fill empty vars only"
