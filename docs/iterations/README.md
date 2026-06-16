@@ -187,3 +187,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | Version | Focus | Doc |
 |---------|--------|-----|
 | 23.1 | Portfolio equity + Kalshi + key vault + themes → **v3.23.0** | [23.1.md](23.1.md) |
+
+## Cycle 24 (widget reliability + vault ops)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 24.1 | Vault masked export tests | [24.1.md](24.1.md) |
+| 24.2 | Equity fetch timeout + stale cache | [24.2.md](24.2.md) |
+| 24.3 | Stale equity flag correctness | [24.3.md](24.3.md) |
+| 24.4 | Doctor + homelab vault hints | [24.4.md](24.4.md) |
+| 24.5 | Capstone **v3.24.0** | [24.5.md](24.5.md) |

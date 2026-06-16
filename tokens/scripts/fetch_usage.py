@@ -804,6 +804,33 @@ LIVE_FETCHERS: dict[str, Callable[[], ProviderSnapshot]] = {
 }
 
 
+def _fetch_equity_safe(cfg: dict[str, Any]) -> dict[str, Any] | None:
+    """Bounded equity fetch — avoids blocking widget refresh on slow Kraken."""
+    equity_cfg = cfg.get("equity") or {}
+    if not equity_cfg.get("enabled", True):
+        return None
+    timeout = int(equity_cfg.get("fetch_timeout_seconds") or 90)
+    try:
+        from concurrent.futures import ThreadPoolExecutor, TimeoutError as FutTimeout
+
+        from fetch_equity import fetch_equity, read_stale_equity
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(fetch_equity, cfg)
+            return future.result(timeout=timeout)
+    except FutTimeout:
+        from fetch_equity import read_stale_equity
+
+        stale = read_stale_equity()
+        if stale:
+            stale["stale"] = True
+            stale["error"] = f"live fetch timed out after {timeout}s — showing cache"
+            return stale
+        return {"error": f"equity timed out after {timeout}s", "brokers": [], "stale": True}
+    except Exception as exc:
+        return {"error": str(exc)[:200], "brokers": []}
+
+
 def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
     cfg = config or load_config()
     enabled = cfg.get("providers") or {}
@@ -844,12 +871,7 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
 
     equity: dict[str, Any] | None = None
     if (cfg.get("equity") or {}).get("enabled", True):
-        try:
-            from fetch_equity import fetch_equity
-
-            equity = fetch_equity(cfg)
-        except Exception as exc:
-            equity = {"error": str(exc)[:200], "brokers": []}
+        equity = _fetch_equity_safe(cfg)
 
     wallets: dict[str, Any] | None = None
     if (cfg.get("wallets") or {}).get("enabled", True):

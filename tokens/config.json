@@ -29,6 +29,7 @@
     "include_wallets": true,
     "force_live": true,
     "cache_ttl_seconds": 300,
+    "fetch_timeout_seconds": 90,
     "timeout_seconds": 90,
     "broker_timeouts": { "kraken": 120 },
     "kraken_market_symbols": "BTC/USD,ETH/USD,SOL/USD,USD,USDC,USDT",

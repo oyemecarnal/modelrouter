@@ -257,6 +257,16 @@ def _write_cache(payload: dict[str, Any]) -> None:
         pass
 
 
+def read_stale_equity() -> dict[str, Any] | None:
+    """Last equity cache regardless of TTL — widget timeout fallback."""
+    data = _read_cache(0)
+    if not data:
+        return None
+    out = dict(data)
+    out["cached"] = True
+    return out
+
+
 def _status_to_equity(status: dict[str, Any], host: str) -> dict[str, Any]:
     equity = status.get("total_equity_usd") or status.get("equity_usd")
     broker = (status.get("broker") or status.get("exchange") or "coinbot").lower()

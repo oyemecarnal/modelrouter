@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.24.0] — 2026-06-16 (Cycle 24 — widget reliability + vault ops)
+
+### Added
+- Equity **fetch timeout** in widget (`fetch_timeout_seconds`) — stale cache fallback when Kraken/live brokers hang
+- **Key vault** hints in homelab receiver bar + doctor vault row
+- Tests: vault masked export guard, equity bounded fetch helper
+
+### Changed
+- `fetch_usage` — equity via `_fetch_equity_safe` (90s default) instead of unbounded live fetch
+- `doctor` — vault status + next-step commands; fixed gateway hint indentation
+
 ## [3.23.0] — 2026-06-16 (Cycle 23 — portfolio equity + key vault + themes)
 
 ### Added

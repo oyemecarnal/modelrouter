@@ -108,13 +108,31 @@ else
 fi
 
 echo ""
+echo "── Key vault"
+if [[ -x "$ROOT/.venv/bin/python" ]]; then
+  PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+from modelrouter.key_vault import list_entries, vault_path, load_vault_config
+cfg = load_vault_config()
+n = len(list_entries(cfg))
+p = vault_path(cfg)
+print(f'{n} entries in {p.name}' if p.exists() else 'not collected yet')
+" 2>/dev/null | while read -r line; do
+    if [[ "$line" == *"not collected"* ]]; then warn "$line — make vault-scrape-collect"
+    else ok "Key vault: $line"
+    fi
+  done
+fi
+
+echo ""
 echo "── Next steps"
 echo "  make restart              # if unhealthy"
 echo "  make route-hints          # refresh widget → routing hints"
 echo "  make push-client-env-tower  # when tower SSH is up"
 echo "  make rotate-master-key    # if master key placeholder"
-  echo "  make ensure-gateway       # restart gateway if down"
-  echo "  make daemon-enable        # laptop launchd — docs/LAPTOP_DAEMON.md"
+echo "  make ensure-gateway       # restart gateway if down"
+echo "  make daemon-enable        # laptop launchd — docs/LAPTOP_DAEMON.md"
+echo "  make vault-scrape-collect # network key ingest"
+echo "  make vault-export         # merge vault → .env"
 echo "  make deploy-mini          # sync this tree to kc-mini"
 echo "  make core-apis            # refresh gitignored data/CORE_APIS.md (masked)"
 echo "  make check-key-hygiene    # salt distinct, provider keys, Groq rotate reminder"

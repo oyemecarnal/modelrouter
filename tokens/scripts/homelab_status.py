@@ -339,6 +339,18 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             }
         )
 
+    vault_path = root / "data" / "key_vault.json"
+    if not vault_path.is_file():
+        hints.append(
+            {
+                "id": "key_vault",
+                "text": "Network key vault empty — keys may be scattered",
+                "fix": "make vault-scrape-collect",
+                "alt": "make vault-export",
+                "doc": "docs/KEY_VAULT.md",
+            }
+        )
+
     return {
         "enabled": True,
         "host": socket.gethostname(),

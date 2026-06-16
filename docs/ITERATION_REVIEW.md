@@ -350,16 +350,20 @@ Bugbot        → 7 findings; 4 patched in-cycle
 
 ## Ship status (2026-06-16)
 
-**Origin:** **v3.23.0** (`8535c3d`). **Tower:** audit ✓. **Mini:** deploy ✓. **Gate:** `make ship-check` ✓
+**Origin:** **v3.24.0**. **Tower:** audit ✓. **Mini:** gateway ok. **Laptop gateway:** down — `make ensure-gateway`
 
 ---
 
-## Cycle 23 checkpoint (v3.23.0)
+## Cycle 24 checkpoint (v3.24.0)
 
-**Theme:** Portfolio equity, network key vault, widget themes.
+**Theme:** Widget refresh reliability + vault operational visibility.
 
 | Iter | Deliverable |
 |------|-------------|
-| 23.1 | `fetch_equity` portfolio · Kalshi · Tangem USD · `key_vault.py` · 11 themes · **v3.23.0** |
+| 24.1 | Vault masked export tests |
+| 24.2 | Equity fetch timeout (90s) + stale cache |
+| 24.3 | Stale flag on timeout path |
+| 24.4 | Doctor + homelab vault hints |
+| 24.5 | **v3.24.0** |
 
-**Next cycle 24 proposal:** Gateway key cycling on 429, OAuth google exchange stub, widget vault UI.
+**Next cycle 25 proposal:** Gateway 429 key cycling, OAuth google stub, widget vault disable UI.

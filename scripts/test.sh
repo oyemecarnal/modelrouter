@@ -201,6 +201,31 @@ assert 'keys' in merged
 print('  ok key_vault config + merge')
 "
 
+echo "── Key vault (masked exports)"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+from modelrouter.key_vault import list_entries, load_vault_config, vault_path
+import json, re
+cfg = load_vault_config()
+rows = list_entries(cfg)
+blob = json.dumps(rows)
+# Fingerprints may start with gsk_/sk- — reject full-length secrets only
+SECRET_RE = re.compile(r'(?:gsk_[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9]{20,}|sk-proj-[A-Za-z0-9]{20,})')
+m = SECRET_RE.search(blob)
+assert not m, f'vault list leaked raw key ({m.group(0)[:16]}...)'
+vp = vault_path(cfg)
+assert 'data' in str(vp), vp
+print('  ok key_vault masked list (' + str(len(rows)) + ' entries)')
+"
+
+echo "── Equity timeout helper"
+PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+from fetch_equity import read_stale_equity
+from fetch_usage import _fetch_equity_safe
+assert callable(read_stale_equity)
+assert callable(_fetch_equity_safe)
+print('  ok equity bounded fetch')
+"
+
 echo "── Health (optional)"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/lib.sh" 2>/dev/null || true
