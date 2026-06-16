@@ -131,17 +131,17 @@ _PREFIX_HINTS: dict[str, str] = {
     "ANTHROPIC_API_KEY": "sk-ant-",
     "OPENAI_API_KEY": "sk-",
     "MISTRAL_API_KEY": "",
+    "GOOGLE_API_KEY": "AIza",
 }
 
 # Non-registry keys shown on receiver bar (laptop / stub providers)
-EXTRA_CONNECTOR_DEFS = [
-    ("google", "GOOGLE", "GOOGLE_API_KEY", "AIza"),
-    ("cursor", "CURSOR", "CURSOR_API_KEY", ""),
-    ("openrouter", "OROUTE", "OPENROUTER_API_KEY", "sk-or-"),
+EXTRA_CONNECTOR_DEFS: list[dict[str, str]] = [
+    {"id": "cursor", "label": "CURSOR", "env": "CURSOR_API_KEY", "prefix": ""},
+    {"id": "openrouter", "label": "OROUTE", "env": "OPENROUTER_API_KEY", "prefix": "sk-or-"},
 ]
 
 
-def _load_registry_connectors(root: Path) -> list[tuple[str, str, str, str]]:
+def _load_registry_connectors(root: Path) -> list[dict[str, str]]:
     """Paste-key connectors from config/connectors.yaml (SSOT)."""
     try:
         import yaml
@@ -150,12 +150,20 @@ def _load_registry_connectors(root: Path) -> list[tuple[str, str, str, str]]:
         if not path.exists():
             return []
         reg = yaml.safe_load(path.read_text()) or {}
-        out: list[tuple[str, str, str, str]] = []
+        out: list[dict[str, str]] = []
         for cid, c in (reg.get("connectors") or {}).items():
             env_var = (c or {}).get("env") or ""
             label = ((c or {}).get("label") or cid).upper()[:6]
             prefix = _PREFIX_HINTS.get(env_var, "")
-            out.append((cid, label, env_var, prefix))
+            out.append(
+                {
+                    "id": cid,
+                    "label": label,
+                    "env": env_var,
+                    "prefix": prefix,
+                    "signup": (c or {}).get("signup") or "",
+                }
+            )
         return out
     except Exception:
         return []
@@ -248,9 +256,12 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
 
     connector_defs = _load_registry_connectors(root) + EXTRA_CONNECTOR_DEFS
 
-    validators = {env_var: prefix for _, _, env_var, prefix in connector_defs}
+    validators = {c["env"]: c["prefix"] for c in connector_defs}
     connectors: list[dict[str, str]] = []
-    for cid, label, env_var, prefix in connector_defs:
+    for conn in connector_defs:
+        cid = conn["id"]
+        label = conn["label"]
+        env_var = conn["env"]
         val = env.get(env_var, "")
         if env_var == "GOOGLE_API_KEY" and not val:
             val = env.get("GEMINI_API_KEY", "")
@@ -260,7 +271,10 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             detail = "stubbed — not routed"
         else:
             detail = "configured" if state == "ok" else "missing"
-        connectors.append(_led(cid, label, state, detail, "api"))
+        led = _led(cid, label, state, detail, "api")
+        if conn.get("signup"):
+            led["signup"] = conn["signup"]
+        connectors.append(led)
 
     webhooks_cfg = rx.get("webhooks") or DEFAULT_WEBHOOKS
     webhooks: list[dict[str, str]] = []

@@ -239,6 +239,22 @@ Bugbot        → 7 findings; 4 patched in-cycle
 
 ---
 
+## Cycle 13 checkpoint (v3.13.0)
+
+**Theme:** Google connector + registry signup links + tower cleanup docs.
+
+| Iter | Deliverable |
+|------|-------------|
+| 13.1 | `GOOGLE_API_KEY` validation (`AIza…`) |
+| 13.2 | `docs/TOWER_CLEANUP.md`, coinbot audit hints |
+| 13.3 | `make connect-google` (5 registry connectors) |
+| 13.4 | Widget signup strip from `connectors.yaml` |
+| 13.5 | **v3.13.0** |
+
+**Next cycle 14 proposal:** DeepSeek/Together connectors, widget “Add provider” button, `make daemon-enable` laptop doc pass.
+
+---
+
 ## Ship status (2026-06-15)
 
-**Origin:** **v3.12.0** (`dc1ea7c`) — Cycles 11–12 shipped. Repo clean; laptop gateway often down without `make daemon-enable`.
+**Origin:** **v3.12.0** + docs patch (`6840cd3`). Cycle 13 local (**v3.13.0** unshipped).

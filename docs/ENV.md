@@ -13,6 +13,7 @@
 | Anthropic | `make connect-anthropic` | `ANTHROPIC_API_KEY` | `sk-ant-…` |
 | OpenAI    | `make connect-openai`    | `OPENAI_API_KEY`    | `sk-…`     |
 | Mistral   | `make connect-mistral`   | `MISTRAL_API_KEY`   | alphanumeric |
+| Google    | `make connect-google`    | `GOOGLE_API_KEY`    | `AIza…`      |
 
 
 Generic registry: `make connect-provider PROVIDER=<id>` (see `config/connectors.yaml`).

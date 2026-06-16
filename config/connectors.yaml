@@ -44,3 +44,13 @@ connectors:
     signup: https://console.mistral.ai
     presets: [code, mistral-small]
     make_target: connect-mistral
+
+  google:
+    label: Google
+    env: GOOGLE_API_KEY
+    mode: paste_key
+    validate: google
+    script: connect-google.sh
+    signup: https://aistudio.google.com/apikey
+    presets: [smart, cheap]
+    make_target: connect-google

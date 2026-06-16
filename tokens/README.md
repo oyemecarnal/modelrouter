@@ -77,7 +77,7 @@ Override any color infinitely:
 }
 ```
 
-Add network probes under `receiver.webhooks` (reachability only, no secrets).
+Add network probes under `receiver.webhooks` (reachability only, no secrets). Paste-key connectors from `config/connectors.yaml` drive the API KEYS row; missing keys show signup links in the widget.
 
 | `scripts/key_inventory.py` | Scan ~/dev for API keys |
 | `widget/desktop_widget.py` | Native pywebview panel |

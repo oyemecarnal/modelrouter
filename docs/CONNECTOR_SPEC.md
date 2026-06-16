@@ -38,6 +38,7 @@ make connect-groq        # paste → local .env → push-env-mini
 make connect-anthropic   # paste sk-ant-… → mini (hermes-smart / review)
 make connect-openai      # paste sk-… → mini (smart / code)
 make connect-mistral     # paste Mistral key → mini
+make connect-google      # paste Google AI key → mini
 make connect-provider PROVIDER=<id>
 make audit-tower-wires   # stray provider keys on kc-tower
 make clean-tower-wires   # push client.env + re-audit
@@ -59,7 +60,7 @@ make smoke-hermes-smart  # Anthropic route on mini
 ## Future (Phase 2.5+)
 
 - OAuth / refresh tokens
-- Widget “Add provider” button (signup deep-link from registry)
+- Widget “Add provider” button (signup links shown for missing keys in Cycle 13)
 - 1Password write from connector (read-only via `load_secrets.py` today)
 - OpenRouter wiring (stub stays)
 - Google/Gemini paste-key connectors

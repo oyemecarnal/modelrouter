@@ -51,7 +51,7 @@ You cannot calibrate spend or context until traffic flows through **one meter**.
 - [x] Cursor: base URL → ModelRouter; API key → `MODELROUTER_MASTER_KEY` *(verified 2026-06-13)*
 - [x] Tower template: `config/client.env.example` + `make push-client-env-tower`
 - [x] Hermes/tower: `client.env` deployed — Tailscale gateway URL (`docs/TOWER_WIRING.md`)
-- [ ] Remove provider keys from tower `.env` files — `make clean-tower-wires` when kc-tower is online
+- [ ] Remove provider keys from tower `.env` files — `make clean-tower-wires` when kc-tower is online (`docs/TOWER_CLEANUP.md`)
 
 **Note:** Tower `client.env` may set `OPENAI_API_KEY` to the **gateway virtual key** (OpenAI-compatible shim) — that is not a vendor secret. Audit skips it.
 - [ ] Stop new keys in `~/.zshrc` — mini `modelrouter/.env` + 1Password *(human habit)*

@@ -80,7 +80,9 @@ assert validate_provider_key('OPENAI_API_KEY', 'sk-proj-' + 'x' * 40) is None
 assert validate_provider_key('OPENAI_API_KEY', 'bad') is not None
 assert validate_provider_key('MISTRAL_API_KEY', 'a' * 32) is None
 assert validate_provider_key('MISTRAL_API_KEY', 'short') is not None
-print('  ok env_store key validation (groq + anthropic + openai + mistral)')
+assert validate_provider_key('GOOGLE_API_KEY', 'AIza' + 'x' * 35) is None
+assert validate_provider_key('GOOGLE_API_KEY', 'bad') is not None
+print('  ok env_store key validation (groq + anthropic + openai + mistral + google)')
 "
 
 echo "── Connector registry"
@@ -116,6 +118,8 @@ assert len(d.get('themePresets', {})) >= 5, d
 assert len(d.get('rows', [])) >= 3, d
 api_row = next((r for r in d['rows'] if r.get('id') == 'connectors'), {})
 assert len(api_row.get('leds', [])) >= 4, 'registry-driven API KEY LEDs'
+signup = [l for l in api_row.get('leds', []) if l.get('signup')]
+assert len(signup) >= 4, 'connector signup URLs from registry'
 print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'presets')
 "
 

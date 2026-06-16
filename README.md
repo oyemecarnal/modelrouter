@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.12.0** — Self-hosted AI control plane ([landing](docs/LANDING.md) · [positioning](docs/POSITIONING.md) · [env](docs/ENV.md))
+**v3.13.0** — Self-hosted AI control plane ([landing](docs/LANDING.md) · [positioning](docs/POSITIONING.md) · [env](docs/ENV.md))
 
 One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 
@@ -125,6 +125,7 @@ make connect-groq        # paste Groq key → .env → mini
 make connect-anthropic   # paste Anthropic key → mini (hermes-smart / review)
 make connect-openai      # paste OpenAI key → mini (smart / code)
 make connect-mistral     # paste Mistral key → mini (code / fallbacks)
+make connect-google      # paste Google AI key → mini (Gemini routes)
 make connect-provider PROVIDER=anthropic  # generic registry dispatch
 make audit-tower-wires   # scan kc-tower for stray provider keys
 make clean-tower-wires   # push client.env + re-audit tower

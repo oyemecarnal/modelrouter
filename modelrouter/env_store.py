@@ -12,6 +12,7 @@ _KEY_PATTERNS: dict[str, re.Pattern[str]] = {
     "ANTHROPIC_API_KEY": re.compile(r"^sk-ant-[A-Za-z0-9_-]{20,}$"),
     "OPENAI_API_KEY": re.compile(r"^sk-[A-Za-z0-9_-]{20,}$"),
     "MISTRAL_API_KEY": re.compile(r"^[A-Za-z0-9]{20,}$"),
+    "GOOGLE_API_KEY": re.compile(r"^AIza[A-Za-z0-9_-]{20,}$"),
 }
 
 
@@ -28,6 +29,7 @@ def validate_provider_key(env_var: str, value: str) -> str | None:
             "GROQ_API_KEY": "gsk_…",
             "ANTHROPIC_API_KEY": "sk-ant-…",
             "OPENAI_API_KEY": "sk-…",
+            "GOOGLE_API_KEY": "AIza…",
         }.get(env_var, "provider format")
         return f"{env_var} does not match expected format ({hint})"
     if len(val) < 20:

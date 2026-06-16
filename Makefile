@@ -1,7 +1,7 @@
 .PHONY: install start stop restart health logs status doctor daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-provider audit-tower-wires clean-tower-wires check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-provider audit-tower-wires clean-tower-wires check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene
 
 install:
 	./scripts/install.sh
@@ -86,6 +86,9 @@ connect-openai:
 
 connect-mistral:
 	./scripts/connect-mistral.sh
+
+connect-google:
+	./scripts/connect-google.sh
 
 connect-provider:
 	./scripts/connect-provider.sh $(or $(PROVIDER),)

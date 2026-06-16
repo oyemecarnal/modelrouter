@@ -127,6 +127,18 @@
       margin: 4px 0 2px 2px;
     }
     .receiver-row-label:first-of-type { margin-top: 0; }
+    .receiver-signups {
+      font-size: 9px;
+      text-align: center;
+      margin: 2px 0 6px;
+      line-height: 1.4;
+      color: var(--rx-label);
+    }
+    .receiver-signups a {
+      color: var(--led-warn);
+      text-decoration: none;
+    }
+    .receiver-signups a:hover { text-decoration: underline; }
     .receiver-bar.mode-classic-rg .led-lamp.down,
     .receiver-bar.mode-classic-rg .led-lamp.off,
     .receiver-bar.mode-classic-rg .led-lamp.skip {
@@ -399,6 +411,7 @@
     <div class="receiver-panel">
       <div class="receiver-brand">C O N N E C T I V I T Y</div>
       <div id="receiver-rows"></div>
+      <div id="receiver-signups" class="receiver-signups" aria-label="Provider signup links"></div>
     </div>
   </div>
   <div id="scroll">
@@ -566,11 +579,28 @@
     }
 
     function renderLedRow(leds) {
-      return `<div class="receiver-led-row">${(leds || []).map(led => `
-        <div class="led-unit" title="${(led.detail || led.label || '').replace(/"/g, '&quot;')}">
+      return `<div class="receiver-led-row">${(leds || []).map(led => {
+        const tip = [led.detail, led.signup].filter(Boolean).join(' — ');
+        return `
+        <div class="led-unit" title="${tip.replace(/"/g, '&quot;')}">
           <div class="led-bezel"><div class="led-lamp ${led.state || 'off'}"></div></div>
           <div class="led-label">${led.label || led.id}</div>
-        </div>`).join('')}</div>`;
+        </div>`;
+      }).join('')}</div>`;
+    }
+
+    function renderSignupHints(status) {
+      const el = document.getElementById('receiver-signups');
+      if (!el) return;
+      const row = (status.rows || []).find(r => r.id === 'connectors');
+      const hints = (row?.leds || []).filter(l => l.signup && l.state !== 'ok');
+      if (!hints.length) {
+        el.innerHTML = '';
+        return;
+      }
+      el.innerHTML = hints.map(l =>
+        `<a href="${l.signup}" target="_blank" rel="noopener noreferrer">${l.label} keys</a>`
+      ).join(' · ');
     }
 
     function selectReceiverPreset(presetId) {
@@ -631,6 +661,7 @@
       } else {
         rowsRoot.innerHTML = renderLedRow(status.leds);
       }
+      renderSignupHints(status);
     }
 
     function renderConsole(grid) {

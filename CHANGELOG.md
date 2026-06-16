@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.13.0] — 2026-06-15 (Cycle 13 — Google connector + widget signup links)
+
+### Added
+- `make connect-google` — paste `AIza…` → `.env` → mini (`GEMINI_API_KEY` alias when unset)
+- `docs/TOWER_CLEANUP.md` — tower agent `.env` cleanup (coinbot pattern)
+- Widget receiver — signup links for missing registry connectors (`connectors.yaml`)
+
+### Changed
+- `homelab_status` — registry LEDs include `signup` URLs; Google moved into registry
+- `env_store` — `GOOGLE_API_KEY` validation (`AIza…`)
+- `audit-tower-wires` — coinbot-specific cleanup hint
+- `test.sh` — Google validation + signup URL smoke
+
 ## [3.12.0] — 2026-06-15 (Cycle 12 — landing stub + Mistral + registry LEDs)
 
 ### Added

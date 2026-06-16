@@ -121,3 +121,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 12.3 | `make connect-mistral` | [12.3.md](12.3.md) |
 | 12.4 | Registry-driven receiver LEDs + `LANDING.md` | [12.4.md](12.4.md) |
 | 12.5 | Capstone → **v3.12.0** | [12.5.md](12.5.md) |
+
+## Cycle 13 (Google connector + signup links)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 13.1 | `GOOGLE_API_KEY` validation | [13.1.md](13.1.md) |
+| 13.2 | `docs/TOWER_CLEANUP.md` + audit hints | [13.2.md](13.2.md) |
+| 13.3 | `make connect-google` | [13.3.md](13.3.md) |
+| 13.4 | Widget signup links from registry | [13.4.md](13.4.md) |
+| 13.5 | Capstone → **v3.13.0** | [13.5.md](13.5.md) |

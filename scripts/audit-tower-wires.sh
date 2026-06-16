@@ -95,6 +95,9 @@ while IFS= read -r line; do
       var="${path##*:}"
       file="${path%:*}"
       fail "stray ${var} in ${file}"
+      if [[ "$file" == *coinbot* ]]; then
+        warn "coinbot: remove ${var} from .env; use source ~/.config/modelrouter/client.env"
+      fi
       strays=$((strays + 1))
       ;;
     HITS:*)
@@ -118,4 +121,5 @@ fi
 echo ""
 echo "Action: remove provider keys from tower; use gateway presets via client.env"
 echo "  make clean-tower-wires && make smoke-tower"
+echo "  docs/TOWER_CLEANUP.md  (coinbot and other agent .env files)"
 exit 1

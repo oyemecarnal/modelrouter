@@ -35,7 +35,7 @@ else
   ok "LITELLM_SALT_KEY distinct from master"
 fi
 
-for k in GROQ_API_KEY ANTHROPIC_API_KEY OPENAI_API_KEY; do
+for k in GROQ_API_KEY ANTHROPIC_API_KEY OPENAI_API_KEY MISTRAL_API_KEY GOOGLE_API_KEY; do
   v="${!k:-}"
   if [[ -n "$v" ]]; then ok "$k set on laptop"
   else warn "$k empty on laptop"
@@ -48,7 +48,7 @@ echo ""
 echo "── kc-mini (remote)"
 if ssh -o ConnectTimeout=4 kc-mini-lan 'test -d ~/dev/modelrouter' 2>/dev/null; then
   ssh -o ConnectTimeout=4 kc-mini-lan 'cd ~/dev/modelrouter && source .env 2>/dev/null; \
-    for k in GROQ_API_KEY ANTHROPIC_API_KEY OPENAI_API_KEY MISTRAL_API_KEY LITELLM_SALT_KEY MODELROUTER_MASTER_KEY; do \
+    for k in GROQ_API_KEY ANTHROPIC_API_KEY OPENAI_API_KEY MISTRAL_API_KEY GOOGLE_API_KEY LITELLM_SALT_KEY MODELROUTER_MASTER_KEY; do \
       eval v=\$${k}; \
       if [[ -n "$v" && "$v" != *change-me* ]]; then echo "  ok $k"; else echo "  ! $k missing/placeholder"; fi; \
     done; \
