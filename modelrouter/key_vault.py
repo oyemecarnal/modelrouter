@@ -37,6 +37,14 @@ VAULT_VERSION = 1
 ENV_LINE_EXPORT = re.compile(r"^(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=\s*(.+)$")
 ENV_ALT_SUFFIX = re.compile(r"^([A-Z][A-Z0-9_]*)__ALT_(\d+)$")
 
+# LiteLLM simple-shuffle alt deployments (config SSOT)
+ALT_ROUTE_VARS = (
+    "GROQ_API_KEY",
+    "OPENAI_API_KEY",
+    "MISTRAL_API_KEY",
+    "ANTHROPIC_API_KEY",
+)
+
 
 def normalize_env_var_key(key: str) -> tuple[str, int | None]:
     """Map GROQ_API_KEY__ALT_1 → (GROQ_API_KEY, 1); primary keys return alt_index None."""
@@ -438,6 +446,27 @@ def list_entries(cfg: dict[str, Any] | None = None, *, enabled_only: bool = Fals
             }
         )
     return out
+
+
+def vault_alt_readiness(cfg: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Count enabled vault keys per alt-routed provider (no secret values)."""
+    from collections import Counter
+
+    cfg = cfg or load_vault_config()
+    doc = load_vault(cfg)
+    counts = Counter(
+        r.get("env_var")
+        for r in doc.get("keys") or []
+        if r.get("enabled", True) and r.get("env_var") in ALT_ROUTE_VARS
+    )
+    ready = {var: counts.get(var, 0) >= 2 for var in ALT_ROUTE_VARS}
+    missing = [var for var in ALT_ROUTE_VARS if not ready[var]]
+    return {
+        "counts": {var: counts.get(var, 0) for var in ALT_ROUTE_VARS},
+        "ready": ready,
+        "missing": missing,
+        "shuffle_ready": len(missing) == 0,
+    }
 
 
 def select_key(

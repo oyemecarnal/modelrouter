@@ -14,6 +14,9 @@ make check-alt-keys            # verify __ALT_N vars vs LiteLLM config (warn-onl
 make check-alt-keys-mini       # same audit on kc-mini .env
 make push-alt-keys-mini        # sync alt keys laptop → kc-mini .env
 make vault-sync-alts           # export + push alts (see multi-key hint)
+make vault-sync-alts-restart   # same + restart kc-mini gateway
+make vault-rotate-drill        # dry-run 429 rotate pipeline readiness
+make connect-alt-key PROVIDER=groq  # paste GROQ_API_KEY__ALT_1
 make bootstrap-mini            # deploy + daemon-enable + push alts
 ```
 

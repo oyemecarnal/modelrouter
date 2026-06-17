@@ -30,6 +30,20 @@ def _last_rotate_hint(root: Path) -> dict[str, Any] | None:
         return None
 
 
+def _vault_alt_readiness(root: Path) -> dict[str, Any]:
+    try:
+        import sys
+
+        rstr = str(root)
+        if rstr not in sys.path:
+            sys.path.insert(0, rstr)
+        from modelrouter.key_vault import vault_alt_readiness
+
+        return vault_alt_readiness()
+    except Exception:
+        return {"ready": {}, "missing": [], "shuffle_ready": False, "counts": {}}
+
+
 def _load_hosts(root: Path) -> dict[str, Any]:
     try:
         import yaml
@@ -286,6 +300,25 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             )
         )
 
+    alt_ready = _vault_alt_readiness(root)
+    n_ready = sum(1 for v in alt_ready.get("ready", {}).values() if v)
+    n_total = len(alt_ready.get("ready") or {})
+    if n_total:
+        if n_ready < n_total:
+            infra.append(
+                _led(
+                    "alts",
+                    "ALTS",
+                    "warn",
+                    f"{n_ready}/{n_total} shuffle",
+                    "path",
+                )
+            )
+        else:
+            infra.append(
+                _led("alts", "ALTS", "ok", f"{n_total} shuffle-ready", "path")
+            )
+
     connector_defs = _load_registry_connectors(root) + EXTRA_CONNECTOR_DEFS
 
     validators = {c["env"]: c["prefix"] for c in connector_defs}
@@ -385,6 +418,18 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
                 "text": f"429 rotate pending — {rotate_hint.get('env_var', 'key')}",
                 "fix": "make vault-rotate-push",
                 "alt": "make vault-rotate-export",
+                "doc": "docs/KEY_VAULT.md",
+            }
+        )
+
+    alt_missing = alt_ready.get("missing") or []
+    if alt_missing:
+        hints.append(
+            {
+                "id": "alt_keys",
+                "text": f"Alt shuffle inactive — need 2+ keys: {', '.join(alt_missing)}",
+                "fix": "make connect-alt-key PROVIDER=groq",
+                "alt": "make vault-sync-alts",
                 "doc": "docs/KEY_VAULT.md",
             }
         )

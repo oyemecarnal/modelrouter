@@ -127,7 +127,7 @@ print('  ok connectors.yaml', len(connectors), 'entries + connect-provider')
 "
 
 echo "── Homelab status (widget)"
-PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
+PYTHONPATH="$ROOT:$ROOT/tokens/scripts" "$PY" -c "
 from homelab_status import load_homelab_status
 d = load_homelab_status({'modelrouter_root': '$ROOT', 'receiver': {'enabled': True, 'default_preset': 'classic-rg'}})
 assert d.get('enabled') and len(d.get('leds', [])) >= 10, d
@@ -141,6 +141,8 @@ assert len(d.get('registryConnectors', [])) >= 6, 'registryConnectors for widget
 rc = d['registryConnectors'][0]
 assert rc.get('env'), 'registryConnectors need env for paste modal'
 assert 'hints' in d, 'homelab_status should expose hints list'
+infra = next((r for r in d['rows'] if r.get('id') == 'infra'), {})
+assert any(l.get('id') == 'alts' for l in infra.get('leds', [])), 'ALTS LED missing'
 print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'presets, hints=', len(d.get('hints', [])))
 "
 
@@ -229,6 +231,15 @@ with tempfile.TemporaryDirectory() as td:
     out = export_env(cfg2, dry_run=True)
     assert 'GROQ_API_KEY__ALT_1' in out['keys'], out
 print('  ok key_vault alt normalize + export')
+"
+
+echo "── Key vault (alt readiness)"
+PYTHONPATH="$ROOT" "$PY" -c "
+from modelrouter.key_vault import vault_alt_readiness, ALT_ROUTE_VARS
+r = vault_alt_readiness()
+assert set(r['counts'].keys()) == set(ALT_ROUTE_VARS)
+assert 'missing' in r and 'shuffle_ready' in r
+print('  ok vault_alt_readiness', len(r['missing']), 'providers need 2nd key')
 "
 
 echo "── Key vault (masked exports)"

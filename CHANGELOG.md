@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.33.0] — 2026-06-12 (Cycle 33 — alt paste, rotate drill, ALTS LED)
+
+### Added
+- **`make connect-alt-key`** — paste `VAR__ALT_N` into `.env` + optional `push-alt-keys-mini`
+- **`make vault-rotate-drill`** — dry-run 429 rotate pipeline readiness (no secrets)
+- **`make vault-sync-alts-restart`** — export, push alts, restart mini gateway
+- **Widget ALTS LED** — vault multi-key readiness + `alt_keys` hint in homelab status
+
+### Changed
+- `vault_alt_readiness()` — counts enabled keys per alt-routed provider
+- `doctor` next-steps — rotate drill + connect-alt-key paths
+
 ## [3.32.0] — 2026-06-12 (Cycle 32 — alt scrape ingest + vault sync alts)
 
 ### Added

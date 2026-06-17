@@ -1,7 +1,7 @@
 .PHONY: install start stop restart health logs status doctor doctor-fix daemon daemon-enable daemon-disable
-.PHONY: docker-up docker-down docker-logs agents deploy-mini bootstrap-mini daemon-enable-mini push-alt-keys-mini check-alt-keys check-alt-keys-mini vault-sync-alts keys-audit keys-sync keys-sync-mini
+.PHONY: docker-up docker-down docker-logs agents deploy-mini bootstrap-mini daemon-enable-mini push-alt-keys-mini check-alt-keys check-alt-keys-mini vault-sync-alts vault-sync-alts-restart vault-rotate-drill connect-alt-key keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal inventory inventory-mini vault-scrape vault-scrape-collect vault-list vault-export vault-export-dry vault-sync-alts vault-rotate-export vault-rotate-export-dry vault-rotate-push vault-rotate-push-dry
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider connect-alt-key audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal inventory inventory-mini vault-scrape vault-scrape-collect vault-list vault-export vault-export-dry vault-sync-alts vault-sync-alts-restart vault-rotate-drill vault-rotate-export vault-rotate-export-dry vault-rotate-push vault-rotate-push-dry
 
 install:
 	./scripts/install.sh
@@ -89,6 +89,18 @@ check-alt-keys-mini:
 vault-sync-alts:
 	chmod +x scripts/vault-sync-alts.sh
 	./scripts/vault-sync-alts.sh
+
+vault-sync-alts-restart:
+	chmod +x scripts/vault-sync-alts.sh
+	./scripts/vault-sync-alts.sh --restart-mini
+
+vault-rotate-drill:
+	chmod +x scripts/vault-rotate-drill.sh
+	./scripts/vault-rotate-drill.sh
+
+connect-alt-key:
+	chmod +x scripts/connect-alt-key.sh
+	./scripts/connect-alt-key.sh $(or $(PROVIDER),)
 
 keys-audit:
 	./scripts/discover-keys.sh

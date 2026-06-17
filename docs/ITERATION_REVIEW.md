@@ -497,3 +497,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 **Finding:** Homelab still has 1 distinct key per provider — alt shuffle inactive until a second key is added (`VAR__ALT_1` in `.env` or second host path + `vault-scrape-collect`).
 
 **Next cycle 33 proposal:** Human: add second Groq/Anthropic keys, `make vault-sync-alts --restart-mini`, smoke + 429 rotate drill on mini.
+
+---
+
+## Cycle 33 checkpoint (v3.33.0)
+
+**Theme:** Alt-key human path, rotate drill, widget readiness.
+
+| Iter | Deliverable |
+|------|-------------|
+| 33.1 | `connect-alt-key` — paste `VAR__ALT_N` safely |
+| 33.2 | `vault-rotate-drill` — dry-run 429 pipeline audit |
+| 33.3 | `vault_alt_readiness()` + homelab ALTS LED/hint |
+| 33.4 | `vault-sync-alts-restart` + deploy v3.33 to mini |
+| 33.5 | **v3.33.0** |
+
+**Next cycle 34 proposal:** After pasting one alt key: `vault-scrape-collect`, `vault-sync-alts-restart`, live 429 drill with `MODELROUTER_AUTO_VAULT_*=1` on mini.
