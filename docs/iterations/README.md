@@ -227,3 +227,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 27.3 | ETH RPC fallback | [27.3.md](27.3.md) |
 | 27.4 | vault-rotate-export | [27.4.md](27.4.md) |
 | 27.5 | Capstone **v3.27.0** | [27.5.md](27.5.md) |
+
+## Cycle 28 (alt Groq routes + auto rotate + push)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 28.1 | Auto-rotate gate | [28.1.md](28.1.md) |
+| 28.2 | Groq __ALT_1 routes | [28.2.md](28.2.md) |
+| 28.3 | rotate_export log | [28.3.md](28.3.md) |
+| 28.4 | vault-rotate-push | [28.4.md](28.4.md) |
+| 28.5 | Capstone **v3.28.0** | [28.5.md](28.5.md) |

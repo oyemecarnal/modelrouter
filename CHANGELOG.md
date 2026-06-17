@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.28.0] — 2026-06-12 (Cycle 28 — alt Groq routes + auto rotate + push)
+
+### Added
+- **Groq alt deployments** — `hermes-fast` / `cheap` use `GROQ_API_KEY__ALT_1` via `simple-shuffle`
+- **Opt-in auto rotate** — `MODELROUTER_AUTO_VAULT_ROTATE=1` exports `.env` on 429 (gateway host only)
+- **`make vault-rotate-push`** — rotate export + push rotated keys to kc-mini
+
+### Changed
+- `logging_callback` — optional `rotate_export` event when auto-rotate enabled
+- Tests: `maybe_auto_rotate_export` gate
+
 ## [3.27.0] — 2026-06-12 (Cycle 27 — Tangem ETH + rotate export + daemon fix)
 
 ### Added

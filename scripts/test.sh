@@ -275,6 +275,18 @@ assert r.get('reason') in ('no_hints', 'no_ok_hint') or r.get('ok')
 print('  ok vault rotate export helper')
 "
 
+echo "── Vault auto-rotate gate"
+PYTHONPATH="$ROOT" "$PY" -c "
+import os
+os.environ.pop('MODELROUTER_AUTO_VAULT_ROTATE', None)
+from modelrouter.key_vault import maybe_auto_rotate_export
+assert maybe_auto_rotate_export() is None
+os.environ['MODELROUTER_AUTO_VAULT_ROTATE'] = '1'
+r = maybe_auto_rotate_export()
+assert r is None or r.get('reason') in ('no_hints', 'no_ok_hint') or r.get('ok')
+print('  ok vault auto-rotate gate')
+"
+
 echo "── Tangem preset sync"
 (cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$PY" -c "
 from fetch_usage import load_config, resolve_secret

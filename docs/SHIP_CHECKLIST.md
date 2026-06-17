@@ -39,6 +39,7 @@ make daemon-enable       # laptop — stable Cursor gateway
 | `make vault-scrape-collect` | Network key ingest → `data/key_vault.json` |
 | `make vault-export` | Merge vault → `.env` |
 | `make vault-rotate-export` | Apply last 429 rotate hint → `.env` |
+| `make vault-rotate-push` | Rotate export + push keys to kc-mini |
 | `make ship-check` | Pre-flight validation |
 | `make doctor-fix` | Gateway down on laptop (`ensure-gateway`) |
 | `make strip-tower-llm-keys` | Tower stray LLM keys |

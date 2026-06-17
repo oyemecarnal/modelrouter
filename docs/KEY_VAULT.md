@@ -78,7 +78,12 @@ On gateway **429**, `logging_callback` calls `record_rate_limit()` — advances 
 ```bash
 make vault-rotate-export-dry   # preview
 make vault-rotate-export       # merge next primary into .env
+make vault-rotate-push         # export + push rotated keys to kc-mini
 ```
+
+**Opt-in auto-export on 429:** set `MODELROUTER_AUTO_VAULT_ROTATE=1` on the gateway host — `logging_callback` will call `apply_last_rotate_export` after a successful rotate hint (does not push to mini).
+
+**LiteLLM alt routes:** `hermes-fast` and `cheap` include a second Groq deployment on `GROQ_API_KEY__ALT_1` when exported from vault (`simple-shuffle` load-balances).
 
 ## Tangem / cold wallets
 

@@ -66,12 +66,20 @@ class ModelRouterLogger(CustomLogger):
         error = str(response_obj)
         model = kwargs.get("model") or ""
         rotate_hint: dict[str, Any] | None = None
+        auto_export: dict[str, Any] | None = None
         if error:
             try:
                 from modelrouter.key_vault import is_rate_limit_error, record_rate_limit
 
                 if is_rate_limit_error(error):
                     rotate_hint = record_rate_limit(model, error)
+                    if rotate_hint.get("ok"):
+                        try:
+                            from modelrouter.key_vault import maybe_auto_rotate_export
+
+                            auto_export = maybe_auto_rotate_export()
+                        except Exception:
+                            auto_export = None
             except Exception:
                 pass
         payload: dict[str, Any] = {
@@ -84,6 +92,8 @@ class ModelRouterLogger(CustomLogger):
         }
         if rotate_hint:
             payload["rotate_hint"] = rotate_hint
+        if auto_export:
+            payload["rotate_export"] = {k: v for k, v in auto_export.items() if k != "keys"}
         print(json.dumps(payload), flush=True)
 
 

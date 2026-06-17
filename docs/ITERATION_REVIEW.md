@@ -415,3 +415,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 27.5 | **v3.27.0** |
 
 **Next cycle 28 proposal:** LiteLLM `__ALT_N` model routes, auto `vault-rotate-export` on 429, push-env-mini after rotate.
+
+---
+
+## Cycle 28 checkpoint (v3.28.0)
+
+**Theme:** Groq alt routes + opt-in auto rotate + rotate-push to mini.
+
+| Iter | Deliverable |
+|------|-------------|
+| 28.1 | `MODELROUTER_AUTO_VAULT_ROTATE=1` gate |
+| 28.2 | `GROQ_API_KEY__ALT_1` on hermes-fast/cheap |
+| 28.3 | `rotate_export` log event |
+| 28.4 | `make vault-rotate-push` |
+| 28.5 | **v3.28.0** |
+
+**Next cycle 29 proposal:** OpenAI/Mistral alt routes, gateway restart hook after auto-rotate, widget rotate-hint LED.

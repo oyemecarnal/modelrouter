@@ -559,6 +559,15 @@ def apply_last_rotate_export(
     return result
 
 
+def maybe_auto_rotate_export(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
+    """Apply last rotate hint when MODELROUTER_AUTO_VAULT_ROTATE=1 (opt-in)."""
+    import os
+
+    if os.environ.get("MODELROUTER_AUTO_VAULT_ROTATE") != "1":
+        return None
+    return apply_last_rotate_export(cfg, dry_run=False, overwrite=True)
+
+
 def export_blocked(env_var: str, cfg: dict[str, Any]) -> bool:
     """True when a var must not be written by vault export."""
     perms = cfg.get("permissions") or {}
