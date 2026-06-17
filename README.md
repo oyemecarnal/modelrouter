@@ -114,6 +114,7 @@ make status           # health + PID
 make homelab-status   # doctor + remote-health + cost-review
 make deploy-mini      # rsync + restart on kc-mini
 make bootstrap-mini   # deploy + daemon-enable-mini + push alt keys
+make vault-sync-alts  # export vault alts + push to mini
 make push-env-mini    # sync selected secrets to mini
 make push-client-env-tower  # tower client.env (gateway key only)
 make daemon-enable    # auto-start at login — docs/LAPTOP_DAEMON.md

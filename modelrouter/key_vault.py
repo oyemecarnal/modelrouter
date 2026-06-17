@@ -35,6 +35,15 @@ DEFAULT_CONFIG = ROOT / "config" / "key_vault.yaml"
 VAULT_VERSION = 1
 
 ENV_LINE_EXPORT = re.compile(r"^(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=\s*(.+)$")
+ENV_ALT_SUFFIX = re.compile(r"^([A-Z][A-Z0-9_]*)__ALT_(\d+)$")
+
+
+def normalize_env_var_key(key: str) -> tuple[str, int | None]:
+    """Map GROQ_API_KEY__ALT_1 → (GROQ_API_KEY, 1); primary keys return alt_index None."""
+    m = ENV_ALT_SUFFIX.match(key)
+    if m:
+        return m.group(1), int(m.group(2))
+    return key, None
 
 
 @dataclass
@@ -197,31 +206,35 @@ def _parse_env_file(path: Path, host_id: str, cfg: dict[str, Any], *, collect: b
         if not m:
             continue
         key, val = m.group(1), m.group(2).strip().strip("'\"")
-        if key not in allowed_names and not key.endswith("_API_KEY") and "TOKEN" not in key:
+        base_key, alt_index = normalize_env_var_key(key)
+        if base_key not in allowed_names and not base_key.endswith("_API_KEY") and "TOKEN" not in base_key:
             continue
         if not val or val.startswith("op://"):
             continue
         if _skip_source_path(rel):
             continue
-        if collect and not _can_collect_var(key, host_id, cfg):
+        if collect and not _can_collect_var(base_key, host_id, cfg):
             continue
         if not collect:
             continue
-        if not _looks_like_secret_value(key, val):
+        if not _looks_like_secret_value(base_key, val):
             continue
-        svc = _service_for_var(key, cfg)
+        svc = _service_for_var(base_key, cfg)
         tags = list(svc.get("tags") or []) if svc else []
+        priority = 80 if host_id == "kc-mini" else 60
+        if alt_index is not None:
+            priority = max(10, 45 - alt_index)
         entries.append(
             VaultEntry(
                 id=uuid.uuid4().hex[:12],
-                env_var=key,
+                env_var=base_key,
                 value=val,
                 fingerprint=fingerprint(val),
                 source_host=host_id,
-                source_path=rel,
+                source_path=rel if alt_index is None else f"{rel}#__ALT_{alt_index}",
                 enabled=True,
                 tags=tags,
-                priority=80 if host_id == "kc-mini" else 60,
+                priority=priority,
                 collected_at=now,
             )
         )
@@ -293,6 +306,10 @@ def scrape_host(host_id: str, cfg: dict[str, Any], *, collect: bool) -> tuple[In
                         collected_at=datetime.now(timezone.utc).isoformat(),
                     )
                 )
+            for env_file in host_cfg.get("env_files") or []:
+                path = expand(str(env_file))
+                if path.is_file():
+                    entries.extend(_parse_env_file(path, host_id, cfg, collect=True))
     elif htype == "ssh":
         ssh = host_cfg.get("ssh") or host_id
         if collect and host_cfg.get("collect", False):

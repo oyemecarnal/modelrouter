@@ -202,6 +202,35 @@ assert 'keys' in merged
 print('  ok key_vault config + merge')
 "
 
+echo "── Key vault (alt normalize)"
+PYTHONPATH="$ROOT" "$PY" -c "
+from modelrouter.key_vault import normalize_env_var_key, merge_entries, export_env, VaultEntry, load_vault_config
+assert normalize_env_var_key('GROQ_API_KEY') == ('GROQ_API_KEY', None)
+assert normalize_env_var_key('GROQ_API_KEY__ALT_1') == ('GROQ_API_KEY', 1)
+assert normalize_env_var_key('OPENAI_API_KEY__ALT_2') == ('OPENAI_API_KEY', 2)
+cfg = load_vault_config()
+groq_a = 'gsk_' + 'A' * 48
+groq_b = 'gsk_' + 'B' * 48
+rows = [
+    VaultEntry('id1', 'GROQ_API_KEY', groq_a, 'fp1', 'test', 'a.env', priority=80),
+    VaultEntry('id2', 'GROQ_API_KEY', groq_b, 'fp2', 'test', 'b.env#__ALT_1', priority=44),
+]
+merged = merge_entries({'keys': []}, rows, cfg)
+enabled = [k for k in merged['keys'] if k['env_var'] == 'GROQ_API_KEY' and k.get('enabled', True)]
+assert len(enabled) == 2, enabled
+import tempfile
+from pathlib import Path
+from modelrouter.key_vault import save_vault, vault_path
+with tempfile.TemporaryDirectory() as td:
+    cfg2 = dict(cfg)
+    cfg2['vault_file'] = str(Path(td) / 'vault.json')
+    cfg2['export_target'] = str(Path(td) / '.env')
+    save_vault(cfg2, merged)
+    out = export_env(cfg2, dry_run=True)
+    assert 'GROQ_API_KEY__ALT_1' in out['keys'], out
+print('  ok key_vault alt normalize + export')
+"
+
 echo "── Key vault (masked exports)"
 PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.key_vault import list_entries, load_vault_config, vault_path
@@ -328,8 +357,9 @@ print('  ok equity bounded fetch')
 "
 
 echo "── Alt keys (warn-only)"
-chmod +x scripts/check-alt-keys.sh 2>/dev/null || true
+chmod +x scripts/check-alt-keys.sh scripts/check-alt-keys-mini.sh 2>/dev/null || true
 ./scripts/check-alt-keys.sh || true
+./scripts/check-alt-keys-mini.sh || true
 
 echo "── Health (optional)"
 # shellcheck disable=SC1091

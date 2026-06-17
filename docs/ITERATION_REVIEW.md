@@ -479,3 +479,21 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 31.5 | **v3.31.0** |
 
 **Next cycle 32 proposal:** Scrape second keys into vault for `__ALT_1`, run `vault-export` + `push-alt-keys-mini`, live smoke hermes-smart on mini v3.31.0.
+
+---
+
+## Cycle 32 checkpoint (v3.32.0)
+
+**Theme:** Alt-key ingest path, vault→mini sync, remote alt audit.
+
+| Iter | Deliverable |
+|------|-------------|
+| 32.1 | Vault scrape ingests `__ALT_N` → base `env_var` (security: no duplicate env_var names in vault) |
+| 32.2 | Laptop `env_files` scrape for explicit alt lines |
+| 32.3 | Alt normalize + multi-key export unit test |
+| 32.4 | `vault-sync-alts` + `check-alt-keys-mini` |
+| 32.5 | **v3.32.0** |
+
+**Finding:** Homelab still has 1 distinct key per provider — alt shuffle inactive until a second key is added (`VAR__ALT_1` in `.env` or second host path + `vault-scrape-collect`).
+
+**Next cycle 33 proposal:** Human: add second Groq/Anthropic keys, `make vault-sync-alts --restart-mini`, smoke + 429 rotate drill on mini.

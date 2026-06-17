@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.32.0] — 2026-06-12 (Cycle 32 — alt scrape ingest + vault sync alts)
+
+### Added
+- **Vault `__ALT_N` scrape** — ingests `GROQ_API_KEY__ALT_1` etc. as second keys under base `env_var`
+- **`make vault-sync-alts`** — export vault → laptop `.env` → `push-alt-keys-mini` (+ optional `--restart-mini`)
+- **`make check-alt-keys-mini`** — remote mini `.env` alt-key audit (names only)
+
+### Changed
+- `key_vault` laptop scrape reads `env_files` for explicit `__ALT_N` lines
+- `test.sh` — alt normalize/export unit check + mini alt audit (warn-only)
+
 ## [3.31.0] — 2026-06-12 (Cycle 31 — mini bootstrap + alt key ops)
 
 ### Added
