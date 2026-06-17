@@ -348,9 +348,9 @@ Bugbot        → 7 findings; 4 patched in-cycle
 
 ---
 
-## Ship status (2026-06-16)
+## Ship status (2026-06-12)
 
-**Origin:** **v3.24.0**. **Tower:** audit ✓. **Mini:** gateway ok. **Laptop gateway:** down — `make ensure-gateway`
+**Origin:** **v3.27.0**. **Tower:** audit ✓. **Mini:** gateway ok. **Laptop gateway:** run `make doctor-fix` if down
 
 ---
 

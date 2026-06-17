@@ -137,7 +137,7 @@ if last.get('ok'):
 else:
     print('hints file present (empty or no successful rotate)')
 " 2>/dev/null | while read -r line; do
-    warn "Rotate hint: $line — run make vault-export if cycling keys"
+    warn "Rotate hint: $line — run make vault-rotate-export"
   done
 else
   ok "No rate-limit rotate hints yet"
@@ -153,8 +153,8 @@ echo "  make ensure-gateway       # restart gateway if down"
 echo "  make doctor-fix           # same as ensure-gateway (doctor companion)"
 echo "  make daemon-enable        # laptop launchd — docs/LAPTOP_DAEMON.md"
 echo "  make vault-scrape-collect # network key ingest"
-echo "  make vault-export         # merge vault → .env
-  make vault-rotate-export  # after 429 rotate hint"
+echo "  make vault-export         # merge vault → .env"
+echo "  make vault-rotate-export  # after 429 rotate hint"
 echo "  make deploy-mini          # sync this tree to kc-mini"
 echo "  make core-apis            # refresh gitignored data/CORE_APIS.md (masked)"
 echo "  make check-key-hygiene    # salt distinct, provider keys, Groq rotate reminder"

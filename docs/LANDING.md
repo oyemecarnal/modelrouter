@@ -59,11 +59,11 @@ Tower: `make push-client-env-tower` — gateway auth only, no provider keys.
 
 ## Purchase / download
 
-**Status:** Not for sale yet — homelab dogfood phase. **v3.24.0** on `origin/main`.
+**Status:** Not for sale yet — homelab dogfood phase. **v3.27.0** on `origin/main`.
 
 When ready:
 
-1. Tagged release tarball — `make package-personal` → `dist/modelrouter-v3.24.0-personal.tar.gz`
+1. Tagged release tarball — `make package-personal` → `dist/modelrouter-v3.27.0-personal.tar.gz`
 2. Optional Gumroad / GitHub Sponsors link here
 3. License: see repository `LICENSE`
 

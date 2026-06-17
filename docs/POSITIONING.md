@@ -108,14 +108,14 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 - [x] Widget paste modal + receiver hints (`make ensure-gateway`)  
 - [x] Tower wire audit/strip — coinbot Option A (`docs/WHY_MODELROUTER.md`)  
 - [x] `docs/ENV.md`, `docs/LANDING.md`, `make ship-check`  
-- [x] **v3.24.0** on `main` — portfolio equity, key vault, widget themes, fetch timeout
+- [x] **v3.27.0** on `main` — portfolio equity, key vault, 429 rotate export, Tangem RPC, OAuth exchange stub
 
 **Next wires (in order)**
 
-1. **`make daemon-enable`** on laptop — `docs/LAPTOP_DAEMON.md`  
-2. **`make vault-export`** + **`make push-env-mini`** — centralize keys on mini  
-3. **Personal tier sale** — tarball + Gumroad when interviews say yes  
-4. **OAuth exchange** — Phase 3 (`docs/OAUTH_CONNECTOR_SPEC.md`)
+1. **`make daemon-enable`** on laptop — `docs/LAPTOP_DAEMON.md` (uses `launchctl bootstrap` on modern macOS)
+2. **`make vault-export`** + **`make push-env-mini`** — centralize keys on mini; **`make vault-rotate-export`** after 429 hints
+3. **Personal tier sale** — tarball + Gumroad when interviews say yes
+4. **OAuth exchange** — `OAUTH_EXCHANGE=1` pilot (`docs/OAUTH_CONNECTOR_SPEC.md`)
 
 ---
 

@@ -32,5 +32,6 @@ fail "Gateway still down after restart"
 echo ""
 echo "Next:"
 echo "  make daemon-enable   # auto-start at login — docs/LAPTOP_DAEMON.md"
+echo "  make doctor-fix      # same as this script"
 echo "  make doctor          # full diagnostic"
 exit 1

@@ -96,6 +96,7 @@ make check-key-hygiene     # laptop + mini key audit
 make vault-scrape          # masked network key discovery
 make vault-scrape-collect  # ingest → data/key_vault.json (policy-gated)
 make vault-export          # merge vault → .env
+make vault-rotate-export   # apply last 429 rotate hint → .env
 make doctor                # masked provider key status
 ```
 

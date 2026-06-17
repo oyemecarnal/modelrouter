@@ -76,7 +76,7 @@ Unified **portfolio** across exchanges (coinbot), Kalshi, and watch-only cold wa
 }
 ```
 
-Set `TANGEM_BTC_ADDRESS` / `TANGEM_ETH_ADDRESS` in `modelrouter/.env` or add presets — watch-only public addresses, no keys. Cold wallets refresh on a slower cache (`cold_cache_seconds`).
+Set `TANGEM_BTC_ADDRESS` / `TANGEM_ETH_ADDRESS` / `TANGEM_SOL_ADDRESS` in `modelrouter/.env` (or `tokens/.env.local`) — watch-only public addresses, no keys. ETH balance uses public RPC when `ETHERSCAN_API_KEY` is unset; Etherscan still needed for transaction history. Cold wallets refresh on a slower cache (`cold_cache_seconds`).
 
 Kalshi reads `POLYMARKET_KALSHI_*` from `~/dev/Kalshi_bot/.env`. Kraken on laptop coinbot uses plaintext or encrypted keys (`~/.coinbot/master_{instance_id}.key` on the fetch host).
 

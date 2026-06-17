@@ -241,6 +241,8 @@ make keys-widget-install   # venv + background refresh
 make keys-widget           # open panel (Refresh + Edit buttons)
 make vault-scrape-collect  # network key ingest → data/key_vault.json
 make vault-export          # merge vault → .env (see docs/KEY_VAULT.md)
+make vault-rotate-export   # after 429 rate-limit hint
+make doctor-fix            # restart laptop gateway if down
 ```
 
 See `tokens/README.md` for providers, equity routes, and theme presets.

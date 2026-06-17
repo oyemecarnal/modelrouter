@@ -323,7 +323,7 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             {
                 "id": "laptop_gateway",
                 "text": "Laptop gateway down — Cursor may bypass ModelRouter",
-                "fix": "make ensure-gateway",
+                "fix": "make doctor-fix",
                 "alt": "make daemon-enable",
                 "doc": "docs/LAPTOP_DAEMON.md",
             }

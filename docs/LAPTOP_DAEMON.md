@@ -8,7 +8,7 @@ Production agents use **kc-mini** — see `docs/TOWER_WIRING.md`. This doc is fo
 
 ```bash
 cd ~/dev/modelrouter
-make daemon-enable    # install com.modelrouter.plist via launchd
+make daemon-enable    # install com.modelrouter.plist via launchd (bootstrap on modern macOS)
 make health           # confirm gateway up
 make smoke-cursor     # Cursor path check
 ```
@@ -25,6 +25,7 @@ Symptoms: `make test` skips health, `make smoke-cursor` fails, widget PATHS LEDs
 
 ```bash
 make status           # PID + health
+make doctor-fix       # restart if down (alias: make ensure-gateway)
 make restart          # stop + start daemon
 make logs             # tail modelrouter.log
 ```

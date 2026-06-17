@@ -45,7 +45,7 @@ echo "── Gateway (optional)"
 if ./scripts/healthcheck.sh &>/dev/null; then
   ok "laptop gateway up"
 else
-  warn "laptop gateway down — run: make ensure-gateway"
+  warn "laptop gateway down — run: make doctor-fix"
 fi
 
 echo ""

@@ -3,11 +3,12 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+PY="$ROOT/.venv/bin/python"
 
 echo "==> ModelRouter test ($(cat VERSION 2>/dev/null || echo dev))"
 
 echo "── YAML"
-.venv/bin/python -c "
+"$PY" -c "
 import yaml
 from pathlib import Path
 for p in ['config/modelrouter.minimal.yaml', 'config/projects.yaml', 'config/hosts.yaml']:
@@ -17,20 +18,20 @@ for p in ['config/modelrouter.minimal.yaml', 'config/projects.yaml', 'config/hos
 "
 
 echo "── Route policy"
-PYTHONPATH="$ROOT" .venv/bin/python -m modelrouter.route_policy --project smalshi-hermes >/dev/null
-PYTHONPATH="$ROOT" .venv/bin/python -m modelrouter.route_policy --all >/dev/null
+PYTHONPATH="$ROOT" "$PY" -m modelrouter.route_policy --project smalshi-hermes >/dev/null
+PYTHONPATH="$ROOT" "$PY" -m modelrouter.route_policy --all >/dev/null
 
 echo "── Policy presets SSOT"
-.venv/bin/python scripts/check_presets.py
+"$PY" scripts/check_presets.py
 
 echo "── Models catalog SSOT"
-.venv/bin/python scripts/check_catalog.py
+"$PY" scripts/check_catalog.py
 
 echo "── Preset max_tokens sync"
-.venv/bin/python scripts/sync_preset_max_tokens.py | grep -qE 'in sync|Updated'
+"$PY" scripts/sync_preset_max_tokens.py | grep -qE 'in sync|Updated'
 
 echo "── Preset catalog (widget snapshot)"
-PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 from preset_catalog import load_preset_catalog
 d = load_preset_catalog({'modelrouter_root': '$ROOT'})
 assert len(d.get('presets', [])) >= 6, d
@@ -39,7 +40,7 @@ print('  ok', len(d.get('presets', [])), 'policy presets')
 "
 
 echo "── Console grid"
-PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 from console_grid import load_console_grid
 d = load_console_grid({'modelrouter_root': '$ROOT'})
 assert len(d.get('presets', [])) >= 6
@@ -48,7 +49,7 @@ print('  ok console:', len(d.get('presets', [])), 'presets,', len(d.get('models'
 "
 
 echo "── Security (gitignore)"
-.venv/bin/python -c "
+"$PY" -c "
 from pathlib import Path
 gi = Path('.gitignore').read_text()
 assert 'data/CORE_APIS.md' in gi, 'CORE_APIS.md must stay gitignored'
@@ -56,7 +57,7 @@ print('  ok data/CORE_APIS.md gitignored')
 "
 
 echo "── Security (snapshot exports)"
-PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 import json, re
 from preset_catalog import load_preset_catalog
 from console_grid import load_console_grid
@@ -70,7 +71,7 @@ print('  ok snapshot exports (no raw key prefixes)')
 "
 
 echo "── Wire exceptions config"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 import yaml
 from pathlib import Path
 p = Path('$ROOT/config/wire_exceptions.yaml')
@@ -82,7 +83,7 @@ print('  ok wire_exceptions.yaml', len(data.get('exceptions') or []), 'entries')
 "
 
 echo "── Connector validation"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.env_store import validate_provider_key
 assert validate_provider_key('GROQ_API_KEY', 'gsk_' + 'a' * 48) is None
 assert validate_provider_key('GROQ_API_KEY', 'bad') is not None
@@ -103,7 +104,7 @@ print('  ok env_store key validation (9 provider patterns)')
 
 echo "── Connector registry"
 test -x "$ROOT/scripts/connect-provider.sh" || { echo "  FAIL missing connect-provider.sh" >&2; exit 1; }
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 import re
 import yaml
 from pathlib import Path
@@ -126,7 +127,7 @@ print('  ok connectors.yaml', len(connectors), 'entries + connect-provider')
 "
 
 echo "── Homelab status (widget)"
-PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 from homelab_status import load_homelab_status
 d = load_homelab_status({'modelrouter_root': '$ROOT', 'receiver': {'enabled': True, 'default_preset': 'classic-rg'}})
 assert d.get('enabled') and len(d.get('leds', [])) >= 10, d
@@ -144,7 +145,7 @@ print('  ok homelab_status', len(d['leds']), 'LEDs,', len(d['themePresets']), 'p
 "
 
 echo "── Connector paste (widget)"
-PYTHONPATH="$ROOT/tokens/scripts:$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT/tokens/scripts:$ROOT" "$PY" -c "
 from connector_paste import _load_connector
 from pathlib import Path
 root = Path('$ROOT')
@@ -166,7 +167,7 @@ echo "$oauth_out" | grep -q "connect-google" || { echo "  FAIL oauth-start hint"
 echo "  ok oauth-start stub"
 
 echo "── Equity config"
-PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 from fetch_equity import _broker_route, _default_cfg, _provider_for
 from equity_remote_runner import _looks_encrypted
 base = _default_cfg()
@@ -184,7 +185,7 @@ print('  ok fetch_equity broker_routes + encrypted detect')
 "
 
 echo "── Price oracle"
-PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 from price_oracle import spot_usd
 p = spot_usd('BTC')
 assert p is None or p > 0
@@ -192,7 +193,7 @@ print('  ok price_oracle')
 "
 
 echo "── Key vault"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.key_vault import load_vault_config, merge_entries
 cfg = load_vault_config()
 assert cfg.get('permissions', {}).get('deny_vars')
@@ -202,7 +203,7 @@ print('  ok key_vault config + merge')
 "
 
 echo "── Key vault (masked exports)"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.key_vault import list_entries, load_vault_config, vault_path
 import json, re
 cfg = load_vault_config()
@@ -218,7 +219,7 @@ print('  ok key_vault masked list (' + str(len(rows)) + ' entries)')
 "
 
 echo "── Key vault (export deny)"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.key_vault import export_blocked, load_vault_config
 cfg = load_vault_config()
 assert export_blocked('MODELROUTER_KEY_HERMES', cfg)
@@ -228,7 +229,7 @@ print('  ok key_vault export deny')
 "
 
 echo "── Route policy key hints"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.route_policy import recommend
 rec = recommend('smalshi-hermes', write_hints=False)
 d = rec.to_dict()
@@ -237,7 +238,7 @@ print('  ok route_policy key_hints')
 "
 
 echo "── Key vault rate limit"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.key_vault import env_var_for_model, is_rate_limit_error, record_rate_limit
 assert env_var_for_model('groq/llama-3.3-70b') == 'GROQ_API_KEY'
 assert is_rate_limit_error('HTTP 429 Too Many Requests')
@@ -246,7 +247,7 @@ print('  ok key_vault rate_limit helpers')
 "
 
 echo "── OAuth exchange stub"
-PYTHONPATH="$ROOT" .venv/bin/python -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.oauth_exchange import new_oauth_state, validate_oauth_state, exchange_google_code
 s = new_oauth_state('google_test')
 assert validate_oauth_state(s, 'google_test')
@@ -257,17 +258,17 @@ print('  ok oauth_exchange state + stub')
 "
 
 echo "── Ethereum RPC fallback"
-cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+(cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$PY" -c "
 from fetch_wallets import fetch_ethereum_balance_rpc
 r = fetch_ethereum_balance_rpc('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045')
 assert r.get('status') == 'ok'
 assert r.get('native_symbol') == 'ETH'
 assert r.get('source') == 'rpc'
 print('  ok ethereum rpc fallback')
-"
+")
 
 echo "── Vault rotate export helper"
-cd "$ROOT" && PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.key_vault import apply_last_rotate_export
 r = apply_last_rotate_export(dry_run=True)
 assert r.get('reason') in ('no_hints', 'no_ok_hint') or r.get('ok')
@@ -275,7 +276,7 @@ print('  ok vault rotate export helper')
 "
 
 echo "── Tangem preset sync"
-cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+(cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$PY" -c "
 from fetch_usage import load_config, resolve_secret
 from wallet_store import sync_presets_from_config, list_enabled
 cfg = load_config()
@@ -287,10 +288,10 @@ if btc:
     print('  ok tangem presets (' + str(n) + ' wallets)')
 else:
     print('  skip tangem presets (TANGEM_* not in env)')
-"
+")
 
 echo "── Equity timeout helper"
-cd "$ROOT" && PYTHONPATH="$ROOT/tokens/scripts" "$ROOT/.venv/bin/python" -c "
+PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 from fetch_equity import read_stale_equity
 from fetch_usage import _fetch_equity_safe
 assert callable(read_stale_equity)
