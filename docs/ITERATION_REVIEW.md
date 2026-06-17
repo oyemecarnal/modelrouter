@@ -463,3 +463,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 30.5 | **v3.30.0** |
 
 **Next cycle 31 proposal:** Mini `daemon-enable`, vault-export on mini for alts, smoke test hermes-smart via alt key.
+
+---
+
+## Cycle 31 checkpoint (v3.31.0)
+
+**Theme:** kc-mini bootstrap, alt key push path, smoke hardening.
+
+| Iter | Deliverable |
+|------|-------------|
+| 31.1 | `check-alt-keys` — config vs `.env` audit (no secret print) |
+| 31.2 | `daemon-enable-mini` — remote launchd bootstrap (+ `MR_UID` sh fix) |
+| 31.3 | `smoke-hermes-smart` — `/v1/models` + alt-key hints |
+| 31.4 | `push-alt-keys-mini` + `bootstrap-mini` |
+| 31.5 | **v3.31.0** |
+
+**Next cycle 32 proposal:** Scrape second keys into vault for `__ALT_1`, run `vault-export` + `push-alt-keys-mini`, live smoke hermes-smart on mini v3.31.0.

@@ -327,6 +327,10 @@ assert callable(_fetch_equity_safe)
 print('  ok equity bounded fetch')
 "
 
+echo "── Alt keys (warn-only)"
+chmod +x scripts/check-alt-keys.sh 2>/dev/null || true
+./scripts/check-alt-keys.sh || true
+
 echo "── Health (optional)"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/lib.sh" 2>/dev/null || true

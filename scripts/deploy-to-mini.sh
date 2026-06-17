@@ -34,7 +34,7 @@ MODELROUTER_WORKERS=1 ./scripts/start-daemon.sh
 EOF
 
 echo "[deploy] Done. ModelRouter on ${REMOTE_HOST}:${REMOTE_DIR}"
-echo "[deploy] Enable auto-start: ssh ${REMOTE_HOST} 'cd ${REMOTE_DIR} && make daemon-enable'"
+echo "[deploy] Enable auto-start: make daemon-enable-mini"
 
 echo "[deploy] Remote health check..."
 if "$ROOT/scripts/remote-health.sh"; then

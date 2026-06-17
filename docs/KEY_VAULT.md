@@ -10,6 +10,9 @@ make vault-scrape-collect      # ingest values → data/key_vault.json (policy-g
 make vault-list                # masked inventory + source host/path
 make vault-export-dry          # preview .env merge
 make vault-export              # write primary + __ALT_N keys to .env
+make check-alt-keys            # verify __ALT_N vars vs LiteLLM config (warn-only)
+make push-alt-keys-mini        # sync alt keys laptop → kc-mini .env
+make bootstrap-mini            # deploy + daemon-enable + push alts
 ```
 
 ## Architecture
@@ -87,7 +90,7 @@ make vault-rotate-push         # export + push rotated keys to kc-mini
 
 **Opt-in push to mini:** set `MODELROUTER_AUTO_VAULT_PUSH=1` on the gateway host (with auto-rotate) — runs `make vault-rotate-push` after export+restart. Clears the widget ROTATE LED when push succeeds.
 
-**LiteLLM alt routes:** policy presets include `__ALT_1` deployments for Groq, OpenAI, Mistral, and Anthropic when exported from vault (`simple-shuffle` load-balances).
+**LiteLLM alt routes:** policy presets include `__ALT_1` deployments for Groq, OpenAI, Mistral, and Anthropic when exported from vault (`simple-shuffle` load-balances). You need **two or more enabled keys per provider** in the vault for `__ALT_1` to populate — scrape additional keys with `make vault-scrape-collect`, then `make vault-export` and `make push-alt-keys-mini`.
 
 ## Tangem / cold wallets
 

@@ -31,7 +31,20 @@ fi
 if curl -sf --max-time 4 "${GW}/health/liveliness" &>/dev/null; then
   ok "kc-mini gateway alive (${GW})"
 else
-  fail "kc-mini gateway down at ${GW} — run: make restart (mini) or check Tailscale"
+  fail "kc-mini gateway down at ${GW} — run: make bootstrap-mini or make doctor-fix"
+fi
+
+models_json="$(curl -sf --max-time 8 "${BASE}/models" -H "Authorization: Bearer ${KEY}" 2>/dev/null || true)"
+if [[ -n "$models_json" ]] && echo "$models_json" | grep -q '"hermes-smart"'; then
+  ok "hermes-smart in /v1/models"
+else
+  fail "hermes-smart missing from /v1/models — deploy config: make deploy-mini"
+fi
+
+if grep -q "^ANTHROPIC_API_KEY__ALT_1=" "$ROOT/.env" 2>/dev/null; then
+  ok "ANTHROPIC_API_KEY__ALT_1 present locally (push: make push-alt-keys-mini)"
+else
+  warn "ANTHROPIC_API_KEY__ALT_1 not local — alt shuffle inactive until vault-export + push-alt-keys-mini"
 fi
 
 body='{"model":"hermes-smart","messages":[{"role":"user","content":"Reply with exactly: pong"}],"max_tokens":16}'

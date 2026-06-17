@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.31.0] — 2026-06-12 (Cycle 31 — mini bootstrap + alt key ops)
+
+### Added
+- **`make bootstrap-mini`** — deploy + `daemon-enable-mini` + `push-alt-keys-mini`
+- **`make check-alt-keys`** — config vs `.env` alt key audit (never prints values)
+- **`make push-alt-keys-mini`** — sync `__ALT_N` vars laptop → kc-mini
+- **`make daemon-enable-mini`** — launchd bootstrap on kc-mini over SSH
+
+### Changed
+- `smoke-hermes-smart` — `/v1/models` hermes-smart check + alt-key hints
+- `deploy-to-mini` — points at `make daemon-enable-mini`
+- `daemon-enable` / `daemon-disable` — avoid `UID` (readonly in `/bin/sh` on macOS)
+- `test.sh` — warn-only alt key check
+
 ## [3.30.0] — 2026-06-12 (Cycle 30 — Anthropic alts + hint clear + auto push)
 
 ### Added
