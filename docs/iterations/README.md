@@ -217,3 +217,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 26.3 | Widget vault toggle UI | [26.3.md](26.3.md) |
 | 26.4 | OAuth callback + doctor hints | [26.4.md](26.4.md) |
 | 26.5 | Capstone **v3.26.0** | [26.5.md](26.5.md) |
+
+## Cycle 27 (Tangem ETH + rotate export + daemon fix)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 27.1 | launchd bootstrap | [27.1.md](27.1.md) |
+| 27.2 | Widget SSL / venv path | [27.2.md](27.2.md) |
+| 27.3 | ETH RPC fallback | [27.3.md](27.3.md) |
+| 27.4 | vault-rotate-export | [27.4.md](27.4.md) |
+| 27.5 | Capstone **v3.27.0** | [27.5.md](27.5.md) |

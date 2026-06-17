@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.26.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
+**v3.27.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
 
 One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 

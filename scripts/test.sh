@@ -256,8 +256,41 @@ assert stub.get('error') == 'invalid_state'
 print('  ok oauth_exchange state + stub')
 "
 
+echo "── Ethereum RPC fallback"
+cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+from fetch_wallets import fetch_ethereum_balance_rpc
+r = fetch_ethereum_balance_rpc('0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045')
+assert r.get('status') == 'ok'
+assert r.get('native_symbol') == 'ETH'
+assert r.get('source') == 'rpc'
+print('  ok ethereum rpc fallback')
+"
+
+echo "── Vault rotate export helper"
+cd "$ROOT" && PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+from modelrouter.key_vault import apply_last_rotate_export
+r = apply_last_rotate_export(dry_run=True)
+assert r.get('reason') in ('no_hints', 'no_ok_hint') or r.get('ok')
+print('  ok vault rotate export helper')
+"
+
+echo "── Tangem preset sync"
+cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+from fetch_usage import load_config, resolve_secret
+from wallet_store import sync_presets_from_config, list_enabled
+cfg = load_config()
+btc = resolve_secret('TANGEM_BTC_ADDRESS')
+sync_presets_from_config(cfg)
+n = len([w for w in list_enabled() if 'tangem' in (w.get('label') or '').lower()])
+if btc:
+    assert n >= 1, 'TANGEM in env but not synced'
+    print('  ok tangem presets (' + str(n) + ' wallets)')
+else:
+    print('  skip tangem presets (TANGEM_* not in env)')
+"
+
 echo "── Equity timeout helper"
-PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
+cd "$ROOT" && PYTHONPATH="$ROOT/tokens/scripts" "$ROOT/.venv/bin/python" -c "
 from fetch_equity import read_stale_equity
 from fetch_usage import _fetch_equity_safe
 assert callable(read_stale_equity)

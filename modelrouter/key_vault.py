@@ -533,6 +533,32 @@ def record_rate_limit(model: str, error: str, *, cfg: dict[str, Any] | None = No
     return hint
 
 
+def apply_last_rotate_export(
+    cfg: dict[str, Any] | None = None,
+    *,
+    dry_run: bool = False,
+    overwrite: bool = True,
+) -> dict[str, Any]:
+    """Merge vault → .env after the most recent successful 429 rotate hint."""
+    cfg = cfg or load_vault_config()
+    path = rotate_hints_path(cfg)
+    if not path.exists():
+        return {"ok": False, "reason": "no_hints"}
+    try:
+        history = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return {"ok": False, "reason": "invalid_hints"}
+    if not isinstance(history, list):
+        return {"ok": False, "reason": "invalid_hints"}
+    last = next((h for h in reversed(history) if h.get("ok")), None)
+    if not last:
+        return {"ok": False, "reason": "no_ok_hint"}
+    result = export_env(cfg, dry_run=dry_run, overwrite=overwrite)
+    result["ok"] = True
+    result["hint"] = {k: last.get(k) for k in ("env_var", "next_fingerprint", "next_id", "ts", "model")}
+    return result
+
+
 def export_blocked(env_var: str, cfg: dict[str, Any]) -> bool:
     """True when a var must not be written by vault export."""
     perms = cfg.get("permissions") or {}

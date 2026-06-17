@@ -399,3 +399,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 26.5 | **v3.26.0** |
 
 **Next cycle 27 proposal:** Hot-swap `.env` on 429 (or LiteLLM alt-key routes), gateway auto-export hook, Tangem live verify.
+
+---
+
+## Cycle 27 checkpoint (v3.27.0)
+
+**Theme:** Tangem ETH fallback, 429 export hook, launchd bootstrap.
+
+| Iter | Deliverable |
+|------|-------------|
+| 27.1 | `daemon-enable` bootstrap/bootout (modern macOS) |
+| 27.2 | Widget fetch → modelrouter `.venv` (SSL fix) |
+| 27.3 | ETH RPC fallback for watch wallets |
+| 27.4 | `make vault-rotate-export` after 429 hints |
+| 27.5 | **v3.27.0** |
+
+**Next cycle 28 proposal:** LiteLLM `__ALT_N` model routes, auto `vault-rotate-export` on 429, push-env-mini after rotate.

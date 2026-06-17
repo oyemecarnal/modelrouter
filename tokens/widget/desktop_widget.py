@@ -372,8 +372,26 @@ def open_edit_file() -> None:
         logger.exception("failed to open edit file %s", path)
 
 
+def _fetch_python() -> Path:
+    """Prefer modelrouter .venv (working SSL) over tokens/.venv."""
+    try:
+        from fetch_usage import load_config
+
+        cfg = load_widget_config()
+        cfg.update(load_config())
+        mr_root = Path(cfg.get("modelrouter_root") or (ROOT.parent.parent))
+        mr_python = mr_root / ".venv" / "bin" / "python3"
+        if mr_python.exists():
+            return mr_python
+    except Exception:
+        pass
+    if VENV_PYTHON.exists():
+        return VENV_PYTHON
+    return Path(sys.executable)
+
+
 def run_fetch(reason: str = "manual") -> None:
-    python = str(VENV_PYTHON if VENV_PYTHON.exists() else Path(sys.executable))
+    python = str(_fetch_python())
     try:
         result = subprocess.run(
             [python, str(FETCHER)],

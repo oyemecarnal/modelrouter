@@ -68,30 +68,70 @@ def _write_cache(wallet_id: str, row: dict[str, Any]) -> None:
         pass
 
 
+def fetch_ethereum_balance_rpc(address: str) -> dict[str, Any]:
+    """Watch-only ETH balance via public JSON-RPC (no API key)."""
+    payload = {"jsonrpc": "2.0", "method": "eth_getBalance", "params": [address, "latest"], "id": 1}
+    endpoints = (
+        "https://ethereum.publicnode.com",
+        "https://cloudflare-eth.com",
+    )
+    last_err = "RPC unavailable"
+    for url in endpoints:
+        try:
+            data = _http_json(url, method="POST", body=payload)
+            if data.get("error"):
+                last_err = str(data["error"].get("message") or data["error"])[:200]
+                continue
+            hex_wei = data.get("result")
+            if not hex_wei:
+                last_err = "RPC missing result"
+                continue
+            wei = int(hex_wei, 16) if hex_wei != "0x" else 0
+            eth = wei / 1e18
+            return {
+                "status": "ok",
+                "native_symbol": "ETH",
+                "native_amount": round(eth, 8),
+                "native_raw": str(wei),
+                "source": "rpc",
+            }
+        except (urllib.error.URLError, urllib.error.HTTPError, ValueError, OSError) as exc:
+            last_err = str(exc)[:200]
+    return {"status": "error", "error": last_err}
+
+
 def fetch_ethereum_balance(address: str, dev_root: Path | None) -> dict[str, Any]:
     api_key = _etherscan_key(dev_root)
+    if api_key:
+        qs = urllib.parse.urlencode(
+            {
+                "module": "account",
+                "action": "balance",
+                "address": address,
+                "tag": "latest",
+                "apikey": api_key,
+            }
+        )
+        try:
+            data = _http_json(f"https://api.etherscan.io/api?{qs}")
+            if data.get("status") == "1":
+                wei = int(data.get("result") or 0)
+                eth = wei / 1e18
+                return {
+                    "status": "ok",
+                    "native_symbol": "ETH",
+                    "native_amount": round(eth, 8),
+                    "native_raw": str(wei),
+                    "source": "etherscan",
+                }
+        except (urllib.error.URLError, urllib.error.HTTPError, ValueError, OSError):
+            pass
+    rpc = fetch_ethereum_balance_rpc(address)
+    if rpc.get("status") == "ok":
+        return rpc
     if not api_key:
-        return {"status": "unavailable", "error": "Set ETHERSCAN_API_KEY in modelrouter/.env"}
-    qs = urllib.parse.urlencode(
-        {
-            "module": "account",
-            "action": "balance",
-            "address": address,
-            "tag": "latest",
-            "apikey": api_key,
-        }
-    )
-    data = _http_json(f"https://api.etherscan.io/api?{qs}")
-    if data.get("status") != "1":
-        return {"status": "error", "error": data.get("message") or "Etherscan error"}
-    wei = int(data.get("result") or 0)
-    eth = wei / 1e18
-    return {
-        "status": "ok",
-        "native_symbol": "ETH",
-        "native_amount": round(eth, 8),
-        "native_raw": str(wei),
-    }
+        return {"status": "unavailable", "error": rpc.get("error") or "ETH balance unavailable (no Etherscan key, RPC failed)"}
+    return rpc
 
 
 def fetch_ethereum_transactions(address: str, dev_root: Path | None, limit: int = 12) -> list[dict[str, Any]]:

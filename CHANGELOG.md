@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.27.0] — 2026-06-12 (Cycle 27 — Tangem ETH + rotate export + daemon fix)
+
+### Added
+- **ETH balance RPC fallback** — public JSON-RPC when `ETHERSCAN_API_KEY` missing (Tangem watch wallets)
+- **`make vault-rotate-export`** — apply last 429 rotate hint → `.env` merge
+- Widget fetch uses **modelrouter `.venv`** (fixes SSL cert errors on laptop)
+- `daemon-enable` / `daemon-disable` — `launchctl bootstrap` / `bootout` for modern macOS
+
+### Changed
+- `fetch_ethereum_balance` — Etherscan first, Cloudflare RPC fallback
+- Tests: Ethereum RPC, vault rotate export, Tangem preset sync when env set
+
 ## [3.26.0] — 2026-06-12 (Cycle 26 — 429 rotate + vault widget + OAuth exchange)
 
 ### Added

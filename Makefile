@@ -1,7 +1,7 @@
 .PHONY: install start stop restart health logs status doctor doctor-fix daemon daemon-enable daemon-disable
 .PHONY: docker-up docker-down docker-logs agents deploy-mini keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal inventory inventory-mini vault-scrape vault-scrape-collect vault-list vault-export vault-export-dry
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal inventory inventory-mini vault-scrape vault-scrape-collect vault-list vault-export vault-export-dry vault-rotate-export vault-rotate-export-dry
 
 install:
 	./scripts/install.sh
@@ -35,12 +35,21 @@ status:
 
 daemon-enable:
 	cp deploy/com.modelrouter.plist ~/Library/LaunchAgents/
-	launchctl load ~/Library/LaunchAgents/com.modelrouter.plist
+	@UID=$$(id -u); PLIST=$$HOME/Library/LaunchAgents/com.modelrouter.plist; \
+	launchctl bootout gui/$$UID/com.modelrouter 2>/dev/null || launchctl unload "$$PLIST" 2>/dev/null || true; \
+	if launchctl bootstrap gui/$$UID "$$PLIST" 2>/dev/null; then \
+	  echo "ModelRouter launchd job loaded (bootstrap)"; \
+	elif launchctl load "$$PLIST" 2>/dev/null; then \
+	  echo "ModelRouter launchd job loaded (load)"; \
+	else \
+	  echo "launchd load failed — run: launchctl bootstrap gui/$$UID $$PLIST" >&2; exit 1; \
+	fi
 	@echo "ModelRouter will start at login and auto-restart"
 
 daemon-disable:
-	launchctl unload ~/Library/LaunchAgents/com.modelrouter.plist 2>/dev/null || true
-	rm -f ~/Library/LaunchAgents/com.modelrouter.plist
+	@UID=$$(id -u); PLIST=$$HOME/Library/LaunchAgents/com.modelrouter.plist; \
+	launchctl bootout gui/$$UID/com.modelrouter 2>/dev/null || launchctl unload "$$PLIST" 2>/dev/null || true; \
+	rm -f "$$PLIST"
 
 docker-up:
 	docker compose up -d
@@ -82,6 +91,14 @@ vault-export-dry:
 
 vault-export:
 	./scripts/vault-export.sh
+
+vault-rotate-export-dry:
+	chmod +x scripts/vault-rotate-export.sh
+	./scripts/vault-rotate-export.sh --dry-run
+
+vault-rotate-export:
+	chmod +x scripts/vault-rotate-export.sh
+	./scripts/vault-rotate-export.sh
 
 keys-sync:
 	./scripts/sync-keys.sh
