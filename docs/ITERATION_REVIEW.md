@@ -383,3 +383,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 25.5 | **v3.25.0** |
 
 **Next cycle 26 proposal:** Wire gateway 429 → vault `select_key`, widget vault disable UI, OAuth google exchange stub.
+
+---
+
+## Cycle 26 checkpoint (v3.26.0)
+
+**Theme:** 429 rotate hints, widget vault toggles, OAuth exchange pilot.
+
+| Iter | Deliverable |
+|------|-------------|
+| 26.1 | OAuth state validation + Google exchange behind `OAUTH_EXCHANGE=1` |
+| 26.2 | Gateway 429 → `record_rate_limit` + rotate hints file |
+| 26.3 | Widget key vault panel + `/vault/toggle` |
+| 26.4 | OAuth callback state generation + doctor rotate hints |
+| 26.5 | **v3.26.0** |
+
+**Next cycle 27 proposal:** Hot-swap `.env` on 429 (or LiteLLM alt-key routes), gateway auto-export hook, Tangem live verify.

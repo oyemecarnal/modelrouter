@@ -236,6 +236,26 @@ assert 'key_hints' in d and isinstance(d['key_hints'], dict)
 print('  ok route_policy key_hints')
 "
 
+echo "── Key vault rate limit"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+from modelrouter.key_vault import env_var_for_model, is_rate_limit_error, record_rate_limit
+assert env_var_for_model('groq/llama-3.3-70b') == 'GROQ_API_KEY'
+assert is_rate_limit_error('HTTP 429 Too Many Requests')
+assert record_rate_limit('unknown/model', '429')['reason'] == 'unknown_model'
+print('  ok key_vault rate_limit helpers')
+"
+
+echo "── OAuth exchange stub"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+from modelrouter.oauth_exchange import new_oauth_state, validate_oauth_state, exchange_google_code
+s = new_oauth_state('google_test')
+assert validate_oauth_state(s, 'google_test')
+assert not validate_oauth_state(s, 'google_test')
+stub = exchange_google_code('code123', 'bad')
+assert stub.get('error') == 'invalid_state'
+print('  ok oauth_exchange state + stub')
+"
+
 echo "── Equity timeout helper"
 PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
 from fetch_equity import read_stale_equity

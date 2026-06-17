@@ -163,6 +163,13 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(body).encode())
             return
+        if self.path == "/vault/toggle":
+            status, body = vault_toggle_response(self)
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(body).encode())
+            return
         if self.path == "/api-assess":
             status, body = api_assess_response()
             self.send_response(status)
@@ -268,6 +275,37 @@ def connector_paste_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict
         return 400, {"ok": False, "error": str(exc)}
     except Exception as exc:
         logger.exception("connector paste failed")
+        return 500, {"ok": False, "error": str(exc)}
+
+
+def vault_toggle_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
+    try:
+        import sys
+        from pathlib import Path
+
+        from fetch_usage import load_config
+
+        body = _read_post_json(handler)
+        entry_id = str(body.get("id") or "").strip()
+        if not entry_id:
+            return 400, {"ok": False, "error": "id required"}
+        enabled = body.get("enabled")
+        if enabled is None:
+            return 400, {"ok": False, "error": "enabled required"}
+
+        cfg = load_widget_config()
+        cfg.update(load_config())
+        root = Path(cfg.get("modelrouter_root") or Path.home() / "dev" / "modelrouter")
+        if str(root) not in sys.path:
+            sys.path.insert(0, str(root))
+        from modelrouter.key_vault import set_enabled
+
+        if not set_enabled(entry_id, bool(enabled)):
+            return 404, {"ok": False, "error": "not found"}
+        run_fetch(reason="vault_toggled")
+        return 200, {"ok": True, "id": entry_id, "enabled": bool(enabled)}
+    except Exception as exc:
+        logger.exception("vault toggle failed")
         return 500, {"ok": False, "error": str(exc)}
 
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [3.26.0] — 2026-06-12 (Cycle 26 — 429 rotate + vault widget + OAuth exchange)
+
+### Added
+- **429 key rotation hints** — `record_rate_limit()` on gateway failure; `data/key_rotate_hints.json`
+- **Widget key vault panel** — masked entries with enable/disable toggle (`POST /vault/toggle`)
+- **OAuth Google exchange stub** — `modelrouter/oauth_exchange.py` behind `OAUTH_EXCHANGE=1`; state validation in callback listener
+- Doctor row for recent rate-limit rotate hints
+
+### Changed
+- `logging_callback` — emits `rotate_hint` on 429 failures
+- `fetch_usage` snapshot includes `keyVault` (masked)
+- `oauth_callback_stub` — generates dev state; attempts exchange when code present
+
 ## [3.25.0] — 2026-06-12 (Cycle 25 — vault export guard + route key hints)
 
 ### Added

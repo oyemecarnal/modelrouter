@@ -71,7 +71,9 @@ python -m modelrouter.key_vault disable <entry_id>
 python -m modelrouter.key_vault select GROQ_API_KEY --preset hermes-fast
 ```
 
-`route_policy.py` reads widget quota pressure today; vault `select` adds **which physical key** to use when multiple exist. Gateway cycling (auto-swap on 429) is a follow-up — alternates are exported now.
+`route_policy.py` reads widget quota pressure; vault `select` picks **which physical key** when multiple exist.
+
+On gateway **429**, `logging_callback` calls `record_rate_limit()` — advances round-robin in the vault and appends to `data/key_rotate_hints.json`. Run `make vault-export` to merge the next primary into `.env` (hot-swap during a live request is not automatic yet).
 
 ## Tangem / cold wallets
 

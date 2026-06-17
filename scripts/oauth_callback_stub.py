@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dev-only OAuth callback listener — logs code receipt, does not exchange tokens."""
+"""Dev-only OAuth callback listener — validates state; exchange behind OAUTH_EXCHANGE=1."""
 
 from __future__ import annotations
 
@@ -27,12 +27,19 @@ class Handler(BaseHTTPRequestHandler):
         code = (params.get("code") or [""])[0]
         state = (params.get("state") or [""])[0]
         err = (params.get("error") or [""])[0]
+        exchange: dict = {}
+        if code and not err:
+            sys.path.insert(0, str(ROOT))
+            from modelrouter.oauth_exchange import exchange_google_code
+
+            exchange = exchange_google_code(code, state)
         body = {
-            "status": "stub",
-            "message": "Callback received — token exchange not implemented (Phase 3)",
+            "status": "stub" if not exchange.get("ok") else "ok",
+            "message": exchange.get("message") or "Callback received",
             "has_code": bool(code),
             "has_state": bool(state),
             "error": err or None,
+            "exchange": {k: v for k, v in exchange.items() if k not in ("refresh_token", "access_token")},
             "spec": "docs/OAUTH_CONNECTOR_SPEC.md",
             "paste_key": "make connect-google",
         }
@@ -44,7 +51,12 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
+    sys.path.insert(0, str(ROOT))
+    from modelrouter.oauth_exchange import new_oauth_state
+
+    state = new_oauth_state("google")
     print(f"OAuth callback stub on http://127.0.0.1:{PORT}/oauth/callback", file=sys.stderr)
+    print(f"Dev state (include in authorize URL): {state}", file=sys.stderr)
     print("Press Ctrl+C to stop. Spec: docs/OAUTH_CONNECTOR_SPEC.md", file=sys.stderr)
     HTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
 

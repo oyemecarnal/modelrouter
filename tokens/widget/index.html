@@ -515,6 +515,7 @@
     .btn-danger { border-color: rgba(255,92,92,0.35); color: #ffb0b0; }
     .wallet-actions { display: flex; gap: 4px; }
     .wallet-actions button { padding: 4px 6px; font-size: 9px; }
+    .vault-card .detail { font-size: 10px; opacity: 0.85; }
     .modal.wide { max-width: 400px; max-height: 85vh; overflow-y: auto; }
     .family-block { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
     .family-head { font-size: 10px; font-weight: 600; margin-bottom: 4px; }
@@ -1040,6 +1041,51 @@
       return `<div class="section-title">Wallets</div>${err}${cards}`;
     }
 
+    function renderVault(vault) {
+      if (!vault || vault.enabled === false) return '';
+      const rows = vault.entries || [];
+      if (!rows.length && !vault.error) return '';
+      if (vault.error && !rows.length) {
+        return `<div class="section-title">Key vault</div><div class="card"><div class="error">${vault.error}</div></div>`;
+      }
+      const cards = rows.map(r => {
+        const on = r.enabled !== false;
+        return `<article class="card vault-card" data-vault-id="${r.id}">
+          <div class="card-head">
+            <span class="card-name"><span class="dot ${on ? 'ok' : 'error'}"></span>${r.env_var}</span>
+            <span class="badge">${on ? 'on' : 'off'}</span>
+          </div>
+          <div class="detail">${r.fingerprint} · ${r.source_host || '—'}</div>
+          <div class="wallet-actions" style="margin-top:6px">
+            <button type="button" data-vault-toggle="${r.id}" data-enabled="${on ? '0' : '1'}">${on ? 'Disable' : 'Enable'}</button>
+          </div>
+        </article>`;
+      }).join('');
+      const meta = vault.count ? `<div class="detail" style="margin-bottom:6px;padding:0 2px">${vault.count} entries (masked)</div>` : '';
+      return `<div class="section-title">Key vault</div>${meta}${cards}`;
+    }
+
+    function bindVaultEvents() {
+      document.querySelectorAll('[data-vault-toggle]').forEach(btn => {
+        btn.onclick = async (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute('data-vault-toggle');
+          const enabled = btn.getAttribute('data-enabled') === '1';
+          try {
+            const res = await postJson('/vault/toggle', { id, enabled });
+            const data = await res.json();
+            if (!data.ok) {
+              alert(data.error || 'Toggle failed');
+              return;
+            }
+            await refreshAll();
+          } catch (_) {
+            alert('Toggle failed');
+          }
+        };
+      });
+    }
+
     async function loadWalletTx(walletId) {
       const box = document.getElementById('tx-' + walletId);
       if (!box) return;
@@ -1203,9 +1249,11 @@
         renderConsole(snapshot.consoleGrid) +
         renderWallets(snapshot.wallets) +
         (live.length ? '<div class="section-title">Usage</div>' + live.map(renderCard).join('') : '') +
-        (keys.length ? '<div class="section-title">API Keys</div>' + keys.map(renderCard).join('') : '') ||
+        (keys.length ? '<div class="section-title">API Keys</div>' + keys.map(renderCard).join('') : '') +
+        renderVault(snapshot.keyVault) ||
         '<div class="empty">No providers configured</div>';
       bindWalletEvents();
+      bindVaultEvents();
       for (const id of openWalletTx) {
         const box = document.getElementById('tx-' + id);
         if (box && box.style.display !== 'none' && !box.innerHTML.trim()) loadWalletTx(id);

@@ -63,19 +63,28 @@ class ModelRouterLogger(CustomLogger):
         end_time: float,
     ) -> None:
         duration_ms = round((end_time - start_time) * 1000, 1)
-        print(
-            json.dumps(
-                {
-                    "ts": datetime.now(timezone.utc).isoformat(),
-                    "event": "request_failure",
-                    "request_id": kwargs.get("litellm_call_id"),
-                    "model": kwargs.get("model"),
-                    "duration_ms": duration_ms,
-                    "error": str(response_obj),
-                }
-            ),
-            flush=True,
-        )
+        error = str(response_obj)
+        model = kwargs.get("model") or ""
+        rotate_hint: dict[str, Any] | None = None
+        if error:
+            try:
+                from modelrouter.key_vault import is_rate_limit_error, record_rate_limit
+
+                if is_rate_limit_error(error):
+                    rotate_hint = record_rate_limit(model, error)
+            except Exception:
+                pass
+        payload: dict[str, Any] = {
+            "ts": datetime.now(timezone.utc).isoformat(),
+            "event": "request_failure",
+            "request_id": kwargs.get("litellm_call_id"),
+            "model": model,
+            "duration_ms": duration_ms,
+            "error": error,
+        }
+        if rotate_hint:
+            payload["rotate_hint"] = rotate_hint
+        print(json.dumps(payload), flush=True)
 
 
 # LiteLLM discovers this instance by module path

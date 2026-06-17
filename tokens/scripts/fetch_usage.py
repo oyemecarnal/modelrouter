@@ -79,6 +79,7 @@ class Snapshot:
     policy_presets: dict[str, Any] | None = None
     console_grid: dict[str, Any] | None = None
     homelab_status: dict[str, Any] | None = None
+    key_vault: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -110,6 +111,8 @@ class Snapshot:
             out["consoleGrid"] = self.console_grid
         if self.homelab_status is not None:
             out["homelabStatus"] = self.homelab_status
+        if self.key_vault is not None:
+            out["keyVault"] = self.key_vault
         return out
 
 
@@ -918,6 +921,14 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
     except Exception as exc:
         homelab_status = {"enabled": True, "error": str(exc)[:200], "leds": []}
 
+    key_vault: dict[str, Any] | None = None
+    try:
+        from vault_snapshot import load_vault_snapshot
+
+        key_vault = load_vault_snapshot(cfg)
+    except Exception as exc:
+        key_vault = {"enabled": True, "error": str(exc)[:200], "entries": [], "count": 0}
+
     return Snapshot(
         updated_at=int(time.time() * 1000),
         providers=providers,
@@ -928,6 +939,7 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
         policy_presets=policy_presets,
         console_grid=console_grid,
         homelab_status=homelab_status,
+        key_vault=key_vault,
     )
 
 

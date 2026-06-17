@@ -464,6 +464,75 @@ def select_key(
     return chosen
 
 
+def env_var_for_model(model: str) -> str | None:
+    """Map LiteLLM model string to primary provider env var."""
+    m = (model or "").lower()
+    if "groq" in m:
+        return "GROQ_API_KEY"
+    if "openai" in m or "gpt-" in m:
+        return "OPENAI_API_KEY"
+    if "anthropic" in m or "claude" in m:
+        return "ANTHROPIC_API_KEY"
+    if "mistral" in m:
+        return "MISTRAL_API_KEY"
+    if "gemini" in m or "google" in m:
+        return "GOOGLE_API_KEY"
+    if "deepseek" in m:
+        return "DEEPSEEK_API_KEY"
+    if "together" in m:
+        return "TOGETHER_API_KEY"
+    return None
+
+
+def is_rate_limit_error(error: str) -> bool:
+    e = (error or "").lower()
+    return "429" in e or "rate limit" in e or "ratelimit" in e or "too many requests" in e
+
+
+def rotate_hints_path(cfg: dict[str, Any] | None = None) -> Path:
+    cfg = cfg or load_vault_config()
+    vault_file = Path(str(cfg.get("vault_file") or "data/key_vault.json"))
+    return ROOT / vault_file.parent / "key_rotate_hints.json"
+
+
+def record_rate_limit(model: str, error: str, *, cfg: dict[str, Any] | None = None) -> dict[str, Any]:
+    """On provider 429, advance vault round-robin and append rotate hint."""
+    cfg = cfg or load_vault_config()
+    env_var = env_var_for_model(model)
+    if not env_var:
+        return {"ok": False, "reason": "unknown_model", "model": model}
+
+    doc = load_vault(cfg)
+    enabled = [r for r in doc.get("keys") or [] if r.get("env_var") == env_var and r.get("enabled", True)]
+    if len(enabled) < 2:
+        return {"ok": False, "reason": "no_alternate", "env_var": env_var}
+
+    chosen = select_key(env_var, strategy="round_robin", cfg=cfg, mark_used=True)
+    hint: dict[str, Any] = {
+        "ok": True,
+        "ts": datetime.now(timezone.utc).isoformat(),
+        "model": model,
+        "env_var": env_var,
+        "error": (error or "")[:200],
+        "next_fingerprint": chosen.fingerprint if chosen else None,
+        "next_id": chosen.id if chosen else None,
+    }
+
+    path = rotate_hints_path(cfg)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    history: list[Any] = []
+    if path.exists():
+        try:
+            raw = json.loads(path.read_text())
+            if isinstance(raw, list):
+                history = raw
+        except (json.JSONDecodeError, OSError):
+            history = []
+    history.append(hint)
+    path.write_text(json.dumps(history[-20:], indent=2) + "\n")
+    return hint
+
+
 def export_blocked(env_var: str, cfg: dict[str, Any]) -> bool:
     """True when a var must not be written by vault export."""
     perms = cfg.get("permissions") or {}

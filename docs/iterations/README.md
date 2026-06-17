@@ -207,3 +207,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 25.3 | Tangem env template | [25.3.md](25.3.md) |
 | 25.4 | `make doctor-fix` | [25.4.md](25.4.md) |
 | 25.5 | Capstone **v3.25.0** | [25.5.md](25.5.md) |
+
+## Cycle 26 (429 rotate + vault widget + OAuth exchange)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 26.1 | OAuth state + exchange gate | [26.1.md](26.1.md) |
+| 26.2 | 429 → vault rotate hints | [26.2.md](26.2.md) |
+| 26.3 | Widget vault toggle UI | [26.3.md](26.3.md) |
+| 26.4 | OAuth callback + doctor hints | [26.4.md](26.4.md) |
+| 26.5 | Capstone **v3.26.0** | [26.5.md](26.5.md) |

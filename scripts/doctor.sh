@@ -124,6 +124,26 @@ print(f'{n} entries in {p.name}' if p.exists() else 'not collected yet')
 fi
 
 echo ""
+echo "── Rate-limit rotate hints"
+if [[ -f "$ROOT/data/key_rotate_hints.json" ]]; then
+  PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+import json
+from pathlib import Path
+p = Path('$ROOT/data/key_rotate_hints.json')
+rows = json.loads(p.read_text())
+last = rows[-1] if rows else {}
+if last.get('ok'):
+    print(f\"last: {last.get('env_var')} → {last.get('next_fingerprint')} ({last.get('ts','')[:19]})\")
+else:
+    print('hints file present (empty or no successful rotate)')
+" 2>/dev/null | while read -r line; do
+    warn "Rotate hint: $line — run make vault-export if cycling keys"
+  done
+else
+  ok "No rate-limit rotate hints yet"
+fi
+
+echo ""
 echo "── Next steps"
 echo "  make restart              # if unhealthy"
 echo "  make route-hints          # refresh widget → routing hints"
