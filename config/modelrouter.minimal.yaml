@@ -116,6 +116,10 @@ model_list:
     litellm_params:
       model: mistral/mistral-small-latest
       api_key: os.environ/MISTRAL_API_KEY
+  - model_name: cheap
+    litellm_params:
+      model: mistral/mistral-small-latest
+      api_key: os.environ/MISTRAL_API_KEY__ALT_1
   - model_name: code
     litellm_params:
       model: groq/llama-3.3-70b-versatile
@@ -125,6 +129,10 @@ model_list:
     litellm_params:
       model: openai/gpt-4o-mini
       api_key: os.environ/OPENAI_API_KEY
+  - model_name: code
+    litellm_params:
+      model: openai/gpt-4o-mini
+      api_key: os.environ/OPENAI_API_KEY__ALT_1
   - model_name: review
     litellm_params:
       model: openai/gpt-4o
@@ -144,10 +152,19 @@ model_list:
     litellm_params:
       model: mistral/mistral-small-latest
       api_key: os.environ/MISTRAL_API_KEY
+  - model_name: hermes-fast
+    litellm_params:
+      model: mistral/mistral-small-latest
+      api_key: os.environ/MISTRAL_API_KEY__ALT_1
   - model_name: hermes-smart
     litellm_params:
       model: openai/gpt-4o
       api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 16384
+  - model_name: hermes-smart
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY__ALT_1
       max_tokens: 16384
   - model_name: hermes-smart
     litellm_params:

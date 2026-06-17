@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import socket
 import subprocess
 import urllib.error
@@ -14,6 +15,19 @@ from receiver_themes import merge_custom, presets_for_snapshot
 
 def _modelrouter_root(cfg: dict[str, Any]) -> Path:
     return Path(cfg.get("modelrouter_root") or Path.home() / "dev" / "modelrouter")
+
+
+def _last_rotate_hint(root: Path) -> dict[str, Any] | None:
+    path = root / "data" / "key_rotate_hints.json"
+    if not path.is_file():
+        return None
+    try:
+        rows = json.loads(path.read_text())
+        if not isinstance(rows, list):
+            return None
+        return next((h for h in reversed(rows) if h.get("ok")), None)
+    except (json.JSONDecodeError, OSError):
+        return None
 
 
 def _load_hosts(root: Path) -> dict[str, Any]:
@@ -259,6 +273,19 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
         )
     )
 
+    rotate_hint = _last_rotate_hint(root)
+    if rotate_hint:
+        fp = str(rotate_hint.get("next_fingerprint") or "?")[:12]
+        infra.append(
+            _led(
+                "rotate",
+                "ROTATE",
+                "warn",
+                f"{rotate_hint.get('env_var', '?')} → {fp}",
+                "path",
+            )
+        )
+
     connector_defs = _load_registry_connectors(root) + EXTRA_CONNECTOR_DEFS
 
     validators = {c["env"]: c["prefix"] for c in connector_defs}
@@ -347,6 +374,17 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
                 "text": "Network key vault empty — keys may be scattered",
                 "fix": "make vault-scrape-collect",
                 "alt": "make vault-export",
+                "doc": "docs/KEY_VAULT.md",
+            }
+        )
+
+    if rotate_hint:
+        hints.append(
+            {
+                "id": "key_rotate",
+                "text": f"429 rotate pending — {rotate_hint.get('env_var', 'key')}",
+                "fix": "make vault-rotate-push",
+                "alt": "make vault-rotate-export",
                 "doc": "docs/KEY_VAULT.md",
             }
         )

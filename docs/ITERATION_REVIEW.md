@@ -431,3 +431,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 28.5 | **v3.28.0** |
 
 **Next cycle 29 proposal:** OpenAI/Mistral alt routes, gateway restart hook after auto-rotate, widget rotate-hint LED.
+
+---
+
+## Cycle 29 checkpoint (v3.29.0)
+
+**Theme:** Multi-provider alt routes + rotate visibility + auto-restart.
+
+| Iter | Deliverable |
+|------|-------------|
+| 29.1 | `MODELROUTER_AUTO_VAULT_RESTART=1` gate |
+| 29.2 | OpenAI/Mistral `__ALT_1` LiteLLM routes |
+| 29.3 | Widget ROTATE LED + `key_rotate` hint |
+| 29.4 | `rotate_restart` log event |
+| 29.5 | **v3.29.0** |
+
+**Next cycle 30 proposal:** Auto `vault-rotate-push` on mini gateway, Anthropic alts, rotate-hint expiry/clear.

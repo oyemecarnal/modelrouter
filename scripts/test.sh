@@ -287,6 +287,13 @@ assert r is None or r.get('reason') in ('no_hints', 'no_ok_hint') or r.get('ok')
 print('  ok vault auto-rotate gate')
 "
 
+echo "── Vault auto-restart gate"
+PYTHONPATH="$ROOT" "$PY" -c "
+from modelrouter.key_vault import maybe_auto_restart_gateway
+assert maybe_auto_restart_gateway() is None
+print('  ok vault auto-restart gate')
+"
+
 echo "── Tangem preset sync"
 (cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$PY" -c "
 from fetch_usage import load_config, resolve_secret

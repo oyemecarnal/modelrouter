@@ -568,6 +568,32 @@ def maybe_auto_rotate_export(cfg: dict[str, Any] | None = None) -> dict[str, Any
     return apply_last_rotate_export(cfg, dry_run=False, overwrite=True)
 
 
+def maybe_auto_restart_gateway() -> dict[str, Any] | None:
+    """Restart local gateway after auto-rotate when MODELROUTER_AUTO_VAULT_RESTART=1."""
+    import os
+    import subprocess
+
+    if os.environ.get("MODELROUTER_AUTO_VAULT_RESTART") != "1":
+        return None
+    try:
+        proc = subprocess.run(
+            ["make", "restart"],
+            cwd=ROOT,
+            timeout=120,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return {
+            "ok": proc.returncode == 0,
+            "action": "make restart",
+            "exit_code": proc.returncode,
+            "stderr": (proc.stderr or "")[-200:] if proc.returncode != 0 else None,
+        }
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"ok": False, "action": "make restart", "error": str(exc)[:200]}
+
+
 def export_blocked(env_var: str, cfg: dict[str, Any]) -> bool:
     """True when a var must not be written by vault export."""
     perms = cfg.get("permissions") or {}

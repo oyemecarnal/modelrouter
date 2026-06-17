@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.29.0] — 2026-06-12 (Cycle 29 — OpenAI/Mistral alts + rotate LED + auto restart)
+
+### Added
+- **OpenAI/Mistral alt routes** — `OPENAI_API_KEY__ALT_1` / `MISTRAL_API_KEY__ALT_1` on `hermes-smart`, `code`, `hermes-fast`, `cheap`
+- **Widget ROTATE LED** — homelab receiver bar shows pending 429 rotate hints
+- **Opt-in auto restart** — `MODELROUTER_AUTO_VAULT_RESTART=1` runs `make restart` after auto-export
+
+### Changed
+- `homelab_status` — `key_rotate` hint with `vault-rotate-push` fix path
+- `logging_callback` — `rotate_restart` event when auto-restart runs
+
 ## [3.28.0] — 2026-06-12 (Cycle 28 — alt Groq routes + auto rotate + push)
 
 ### Added

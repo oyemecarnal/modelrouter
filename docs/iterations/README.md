@@ -237,3 +237,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 28.3 | rotate_export log | [28.3.md](28.3.md) |
 | 28.4 | vault-rotate-push | [28.4.md](28.4.md) |
 | 28.5 | Capstone **v3.28.0** | [28.5.md](28.5.md) |
+
+## Cycle 29 (OpenAI/Mistral alts + rotate LED + auto restart)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 29.1 | Auto-restart gate | [29.1.md](29.1.md) |
+| 29.2 | OpenAI/Mistral alt routes | [29.2.md](29.2.md) |
+| 29.3 | ROTATE LED | [29.3.md](29.3.md) |
+| 29.4 | rotate_restart log | [29.4.md](29.4.md) |
+| 29.5 | Capstone **v3.29.0** | [29.5.md](29.5.md) |
