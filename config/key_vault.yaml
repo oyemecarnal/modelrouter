@@ -63,6 +63,16 @@ permissions:
   # Set true per var to allow collection despite require_opt_in
   opt_in: {}
 
+# Never write these to export_target (.env) even if present in the vault
+export_deny_vars:
+  - MODELROUTER_MASTER_KEY
+  - LITELLM_SALT_KEY
+  - KRAKEN_API_SECRET
+  - COINBASE_API_SECRET
+
+export_deny_prefixes:
+  - MODELROUTER_KEY_
+
 services:
   groq:
     env_var: GROQ_API_KEY

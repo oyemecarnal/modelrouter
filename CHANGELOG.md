@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.25.0] — 2026-06-12 (Cycle 25 — vault export guard + route key hints)
+
+### Added
+- **Vault export deny** — `export_deny_vars` / `export_deny_prefixes` block sensitive vars from `.env` merge
+- **Route key hints** — `route_policy` writes `key_hints` (vault fingerprint) when quota pressure is high and alternates exist
+- `make doctor-fix` — one-shot gateway restart companion to `make doctor`
+- Tangem watch-wallet placeholders in `tokens/.env.local.example`
+
+### Changed
+- `export_env` — skips blocked vars; tests for export deny + route hints
+
 ## [3.24.0] — 2026-06-16 (Cycle 24 — widget reliability + vault ops)
 
 ### Added

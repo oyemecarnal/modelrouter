@@ -3,6 +3,7 @@ dist/
 .env
 .env.*
 !.env.example
+!tokens/.env.local.example
 secrets.yaml
 config/modelrouter.local.yaml
 __pycache__/

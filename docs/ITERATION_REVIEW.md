@@ -367,3 +367,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 24.5 | **v3.24.0** |
 
 **Next cycle 25 proposal:** Gateway 429 key cycling, OAuth google stub, widget vault disable UI.
+
+---
+
+## Cycle 25 checkpoint (v3.25.0)
+
+**Theme:** Vault export safety + route-policy key cycling hints.
+
+| Iter | Deliverable |
+|------|-------------|
+| 25.1 | Vault export deny (`MODELROUTER_KEY_*`, exchange secrets) |
+| 25.2 | Route `key_hints` when quota hot + vault alternates |
+| 25.3 | Tangem `.env.local.example` placeholders |
+| 25.4 | `make doctor-fix` |
+| 25.5 | **v3.25.0** |
+
+**Next cycle 26 proposal:** Wire gateway 429 → vault `select_key`, widget vault disable UI, OAuth google exchange stub.

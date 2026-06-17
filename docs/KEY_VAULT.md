@@ -38,6 +38,7 @@ Built on `modelrouter/machine_inventory.py` (allowed paths only — see `config/
 | `permissions.deny_vars` | Never ingest (mnemonics, exchange secrets) |
 | `permissions.deny_collect_hosts` | Block value pull from a host |
 | `permissions.require_opt_in` | Vars need `opt_in.VAR_NAME: true` |
+| `export_deny_vars` / `export_deny_prefixes` | Block vault → `.env` export (e.g. `MODELROUTER_KEY_*`) |
 | `hosts.*.collect` | Per-host collection (tower default: false) |
 
 Tower keys are **discovered** but not pulled unless you explicitly enable `collect: true`.

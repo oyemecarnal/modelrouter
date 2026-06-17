@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 import time
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -26,9 +26,49 @@ class RouteRecommendation:
     reason: str
     pressure: dict[str, float]
     updated_at: int
+    key_hints: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
+
+
+_PRESSURE_KEY_HINTS: tuple[tuple[str, str], ...] = (
+    ("groq", "GROQ_API_KEY"),
+    ("openai-codex", "OPENAI_API_KEY"),
+    ("gpt-4o", "OPENAI_API_KEY"),
+    ("mistral", "MISTRAL_API_KEY"),
+)
+
+
+def _vault_key_hints(preset: str, pressure: dict[str, float]) -> dict[str, str]:
+    """When quota pressure is high and alternates exist, suggest vault key fingerprints."""
+    try:
+        from modelrouter.key_vault import load_vault, load_vault_config, select_key
+
+        cfg = load_vault_config()
+        route = (cfg.get("routing") or {}).get(preset) or {}
+        prefer = set(route.get("prefer") or [])
+        doc = load_vault(cfg)
+    except (FileNotFoundError, OSError, ImportError):
+        return {}
+
+    hints: dict[str, str] = {}
+    seen_env: set[str] = set()
+    for pid, env_var in _PRESSURE_KEY_HINTS:
+        if env_var in seen_env:
+            continue
+        if prefer and env_var not in prefer:
+            continue
+        if float(pressure.get(pid, 0)) < 76:
+            continue
+        enabled = [r for r in doc.get("keys") or [] if r.get("env_var") == env_var and r.get("enabled", True)]
+        if len(enabled) < 2:
+            continue
+        chosen = select_key(env_var, preset=preset, cfg=cfg, mark_used=False)
+        if chosen:
+            hints[env_var] = chosen.fingerprint
+            seen_env.add(env_var)
+    return hints
 
 
 def _load_snapshot() -> dict[str, Any]:
@@ -106,6 +146,7 @@ def recommend(
         reason=reason,
         pressure=pressure,
         updated_at=int(time.time() * 1000),
+        key_hints=_vault_key_hints(preset, pressure),
     )
     if write_hints:
         HINTS_PATH.parent.mkdir(parents=True, exist_ok=True)

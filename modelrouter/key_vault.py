@@ -464,6 +464,19 @@ def select_key(
     return chosen
 
 
+def export_blocked(env_var: str, cfg: dict[str, Any]) -> bool:
+    """True when a var must not be written by vault export."""
+    perms = cfg.get("permissions") or {}
+    if env_var in set(perms.get("deny_vars") or []):
+        return True
+    if env_var in set(cfg.get("export_deny_vars") or []):
+        return True
+    for prefix in cfg.get("export_deny_prefixes") or []:
+        if env_var.startswith(str(prefix)):
+            return True
+    return False
+
+
 def export_env(
     cfg: dict[str, Any] | None = None,
     *,
@@ -481,6 +494,8 @@ def export_env(
         if not row.get("enabled", True):
             continue
         entry = VaultEntry.from_dict(row)
+        if export_blocked(entry.env_var, cfg):
+            continue
         by_var.setdefault(entry.env_var, []).append(entry)
 
     updates: dict[str, str] = {}

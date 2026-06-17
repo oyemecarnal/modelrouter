@@ -217,6 +217,25 @@ assert 'data' in str(vp), vp
 print('  ok key_vault masked list (' + str(len(rows)) + ' entries)')
 "
 
+echo "── Key vault (export deny)"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+from modelrouter.key_vault import export_blocked, load_vault_config
+cfg = load_vault_config()
+assert export_blocked('MODELROUTER_KEY_HERMES', cfg)
+assert export_blocked('KRAKEN_API_SECRET', cfg)
+assert not export_blocked('GROQ_API_KEY', cfg)
+print('  ok key_vault export deny')
+"
+
+echo "── Route policy key hints"
+PYTHONPATH="$ROOT" .venv/bin/python -c "
+from modelrouter.route_policy import recommend
+rec = recommend('smalshi-hermes', write_hints=False)
+d = rec.to_dict()
+assert 'key_hints' in d and isinstance(d['key_hints'], dict)
+print('  ok route_policy key_hints')
+"
+
 echo "── Equity timeout helper"
 PYTHONPATH="$ROOT/tokens/scripts" .venv/bin/python -c "
 from fetch_equity import read_stale_equity

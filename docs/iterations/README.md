@@ -197,3 +197,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 24.3 | Stale equity flag correctness | [24.3.md](24.3.md) |
 | 24.4 | Doctor + homelab vault hints | [24.4.md](24.4.md) |
 | 24.5 | Capstone **v3.24.0** | [24.5.md](24.5.md) |
+
+## Cycle 25 (vault export guard + route key hints)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 25.1 | Vault export deny | [25.1.md](25.1.md) |
+| 25.2 | Route key hints | [25.2.md](25.2.md) |
+| 25.3 | Tangem env template | [25.3.md](25.3.md) |
+| 25.4 | `make doctor-fix` | [25.4.md](25.4.md) |
+| 25.5 | Capstone **v3.25.0** | [25.5.md](25.5.md) |
