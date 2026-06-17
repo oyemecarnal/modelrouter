@@ -247,3 +247,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 29.3 | ROTATE LED | [29.3.md](29.3.md) |
 | 29.4 | rotate_restart log | [29.4.md](29.4.md) |
 | 29.5 | Capstone **v3.29.0** | [29.5.md](29.5.md) |
+
+## Cycle 30 (Anthropic alts + hint clear + auto push)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 30.1 | Auto-push gate | [30.1.md](30.1.md) |
+| 30.2 | remote-health fix | [30.2.md](30.2.md) |
+| 30.3 | Anthropic alt routes | [30.3.md](30.3.md) |
+| 30.4 | Hint applied / LED clear | [30.4.md](30.4.md) |
+| 30.5 | Capstone **v3.30.0** | [30.5.md](30.5.md) |

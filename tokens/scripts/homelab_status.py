@@ -25,7 +25,7 @@ def _last_rotate_hint(root: Path) -> dict[str, Any] | None:
         rows = json.loads(path.read_text())
         if not isinstance(rows, list):
             return None
-        return next((h for h in reversed(rows) if h.get("ok")), None)
+        return next((h for h in reversed(rows) if h.get("ok") and not h.get("applied_at")), None)
     except (json.JSONDecodeError, OSError):
         return None
 

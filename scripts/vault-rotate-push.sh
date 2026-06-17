@@ -60,4 +60,9 @@ fi
 
 # shellcheck disable=SC2086
 "$ROOT/scripts/push-env-to-mini.sh" $PUSH_KEYS
+PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+from modelrouter.key_vault import mark_rotate_hint_applied
+ok = mark_rotate_hint_applied()
+print('[vault-rotate-push] marked hint applied' if ok else '[vault-rotate-push] no pending hint to clear')
+"
 echo "[vault-rotate-push] Done — restart mini gateway if needed: ssh kc-mini-lan 'cd ~/dev/modelrouter && make restart'"

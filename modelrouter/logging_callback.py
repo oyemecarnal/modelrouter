@@ -68,6 +68,7 @@ class ModelRouterLogger(CustomLogger):
         rotate_hint: dict[str, Any] | None = None
         auto_export: dict[str, Any] | None = None
         auto_restart: dict[str, Any] | None = None
+        auto_push: dict[str, Any] | None = None
         if error:
             try:
                 from modelrouter.key_vault import is_rate_limit_error, record_rate_limit
@@ -80,12 +81,17 @@ class ModelRouterLogger(CustomLogger):
 
                             auto_export = maybe_auto_rotate_export()
                             if auto_export and auto_export.get("ok"):
-                                from modelrouter.key_vault import maybe_auto_restart_gateway
+                                from modelrouter.key_vault import (
+                                    maybe_auto_restart_gateway,
+                                    maybe_auto_rotate_push,
+                                )
 
                                 auto_restart = maybe_auto_restart_gateway()
+                                auto_push = maybe_auto_rotate_push()
                         except Exception:
                             auto_export = None
                             auto_restart = None
+                            auto_push = None
             except Exception:
                 pass
         payload: dict[str, Any] = {
@@ -102,6 +108,8 @@ class ModelRouterLogger(CustomLogger):
             payload["rotate_export"] = {k: v for k, v in auto_export.items() if k != "keys"}
         if auto_restart:
             payload["rotate_restart"] = auto_restart
+        if auto_push:
+            payload["rotate_push"] = auto_push
         print(json.dumps(payload), flush=True)
 
 

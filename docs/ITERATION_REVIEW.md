@@ -447,3 +447,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 29.5 | **v3.29.0** |
 
 **Next cycle 30 proposal:** Auto `vault-rotate-push` on mini gateway, Anthropic alts, rotate-hint expiry/clear.
+
+---
+
+## Cycle 30 checkpoint (v3.30.0)
+
+**Theme:** Anthropic alts, rotate hint lifecycle, auto-push to mini.
+
+| Iter | Deliverable |
+|------|-------------|
+| 30.1 | `MODELROUTER_AUTO_VAULT_PUSH=1` gate |
+| 30.2 | `remote-health` mini URL fallback fix |
+| 30.3 | Anthropic `__ALT_1` routes |
+| 30.4 | `mark_rotate_hint_applied` + ROTATE LED clear |
+| 30.5 | **v3.30.0** |
+
+**Next cycle 31 proposal:** Mini `daemon-enable`, vault-export on mini for alts, smoke test hermes-smart via alt key.

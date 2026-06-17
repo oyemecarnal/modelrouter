@@ -533,6 +533,27 @@ def record_rate_limit(model: str, error: str, *, cfg: dict[str, Any] | None = No
     return hint
 
 
+def mark_rotate_hint_applied(cfg: dict[str, Any] | None = None) -> bool:
+    """Mark the latest ok rotate hint as applied (clears widget ROTATE LED)."""
+    cfg = cfg or load_vault_config()
+    path = rotate_hints_path(cfg)
+    if not path.exists():
+        return False
+    try:
+        history = json.loads(path.read_text())
+    except (json.JSONDecodeError, OSError):
+        return False
+    if not isinstance(history, list):
+        return False
+    for i in range(len(history) - 1, -1, -1):
+        row = history[i]
+        if row.get("ok") and not row.get("applied_at"):
+            row["applied_at"] = datetime.now(timezone.utc).isoformat()
+            path.write_text(json.dumps(history, indent=2) + "\n")
+            return True
+    return False
+
+
 def apply_last_rotate_export(
     cfg: dict[str, Any] | None = None,
     *,
@@ -592,6 +613,35 @@ def maybe_auto_restart_gateway() -> dict[str, Any] | None:
         }
     except (OSError, subprocess.TimeoutExpired) as exc:
         return {"ok": False, "action": "make restart", "error": str(exc)[:200]}
+
+
+def maybe_auto_rotate_push() -> dict[str, Any] | None:
+    """Push rotated keys to mini when MODELROUTER_AUTO_VAULT_PUSH=1 (after export)."""
+    import os
+    import subprocess
+
+    if os.environ.get("MODELROUTER_AUTO_VAULT_PUSH") != "1":
+        return None
+    script = ROOT / "scripts" / "vault-rotate-push.sh"
+    if not script.is_file():
+        return {"ok": False, "error": "vault-rotate-push.sh missing"}
+    try:
+        proc = subprocess.run(
+            [str(script)],
+            cwd=ROOT,
+            timeout=180,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        return {
+            "ok": proc.returncode == 0,
+            "action": "vault-rotate-push",
+            "exit_code": proc.returncode,
+            "stderr": (proc.stderr or "")[-200:] if proc.returncode != 0 else None,
+        }
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {"ok": False, "action": "vault-rotate-push", "error": str(exc)[:200]}
 
 
 def export_blocked(env_var: str, cfg: dict[str, Any]) -> bool:

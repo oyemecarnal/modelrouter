@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.30.0] — 2026-06-12 (Cycle 30 — Anthropic alts + hint clear + auto push)
+
+### Added
+- **Anthropic alt routes** — `ANTHROPIC_API_KEY__ALT_1` on `hermes-smart` and `review`
+- **Rotate hint clear** — `mark_rotate_hint_applied()` after `vault-rotate-push`; ROTATE LED hides applied hints
+- **Opt-in auto push** — `MODELROUTER_AUTO_VAULT_PUSH=1` runs `vault-rotate-push` after auto-export
+
+### Changed
+- `remote-health` — mini probe tries all URLs silently, one ok/down line
+- `logging_callback` — `rotate_push` event when auto-push runs
+
 ## [3.29.0] — 2026-06-12 (Cycle 29 — OpenAI/Mistral alts + rotate LED + auto restart)
 
 ### Added

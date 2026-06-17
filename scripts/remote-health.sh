@@ -17,6 +17,10 @@ check_url() {
   return 1
 }
 
+_probe_liveness() {
+  curl -sf --max-time 4 "${1}/health/liveliness" &>/dev/null
+}
+
 # kc-mini-lan is an SSH alias; try mDNS / Tailscale fallbacks from ~/.ssh/config.
 mini_gateway_urls() {
   local port="${MODELROUTER_PORT:-3000}"
@@ -32,13 +36,16 @@ mini_gateway_urls() {
 }
 
 check_mini_gateway() {
-  local url
+  local url tried=""
   while IFS= read -r url; do
-    if check_url "kc-mini" "$url"; then
+    tried="${tried}${tried:+ }${url}"
+    if _probe_liveness "$url"; then
+      echo "  ok  kc-mini  $url"
       MINI_GATEWAY_URL="$url"
       return 0
     fi
   done < <(mini_gateway_urls)
+  echo "  down kc-mini  (tried:${tried})"
   return 1
 }
 

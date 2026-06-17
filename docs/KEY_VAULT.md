@@ -85,7 +85,9 @@ make vault-rotate-push         # export + push rotated keys to kc-mini
 
 **Opt-in gateway restart:** set `MODELROUTER_AUTO_VAULT_RESTART=1` with auto-rotate — runs `make restart` after a successful export so LiteLLM picks up new keys.
 
-**LiteLLM alt routes:** `hermes-fast`, `cheap`, `hermes-smart`, and `code` include `__ALT_1` deployments when exported from vault (`simple-shuffle` load-balances).
+**Opt-in push to mini:** set `MODELROUTER_AUTO_VAULT_PUSH=1` on the gateway host (with auto-rotate) — runs `make vault-rotate-push` after export+restart. Clears the widget ROTATE LED when push succeeds.
+
+**LiteLLM alt routes:** policy presets include `__ALT_1` deployments for Groq, OpenAI, Mistral, and Anthropic when exported from vault (`simple-shuffle` load-balances).
 
 ## Tangem / cold wallets
 

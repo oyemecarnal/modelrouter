@@ -294,6 +294,15 @@ assert maybe_auto_restart_gateway() is None
 print('  ok vault auto-restart gate')
 "
 
+echo "── Vault auto-push gate"
+PYTHONPATH="$ROOT" "$PY" -c "
+from modelrouter.key_vault import maybe_auto_rotate_push, mark_rotate_hint_applied
+assert maybe_auto_rotate_push() is None
+# mark on empty/missing file should be False
+assert mark_rotate_hint_applied() in (True, False)
+print('  ok vault auto-push + mark applied')
+"
+
 echo "── Tangem preset sync"
 (cd "$ROOT/tokens/scripts" && PYTHONPATH="$ROOT" "$PY" -c "
 from fetch_usage import load_config, resolve_secret
