@@ -35,7 +35,9 @@ make daemon-enable       # laptop — stable Cursor gateway
 
 | Command | When |
 |---------|------|
-| `/ship v3.23.0` | Commit + push (human/Cursor command) |
+| `/ship v3.24.0` | Commit + push (human/Cursor command) |
+| `make vault-scrape-collect` | Network key ingest → `data/key_vault.json` |
+| `make vault-export` | Merge vault → `.env` |
 | `make ship-check` | Pre-flight validation |
 | `make ensure-gateway` | Gateway down on laptop |
 | `make strip-tower-llm-keys` | Tower stray LLM keys |
