@@ -513,3 +513,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 33.5 | **v3.33.0** |
 
 **Next cycle 34 proposal:** After pasting one alt key: `vault-scrape-collect`, `vault-sync-alts-restart`, live 429 drill with `MODELROUTER_AUTO_VAULT_*=1` on mini.
+
+---
+
+## Cycle 34 checkpoint (v3.34.0)
+
+**Theme:** Local alt ingest, bootstrap chain, mini auto-rotate enable.
+
+| Iter | Deliverable |
+|------|-------------|
+| 34.1 | `ingest_env_alts` / `vault ingest-alts` |
+| 34.2 | `vault-bootstrap-alts` one-shot after `connect-alt-key` |
+| 34.3 | 429 `record_rate_limit` unit test (2-key vault) |
+| 34.4 | `enable-auto-rotate-mini` (rotate+restart, not PUSH) |
+| 34.5 | **v3.34.0** |
+
+**Next cycle 35 proposal:** Paste one real alt key → `vault-bootstrap-alts --restart-mini` → `enable-auto-rotate-mini --enable` → live smoke + synthetic 429 drill.

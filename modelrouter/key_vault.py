@@ -759,6 +759,90 @@ def export_env(
     return {"target": str(target), "written": len(updates), "dry_run": False}
 
 
+def ingest_env_alts(
+    cfg: dict[str, Any] | None = None,
+    *,
+    env_path: Path | None = None,
+    host_id: str = "laptop",
+    dry_run: bool = False,
+) -> dict[str, Any]:
+    """Merge __ALT_N lines from .env into vault (no values printed)."""
+    cfg = cfg or load_vault_config()
+    path = env_path or ROOT / str(cfg.get("export_target") or ".env")
+    if not path.is_file():
+        return {"ok": False, "reason": "no_env", "path": str(path)}
+
+    rel = str(path)
+    try:
+        rel = str(path.relative_to(ROOT))
+    except ValueError:
+        try:
+            rel = str(path.relative_to(Path.home()))
+        except ValueError:
+            pass
+
+    now = datetime.now(timezone.utc).isoformat()
+    new_rows: list[VaultEntry] = []
+    seen: set[tuple[str, str]] = set()
+    for line in path.read_text(errors="ignore").splitlines():
+        s = line.strip()
+        if not s or s.startswith("#"):
+            continue
+        m = ENV_LINE_EXPORT.match(s)
+        if not m:
+            continue
+        key, val = m.group(1), m.group(2).strip().strip("'\"")
+        base_key, alt_index = normalize_env_var_key(key)
+        if alt_index is None or not val or val.startswith("op://"):
+            continue
+        if _skip_source_path(rel):
+            continue
+        if not _can_collect_var(base_key, host_id, cfg):
+            continue
+        if not _looks_like_secret_value(base_key, val):
+            continue
+        dedupe = (base_key, value_hash(val))
+        if dedupe in seen:
+            continue
+        seen.add(dedupe)
+        svc = _service_for_var(base_key, cfg)
+        new_rows.append(
+            VaultEntry(
+                id=uuid.uuid4().hex[:12],
+                env_var=base_key,
+                value=val,
+                fingerprint=fingerprint(val),
+                source_host=host_id,
+                source_path=f"{rel}#__ALT_{alt_index}",
+                enabled=True,
+                tags=list(svc.get("tags") or []) if svc else [],
+                priority=max(10, 45 - alt_index),
+                collected_at=now,
+            )
+        )
+
+    if dry_run:
+        return {
+            "ok": True,
+            "dry_run": True,
+            "path": str(path),
+            "would_ingest": len(new_rows),
+            "vars": sorted({r.env_var for r in new_rows}),
+        }
+
+    if not new_rows:
+        return {"ok": True, "ingested": 0, "reason": "no_alt_lines", "path": str(path)}
+
+    merged = merge_entries(load_vault(cfg), new_rows, cfg)
+    save_vault(cfg, merged)
+    return {
+        "ok": True,
+        "ingested": len(new_rows),
+        "total": len(merged.get("keys") or []),
+        "vars": sorted({r.env_var for r in new_rows}),
+    }
+
+
 def set_enabled(entry_id: str, enabled: bool, cfg: dict[str, Any] | None = None) -> bool:
     cfg = cfg or load_vault_config()
     doc = load_vault(cfg)
@@ -801,6 +885,10 @@ def main() -> int:
     p_export.add_argument("--target", type=Path)
     p_export.add_argument("--overwrite", action="store_true")
 
+    p_ingest = sub.add_parser("ingest-alts", help="Ingest __ALT_N lines from .env into vault")
+    p_ingest.add_argument("--dry-run", action="store_true")
+    p_ingest.add_argument("--env", type=Path, help="Source .env (default: export_target)")
+
     p_sel = sub.add_parser("select", help="Pick a key for routing")
     p_sel.add_argument("env_var")
     p_sel.add_argument("--preset", help="Routing preset from key_vault.yaml")
@@ -834,6 +922,11 @@ def main() -> int:
             for k, fp in sorted(result["keys"].items()):
                 print(f"  {k}: {fp}")
         return 0
+
+    if args.cmd == "ingest-alts":
+        result = ingest_env_alts(cfg, env_path=args.env, dry_run=args.dry_run)
+        print(json.dumps(result, indent=2))
+        return 0 if result.get("ok") else 1
 
     if args.cmd == "select":
         entry = select_key(args.env_var, preset=args.preset, strategy=args.strategy, cfg=cfg, mark_used=False)

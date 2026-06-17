@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.34.0] — 2026-06-12 (Cycle 34 — ingest alts, bootstrap, mini auto-rotate)
+
+### Added
+- **`vault ingest-alts`** — merge local `.env` `__ALT_N` lines into vault (no secret print)
+- **`make vault-bootstrap-alts`** — ingest → export → push alts (+ optional `--restart-mini`)
+- **`make enable-auto-rotate-mini`** — set `MODELROUTER_AUTO_VAULT_ROTATE/RESTART=1` on kc-mini (not PUSH)
+
+### Changed
+- `connect-alt-key` — auto-ingests pasted alt into vault
+- `vault-rotate-drill` — reports mini auto-rotate gate status
+- `test.sh` — ingest + 429 `record_rate_limit` simulation with 2 keys
+
 ## [3.33.0] — 2026-06-12 (Cycle 33 — alt paste, rotate drill, ALTS LED)
 
 ### Added

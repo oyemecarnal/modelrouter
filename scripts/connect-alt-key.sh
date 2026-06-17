@@ -74,8 +74,10 @@ update_env_file(env_path, alt_key, val)
 print(f"  ok saved {alt_key} to .env (validated)")
 PY
 
+PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -m modelrouter.key_vault ingest-alts 2>/dev/null || true
+
 if [[ "$NO_PUSH" -eq 0 && "$PUSH" -eq 1 ]]; then
   "$ROOT/scripts/push-alt-keys-mini.sh" || true
 fi
 
-echo "  Next: make vault-scrape-collect && make vault-sync-alts"
+echo "  Next: make vault-bootstrap-alts   # ingest + export + push (+ --restart-mini)"

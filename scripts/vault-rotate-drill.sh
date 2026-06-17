@@ -42,6 +42,14 @@ print(f'  rotate hints: {len(hints)} total, {len(pending)} pending')
 "
 
 echo ""
+echo "── Mini auto-rotate gates"
+if "$ROOT/scripts/enable-auto-rotate-mini.sh" 2>/dev/null; then
+  ok "mini auto-rotate status"
+else
+  warn "mini auto-rotate status skipped (SSH)"
+fi
+
+echo ""
 echo "── Dry-run export/push"
 if "$ROOT/scripts/vault-rotate-export.sh" --dry-run 2>/dev/null; then
   ok "vault-rotate-export dry-run"
@@ -68,7 +76,7 @@ done
 echo ""
 echo "  Human path when 2+ keys exist:"
 echo "    make connect-alt-key PROVIDER=groq"
-echo "    make vault-scrape-collect && make vault-sync-alts"
-echo "    ./scripts/vault-sync-alts.sh --restart-mini"
+echo "    make vault-bootstrap-alts"
+echo "    make enable-auto-rotate-mini --enable"
 echo ""
 ok "rotate drill complete (dry-run only)"

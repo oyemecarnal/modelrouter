@@ -242,6 +242,36 @@ assert 'missing' in r and 'shuffle_ready' in r
 print('  ok vault_alt_readiness', len(r['missing']), 'providers need 2nd key')
 "
 
+echo "── Key vault (ingest alts + 429 simulate)"
+PYTHONPATH="$ROOT" "$PY" -c "
+import json, tempfile
+from pathlib import Path
+from modelrouter.key_vault import (
+    ingest_env_alts, merge_entries, record_rate_limit, save_vault, load_vault_config, VaultEntry, rotate_hints_path,
+)
+groq_a = 'gsk_' + 'A' * 48
+groq_b = 'gsk_' + 'B' * 48
+with tempfile.TemporaryDirectory() as td:
+    td_path = Path(td)
+    env = td_path / '.env'
+    env.write_text('GROQ_API_KEY__ALT_1=' + groq_b + '\n')
+    cfg = load_vault_config()
+    cfg = dict(cfg)
+    cfg['vault_file'] = str(td_path / 'vault.json')
+    cfg['export_target'] = str(env)
+    rows = [
+        VaultEntry('id1', 'GROQ_API_KEY', groq_a, 'fp1', 'test', 'a.env', priority=80),
+    ]
+    save_vault(cfg, merge_entries({'keys': []}, rows, cfg))
+    ing = ingest_env_alts(cfg, env_path=env, dry_run=False)
+    assert ing.get('ingested') == 1, ing
+    hint = record_rate_limit('groq/llama', 'HTTP 429 Too Many Requests', cfg=cfg)
+    assert hint.get('ok'), hint
+    hints_path = rotate_hints_path(cfg)
+    assert hints_path.exists()
+print('  ok ingest_env_alts + record_rate_limit (2 keys)')
+"
+
 echo "── Key vault (masked exports)"
 PYTHONPATH="$ROOT" "$PY" -c "
 from modelrouter.key_vault import list_entries, load_vault_config, vault_path
