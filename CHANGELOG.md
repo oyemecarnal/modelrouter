@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.35.0] — 2026-06-17 (Groq cycle — stash-alt + smoke-hermes-fast)
+
+### Added
+- **`make smoke-hermes-fast`** — Groq route smoke via kc-mini gateway
+- **`connect-groq --stash-alt`** — move previous primary → `GROQ_API_KEY__ALT_1` on rotate
+
+### Changed
+- `connect-groq` pushes `GROQ_API_KEY__ALT_1` when present; auto `vault ingest-alts` after stash
+
 ## [3.34.0] — 2026-06-12 (Cycle 34 — ingest alts, bootstrap, mini auto-rotate)
 
 ### Added

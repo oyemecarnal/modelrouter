@@ -9,35 +9,55 @@ PUSH="${CONNECT_GROQ_PUSH:-1}"
 RESTART="${CONNECT_GROQ_RESTART:-1}"
 
 usage() {
-  echo "Usage: connect-groq.sh [--no-push] [--no-restart]"
+  echo "Usage: connect-groq.sh [--no-push] [--no-restart] [--stash-alt]"
   echo "  Paste Groq API key (gsk_…), save to .env, push to mini, restart gateway."
+  echo "  --stash-alt  move previous GROQ_API_KEY → GROQ_API_KEY__ALT_1 when replacing"
   echo "  Or set GROQ_API_KEY in environment (non-interactive)."
 }
 
 NO_PUSH=0
 NO_RESTART=0
+STASH_ALT=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --no-push) NO_PUSH=1; shift ;;
     --no-restart) NO_RESTART=1; shift ;;
+    --stash-alt) STASH_ALT=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) echo "Unknown option: $1" >&2; usage; exit 1 ;;
   esac
 done
 
 save_key() {
-  GROQ_API_KEY="$1" PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
+  GROQ_API_KEY="$1" STASH_ALT="$STASH_ALT" PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
 import os
 from pathlib import Path
 from modelrouter.env_store import update_env_file, validate_provider_key
 
+env_path = Path('''$ENV_FILE''')
 key = os.environ.get('GROQ_API_KEY', '')
+stash = os.environ.get('STASH_ALT') == '1'
 err = validate_provider_key('GROQ_API_KEY', key)
 if err:
     raise SystemExit(err)
-update_env_file(Path('''$ENV_FILE'''), 'GROQ_API_KEY', key)
+
+old = None
+if env_path.exists():
+    for line in env_path.read_text().splitlines():
+        if line.startswith('GROQ_API_KEY=') and not line.startswith('GROQ_API_KEY__'):
+            old = line.split('=', 1)[1].strip()
+            break
+
+if stash and old and old != key:
+    update_env_file(env_path, 'GROQ_API_KEY__ALT_1', old)
+    print('  ok stashed previous key → GROQ_API_KEY__ALT_1')
+
+update_env_file(env_path, 'GROQ_API_KEY', key)
 print('  ok saved to .env (validated)')
 "
+  if [[ "$STASH_ALT" -eq 1 ]]; then
+    PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -m modelrouter.key_vault ingest-alts 2>/dev/null || true
+  fi
 }
 
 echo "==> Connect Groq (ModelRouter connector MVP)"
@@ -67,7 +87,12 @@ fi
 if [[ "$NO_PUSH" -eq 0 && "$PUSH" -eq 1 ]]; then
   echo ""
   echo "── Push to ${REMOTE_HOST}"
-  "$ROOT/scripts/push-env-to-mini.sh" GROQ_API_KEY
+  PUSH_KEYS=(GROQ_API_KEY)
+  if grep -q '^GROQ_API_KEY__ALT_1=.' "$ENV_FILE" 2>/dev/null; then
+    PUSH_KEYS+=(GROQ_API_KEY__ALT_1)
+  fi
+  # shellcheck disable=SC2068
+  "$ROOT/scripts/push-env-to-mini.sh" ${PUSH_KEYS[@]}
 else
   echo "── Skip push (--no-push)"
 fi
