@@ -26,8 +26,13 @@ grep -q "\\[${VER}\\]" CHANGELOG.md || fail "CHANGELOG missing [${VER}] section"
 ok "CHANGELOG has [${VER}]"
 
 echo ""
+echo "── Gateway config SSOT"
+.venv/bin/python scripts/sync_gateway_config.py --check || fail "gateway YAML stale — run: make sync-gateway-config"
+ok "generated gateway configs fresh"
+
+echo ""
 echo "── Required scripts"
-for s in connect-provider.sh strip-tower-llm-keys.sh ensure-gateway.sh oauth-start.sh; do
+for s in connect-key.sh connect-provider.sh strip-tower-llm-keys.sh ensure-gateway.sh oauth-start.sh sync_gateway_config.py; do
   test -x "$ROOT/scripts/$s" || fail "missing or not executable: scripts/$s"
 done
 ok "ship scripts executable"

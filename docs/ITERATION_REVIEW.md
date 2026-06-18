@@ -579,3 +579,37 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 38.5 | **v3.38.0** |
 
 **Next cycle 39 proposal:** Paste Mistral #2, `vault-bootstrap-alts-restart`, 4/4 shuffle, laptop `daemon-enable`.
+
+---
+
+## Cycle 39 checkpoint (v3.39.0)
+
+**Theme:** Ponytail architecture simplify — generated gateway, unified connect-key, slim ops.
+
+| Iter | Deliverable |
+|------|-------------|
+| 39.1 | `sync_gateway_config.py` + gateway base YAML |
+| 39.2 | `connect-key.sh` replaces 9 provider scripts |
+| 39.3 | `machine_inventory --keys-audit`, `homelab_probes.py` |
+| 39.4 | Slim `doctor.sh`, portfolio off by default in widget |
+| 39.5 | **v3.39.0** + `architecture-layers.drawio` |
+
+**Next cycle 40 proposal:** Ship-check gateway SSOT gate, `restart` sync, docs, deploy-mini.
+
+---
+
+## Cycle 40 checkpoint (v3.40.0)
+
+**Theme:** Gateway config reliability + docs sync post-simplify.
+
+| Iter | Deliverable |
+|------|-------------|
+| 40.1 | `ship-check` — `sync-gateway-config --check` + connect-key required |
+| 40.2 | `make restart` → `sync-gateway-config` first |
+| 40.3 | README + POLICY_ROUTER SSOT docs |
+| 40.4 | SHIP_CHECKLIST v3.40 |
+| 40.5 | **v3.40.0** + `deploy-mini` |
+
+**Live gaps:** Mistral `__ALT_1` (3/4 shuffle), laptop gateway down between sessions (`make daemon-enable`).
+
+**Next cycle 41 proposal:** Mistral alt paste, laptop daemon-enable runbook, optional widget portfolio opt-in doc.

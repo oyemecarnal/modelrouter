@@ -15,7 +15,7 @@ daemon:
 stop:
 	./scripts/stop.sh
 
-restart: stop daemon
+restart: sync-gateway-config stop daemon
 
 health:
 	./scripts/healthcheck.sh

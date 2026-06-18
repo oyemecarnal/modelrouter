@@ -1,5 +1,14 @@
 # Changelog
 
+## [3.40.0] — 2026-06-18 (Cycle 40 — gateway SSOT reliability)
+
+### Changed
+- **`make restart`** — runs `sync-gateway-config` before stop/daemon
+- **`ship-check`** — verifies generated gateway YAML is fresh; requires `connect-key.sh`
+
+### Docs
+- README, SHIP_CHECKLIST, POLICY_ROUTER — post–Cycle 39 connect-key + generated config SSOT
+
 ## [3.39.0] — 2026-06-18 (Cycle 39 — ponytail architecture simplify)
 
 ### Added

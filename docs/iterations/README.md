@@ -257,3 +257,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 30.3 | Anthropic alt routes | [30.3.md](30.3.md) |
 | 30.4 | Hint applied / LED clear | [30.4.md](30.4.md) |
 | 30.5 | Capstone **v3.30.0** | [30.5.md](30.5.md) |
+
+## Cycle 40 (gateway SSOT reliability)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 40.1 | ship-check gateway SSOT gate | [40.1.md](40.1.md) |
+| 40.2 | restart → sync-gateway-config | [40.2.md](40.2.md) |
+| 40.3 | README + POLICY_ROUTER docs | [40.3.md](40.3.md) |
+| 40.4 | SHIP_CHECKLIST sync | [40.4.md](40.4.md) |
+| 40.5 | Capstone **v3.40.0** | [40.5.md](40.5.md) |

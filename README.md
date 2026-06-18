@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.38.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
+**v3.40.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
 
 One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 
@@ -91,8 +91,9 @@ Fallbacks: `smart` → `fast` → `local` (configured in `config/modelrouter.yam
 
 | File | Purpose |
 |------|---------|
-| `config/modelrouter.yaml` | Full config (Redis cache, all providers) |
-| `config/modelrouter.minimal.yaml` | No Redis/DB required (auto-selected) |
+| `config/modelrouter.yaml` | Full config (Redis cache) — **generated** from `policy_presets.yaml` |
+| `config/modelrouter.minimal.yaml` | No Redis — **generated** |
+| `config/includes/policy_presets.yaml` | Preset SSOT — edit here, then `make sync-gateway-config` |
 | `config/modelrouter.local.yaml` | Your overrides (gitignored) |
 | `secrets.yaml` | 1Password references (gitignored) |
 | `.env` | Plain env vars |
@@ -107,7 +108,8 @@ Start script auto-selects config:
 make start            # foreground
 make daemon           # background
 make stop             # stop daemon
-make restart          # stop + daemon
+make restart          # sync-gateway-config + stop + daemon
+make sync-gateway-config  # regenerate gateway YAML from policy_presets SSOT
 make health           # health check
 make logs             # tail logs
 make status           # health + PID
@@ -132,14 +134,15 @@ make smoke-routes           # hermes-fast + hermes-smart on mini
 make smoke-hermes-fast      # Groq route on mini
 make smoke-hermes-smart     # Anthropic route on mini
 make check-key-hygiene   # salt + provider key hygiene
-make connect-groq        # paste Groq key → .env → mini (--stash-alt on rotate)
-make connect-anthropic   # paste Anthropic key → mini (hermes-smart / review)
-make connect-openai      # paste OpenAI key → mini (smart / code)
-make connect-mistral     # paste Mistral key → mini (code / fallbacks)
-make connect-google      # paste Google AI key → mini (Gemini routes)
-make connect-deepseek    # paste DeepSeek key → mini
-make connect-together    # paste Together key → mini
-make connect-provider PROVIDER=anthropic  # generic registry dispatch
+make connect-key PROVIDER=groq   # unified paste-key (all providers in connectors.yaml)
+make connect-groq        # alias → connect-key groq (--stash-alt on rotate)
+make connect-anthropic   # alias → connect-key anthropic
+make connect-openai      # alias → connect-key openai
+make connect-mistral     # alias → connect-key mistral
+make connect-google      # alias → connect-key google
+make connect-deepseek    # alias → connect-key deepseek
+make connect-together    # alias → connect-key together
+make connect-provider PROVIDER=anthropic  # same as connect-key
 make audit-tower-wires   # scan kc-tower for stray provider keys
 make clean-tower-wires   # push client.env + re-audit tower
 make strip-tower-llm-keys  # remove stray LLM keys from tower ~/dev/*/.env*

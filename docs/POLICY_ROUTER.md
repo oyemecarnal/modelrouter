@@ -17,6 +17,12 @@ Instead of every app choosing “GPT-4” or “Groq” by name, they ask for a 
 
 ModelRouter picks the **cheapest model that’s good enough**, and **steps up or down** if a provider is down or out of quota.
 
+## Config SSOT (Cycle 39+)
+
+- **Edit presets:** `config/includes/policy_presets.yaml`
+- **Regenerate gateway:** `make sync-gateway-config` (also runs on `make restart` and `make install`)
+- **Do not hand-edit** preset blocks in `config/modelrouter.yaml` — they are generated and marked `GENERATED` at the top.
+
 ## Hermes on smalshi (mini → tower)
 
 - **Composed** on the Mac mini, **runs** on kc-tower.
