@@ -7,6 +7,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 source "$ROOT/scripts/lib.sh"
 modelrouter_load_env
 
+REMOTE_HOST="$(modelrouter_remote_host)"
+
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
 warn() { printf "  \033[33m!\033[0m %s\n" "$1"; }
 fail() { printf "  \033[31m✗\033[0m %s\n" "$1"; }
@@ -45,9 +47,9 @@ done
 # Groq rotation waived unless you choose to rotate — see docs/KEY_ROTATION.md
 
 echo ""
-echo "── kc-mini (remote)"
-if ssh -o ConnectTimeout=4 kc-mini-lan 'test -d ~/dev/modelrouter' 2>/dev/null; then
-  ssh -o ConnectTimeout=4 kc-mini-lan 'cd ~/dev/modelrouter && source .env 2>/dev/null; \
+echo "── gateway-mini (remote: ${REMOTE_HOST})"
+if ssh -o ConnectTimeout=4 "$REMOTE_HOST" 'test -d ~/dev/modelrouter' 2>/dev/null; then
+  ssh -o ConnectTimeout=4 "$REMOTE_HOST" 'cd ~/dev/modelrouter && source .env 2>/dev/null; \
     for k in GROQ_API_KEY ANTHROPIC_API_KEY OPENAI_API_KEY MISTRAL_API_KEY GOOGLE_API_KEY LITELLM_SALT_KEY MODELROUTER_MASTER_KEY; do \
       eval v=\$${k}; \
       if [[ -n "$v" && "$v" != *change-me* ]]; then echo "  ok $k"; else echo "  ! $k missing/placeholder"; fi; \
@@ -55,7 +57,7 @@ if ssh -o ConnectTimeout=4 kc-mini-lan 'test -d ~/dev/modelrouter' 2>/dev/null; 
     if [[ -n "${LITELLM_SALT_KEY:-}" && -n "${MODELROUTER_MASTER_KEY:-}" && "$LITELLM_SALT_KEY" == "$MODELROUTER_MASTER_KEY" ]]; then \
       echo "  ! LITELLM_SALT_KEY equals master on mini"; fi' 2>/dev/null || warn "mini .env check failed"
 else
-  warn "kc-mini-lan unreachable"
+  warn "${REMOTE_HOST} unreachable — set MODELROUTER_REMOTE_HOST in .env"
   issues=$((issues + 1))
 fi
 
@@ -65,4 +67,4 @@ if [[ $issues -gt 0 ]]; then
   exit 1
 fi
 echo "Key hygiene OK"
-echo "  Optional: make audit-tower-wires  # stray provider keys on kc-tower"
+echo "  Optional: make audit-tower-wires  # stray provider keys on runtime host"

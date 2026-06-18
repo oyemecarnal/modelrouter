@@ -24,7 +24,7 @@ fi
 "$ROOT/scripts/daemon-enable-mini.sh"
 "$ROOT/scripts/push-alt-keys-mini.sh" || true
 
-REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
+REMOTE_HOST="$(modelrouter_remote_host)"
 REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
 echo "[bootstrap-mini] Remote version:"
 ssh -o ConnectTimeout=8 "$REMOTE_HOST" "cat ${REMOTE_DIR}/VERSION 2>/dev/null || echo unknown"

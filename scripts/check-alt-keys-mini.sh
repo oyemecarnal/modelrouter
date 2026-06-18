@@ -5,8 +5,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/lib.sh"
-
-REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
+modelrouter_load_env
+REMOTE_HOST="$(modelrouter_remote_host)"
 REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
 
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }

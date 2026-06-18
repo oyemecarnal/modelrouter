@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.41.0** — Self-hosted **[LiteLLM](https://docs.litellm.ai/)** gateway with policy presets, key vault, and a homelab ops toolkit.
+**v3.41.1** — Self-hosted **[LiteLLM](https://docs.litellm.ai/)** gateway with policy presets, key vault, and a homelab ops toolkit.
 
 [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [Quick start](#quick-start) · [Homelab hosts](docs/HOSTS.md) · [Security](SECURITY.md)
 

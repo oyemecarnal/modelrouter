@@ -20,7 +20,7 @@ Practical hygiene so the homelab gateway repo stays easy to work in — without 
 
 1. Inspect `git status` and repo shape (~1 MB git; no mystery large artifacts).
 2. Remove obvious junk: stale tmp, duplicate notes, broken comments, orphaned scripts.
-3. Align short docs with reality — especially URLs (`Kevins-Mac-mini.local` for LAN HTTP; `kc-mini-lan` SSH-only), preset names, `make` targets in `README.md`.
+3. Align short docs with reality — especially gateway URLs (`docs/HOSTS.md`), preset names, `make` targets in `README.md`.
 4. Run relevant checks (not necessarily all):
 
 ```bash

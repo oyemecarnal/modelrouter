@@ -11,6 +11,7 @@ from pathlib import Path
 import yaml
 
 from modelrouter.env_store import update_env_file, validate_provider_key
+from modelrouter.hosts_config import gateway_ssh_host
 
 ROOT = Path(__file__).resolve().parent.parent
 REGISTRY = ROOT / "config" / "connectors.yaml"
@@ -120,7 +121,7 @@ def main(argv: list[str] | None = None) -> int:
     conn = load_connector(args.provider)
     env_var = conn.get("env") or ""
     env_file = ROOT / ".env"
-    remote = os.environ.get("MODELROUTER_REMOTE_HOST", "kc-mini-lan")
+    remote = gateway_ssh_host()
     push = not args.no_push and os.environ.get(f"CONNECT_{env_var}_PUSH", "1") != "0"
     restart = not args.no_restart and os.environ.get(f"CONNECT_{env_var}_RESTART", "1") != "0"
 

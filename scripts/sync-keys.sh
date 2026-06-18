@@ -6,6 +6,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 ENV_FILE="$ROOT/.env"
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib.sh"
+modelrouter_load_env
+REMOTE_SSH="$(modelrouter_remote_host)"
 DRY_RUN=false
 USE_MINI=false
 
@@ -85,11 +89,11 @@ KEYS="OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GEMINI_API_KEY OPENROUTER_
 REMOTE_ENV=""
 REMOTE_COINBOT_ENV=""
 if $USE_MINI; then
-  echo "[sync-keys] Pulling kc-mini ~/dev/modelrouter/.env snapshot..."
+  echo "[sync-keys] Pulling ${REMOTE_SSH} ~/dev/modelrouter/.env snapshot..."
   REMOTE_ENV=$(mktemp)
-  scp kc-mini-lan:~/dev/modelrouter/.env "$REMOTE_ENV" 2>/dev/null || true
+  scp "${REMOTE_SSH}:~/dev/modelrouter/.env" "$REMOTE_ENV" 2>/dev/null || true
   REMOTE_COINBOT_ENV=$(mktemp)
-  scp kc-mini-lan:~/dev/coinbot/.env "$REMOTE_COINBOT_ENV" 2>/dev/null || true
+  scp "${REMOTE_SSH}:~/dev/coinbot/.env" "$REMOTE_COINBOT_ENV" 2>/dev/null || true
 fi
 
 [[ -f "$ENV_FILE" ]] || cp "$ROOT/.env.example" "$ENV_FILE"

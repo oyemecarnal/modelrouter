@@ -16,10 +16,21 @@ EQUITY_CACHE = Path.home() / "Library/Application Support/TokenWidget/equity_cac
 COINBOT_BROKERS = frozenset({"kraken", "coinbase", "alpaca"})
 
 
+def _gateway_ssh_host() -> str:
+    if os.environ.get("MODELROUTER_REMOTE_HOST"):
+        return os.environ["MODELROUTER_REMOTE_HOST"]
+    root = Path(__file__).resolve().parents[2]
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    from modelrouter.hosts_config import gateway_ssh_host
+
+    return gateway_ssh_host(root)
+
+
 def _default_cfg() -> dict[str, Any]:
     return {
         "enabled": True,
-        "remote_host": os.environ.get("MODELROUTER_REMOTE_HOST", "kc-mini-lan"),
+        "remote_host": _gateway_ssh_host(),
         "coinbot_root": str(Path.home() / "dev" / "coinbot"),
         "brokers": ["kraken", "coinbase", "kalshi"],
         "prefer_remote": True,
@@ -43,7 +54,7 @@ def _broker_route(broker: str, base: dict[str, Any]) -> dict[str, Any]:
     if "remote" not in route:
         route["remote"] = broker in remote_brokers and broker not in local_brokers
 
-    remote_host = base.get("remote_host", "kc-mini-lan")
+    remote_host = base.get("remote_host") or _gateway_ssh_host()
     if route.get("remote"):
         route.setdefault("host", remote_host)
     else:
@@ -90,7 +101,7 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
 
     brokers = [b.lower() for b in (base.get("brokers") or ["kraken", "coinbase"])]
     prefer_remote = base.get("prefer_remote", True)
-    remote_host = base.get("remote_host", "kc-mini-lan")
+    remote_host = base.get("remote_host") or _gateway_ssh_host()
     force_live = base.get("force_live", True)
     instance_id = base.get("instance_id") or "phase1_paper_daily"
 
@@ -298,8 +309,9 @@ def _status_to_equity(status: dict[str, Any], host: str) -> dict[str, Any]:
 
 
 def _fetch_status_remote(host: str, instance_id: str) -> dict[str, Any] | None:
+    coinbot_home = Path.home() / "dev" / "coinbot"
     for path in (
-        f"/Users/kevinreed/dev/coinbot/coinbot_v2/data/{instance_id}/status.json",
+        str(coinbot_home / "coinbot_v2" / "data" / instance_id / "status.json"),
         f"/root/dev/coinbot/coinbot_v2/data/{instance_id}/status.json",
     ):
         proc = subprocess.run(
@@ -401,7 +413,7 @@ def _fetch_local(
 def _remote_modelrouter_dir(host: str, coinbot_root: Path) -> Path:
     if str(coinbot_root).startswith("/root/"):
         return Path("/root/dev/modelrouter")
-    return Path(os.environ.get("MODELROUTER_REMOTE_DIR", "/Users/kevinreed/dev/modelrouter"))
+    return Path(os.environ.get("MODELROUTER_REMOTE_DIR", str(Path.home() / "dev" / "modelrouter")))
 
 
 def _fetch_remote(

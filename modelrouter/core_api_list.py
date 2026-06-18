@@ -13,6 +13,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from modelrouter.hosts_config import gateway_ssh_host
+
 import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -109,6 +111,7 @@ def key_state(env: str, laptop: dict[str, str], mini: set[str]) -> dict[str, Any
 
 
 def mini_env_keys() -> set[str]:
+    host = gateway_ssh_host()
     try:
         proc = subprocess.run(
             [
@@ -117,7 +120,7 @@ def mini_env_keys() -> set[str]:
                 "ConnectTimeout=4",
                 "-o",
                 "BatchMode=yes",
-                "kc-mini-lan",
+                host,
                 "grep -E '^[A-Z][A-Z0-9_]*=' ~/dev/modelrouter/.env 2>/dev/null | cut -d= -f1",
             ],
             capture_output=True,

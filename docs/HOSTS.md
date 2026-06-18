@@ -17,7 +17,7 @@ cp config/hosts.local.yaml.example config/hosts.local.yaml
 |----------|---------|
 | `MODELROUTER_MINI_URL` | Override LAN gateway URL for smoke tests and health checks |
 | `MODELROUTER_REMOTE_DIR` | Remote deploy path (default `$HOME/dev/modelrouter`) |
-| `MODELROUTER_REMOTE_HOST` | SSH target for `make deploy-mini` |
+| `MODELROUTER_REMOTE_HOST` | SSH target for `make deploy-mini` (overrides `hosts.yaml` gateway-mini ssh) |
 | `KC_TOWER_SSH` | SSH alias for tower probes (`gateway-tower`, etc.) |
 
 ## Gateway URLs

@@ -324,7 +324,7 @@ def scrape_host(host_id: str, cfg: dict[str, Any], *, collect: bool) -> tuple[In
             for remote in host_cfg.get("env_files") or []:
                 entries.extend(_ssh_read_env_file(ssh, remote, host_id, cfg, collect=True))
         # Masked discovery via remote inventory when available
-        remote_dir = host_cfg.get("remote_dir") or "/Users/kevinreed/dev/modelrouter"
+        remote_dir = host_cfg.get("remote_dir") or str(Path.home() / "dev" / "modelrouter")
         proc = subprocess.run(
             [
                 "ssh",

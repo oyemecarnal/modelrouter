@@ -3,7 +3,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib.sh"
+modelrouter_load_env
+REMOTE_HOST="$(modelrouter_remote_host)"
 REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
 KEY_LIST="${*:-MISTRAL_API_KEY GROQ_API_KEY}"
 

@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.41.1] — 2026-06-12 (Deepclean — public hygiene)
+
+### Added
+- **`modelrouter/hosts_config.py`** — merge `hosts.yaml` + `hosts.local.yaml`; resolve gateway SSH alias
+- **`scripts/connect-provider.sh`** — thin wrapper to `connect-key.sh` (was empty)
+
+### Fixed
+- **Personal path leaks** — `homelab_status.py`, `key_vault.py`, `fetch_equity.py`, `core_api_list.py`
+- **Remote host defaults** — deploy/push scripts read SSH alias from `hosts.local.yaml` via `modelrouter_remote_host()`
+- **Cursor slash commands** — generic gateway references
+
 ## [3.41.0] — 2026-06-12 (Public GitHub readiness)
 
 ### Added

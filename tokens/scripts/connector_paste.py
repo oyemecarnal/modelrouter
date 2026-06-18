@@ -44,6 +44,7 @@ def paste_connector(
     if str(root) not in sys.path:
         sys.path.insert(0, str(root))
     from modelrouter.env_store import update_env_file, validate_provider_key
+    from modelrouter.hosts_config import gateway_ssh_host
 
     conn = _load_connector(root, provider_id)
     env_var = conn["env"]
@@ -63,7 +64,7 @@ def paste_connector(
         "restarted": False,
     }
 
-    remote_host = cfg.get("modelrouter_remote_host") or "kc-mini-lan"
+    remote_host = cfg.get("modelrouter_remote_host") or gateway_ssh_host(root)
     if push:
         push_script = root / "scripts" / "push-env-to-mini.sh"
         if not push_script.exists():

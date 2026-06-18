@@ -132,3 +132,18 @@ modelrouter_mini_gateway_urls() {
   fi
   printf '%s\n' "${candidates[@]}"
 }
+
+modelrouter_remote_host() {
+  if [[ -n "${MODELROUTER_REMOTE_HOST:-}" ]]; then
+    echo "$MODELROUTER_REMOTE_HOST"
+    return 0
+  fi
+  local f host
+  f="$(modelrouter_hosts_yaml)"
+  host="$(awk '
+    /^  gateway-mini:$/ { in_host=1; next }
+    in_host && /^  [a-zA-Z0-9_-]+:$/ { exit }
+    in_host && /^    ssh:/ { print $2; exit }
+  ' "$f" 2>/dev/null || true)"
+  echo "${host:-gateway-mini}"
+}

@@ -319,8 +319,11 @@ def print_report(report: InventoryReport) -> None:
     print("Inventory only — not a wallet. Never stores or moves secrets.")
 
 
-def print_keys_audit(root: Path | None = None, remote_host: str = "kc-mini-lan") -> None:
+def print_keys_audit(root: Path | None = None, remote_host: str | None = None) -> None:
     """Masked key audit — replaces scripts/discover-keys.sh."""
+    from modelrouter.hosts_config import gateway_ssh_host
+
+    remote_host = remote_host or gateway_ssh_host()
     import socket
     import subprocess
 

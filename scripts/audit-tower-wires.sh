@@ -26,7 +26,7 @@ tower_ssh_host() {
     return 0
   fi
   local candidate
-  for candidate in kc-tower kc-tower-lan; do
+  for candidate in gateway-tower kc-tower kc-tower-lan; do
     if ssh -o ConnectTimeout=4 -o BatchMode=yes "$candidate" 'true' 2>/dev/null; then
       echo "$candidate"
       return 0

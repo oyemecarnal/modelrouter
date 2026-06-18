@@ -45,7 +45,7 @@ echo ""
 "$ROOT/scripts/check-alt-keys-mini.sh" || true
 
 if [[ "$RESTART_MINI" -eq 1 ]]; then
-  REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
+  REMOTE_HOST="$(modelrouter_remote_host)"
   REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
   echo "[vault-sync-alts] Restarting mini gateway..."
   ssh -o ConnectTimeout=8 "$REMOTE_HOST" "cd '${REMOTE_DIR}' && make restart"

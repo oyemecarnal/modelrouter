@@ -100,7 +100,7 @@ Plus prior work in same tree: policy presets, doctor, cost-review, MCP, route_po
 | **Duplicate preset YAML** in `minimal` + `full` | Drift risk — cycle 2: generate from `config/includes/policy_presets.yaml` |
 | **`OPENROUTER_API_KEY` in .env`** if unused | Confusing in doctor; remove or comment until stub enabled |
 | **`.env` on laptop with keys + mini copy** | Prefer mini as canonical; laptop sync via `keys-sync-mini` only |
-| **Hardcoded `/Users/kevinreed` in plist/mcp example** | Cycle 2: `MODELROUTER_ROOT` or install script templating |
+| **Hardcoded home paths in plist/mcp example** | Done in v3.41.0 — templated plist + `${workspaceFolder}` MCP example |
 | **rsync accidentally synced `.git` once** | Fixed exclude; verify mini isn't a git clone unless intended |
 
 ### Keep (core homelab value)

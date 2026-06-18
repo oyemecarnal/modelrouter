@@ -10,7 +10,7 @@ description: ModelRouter full cycle — cleanup, deepclean, five iterations, lin
 
 ## Context
 
-**ModelRouter** — LiteLLM gateway on **kc-mini** (`http://Kevins-Mac-mini.local:3000`). Presets not vendors. Keys on mini. `docs/HOMELAB_GOALS.md` · `docs/iterations/` · `VERSION`.
+**ModelRouter** — LiteLLM gateway on your always-on host (`config/hosts.yaml`). Presets not vendors. Keys on gateway. `docs/HOMELAB_GOALS.md` · `docs/iterations/` · `VERSION`.
 
 ## Covenant
 
@@ -44,7 +44,7 @@ Read before touching code:
 
 1. Inspect repo shape — no mystery artifacts, no tracked secrets.
 2. Remove obvious junk; fix stale README/hosts/preset references.
-3. Quick hotspots: preset SSOT drift, wrong LAN URLs (`Kevins-Mac-mini.local` HTTP; `kc-mini-lan` SSH-only).
+3. Quick hotspots: preset SSOT drift, stale gateway URLs in docs (`docs/HOSTS.md` SSOT), `make` targets in `README.md`.
 
 **Validate (if anything changed):** `make lint`
 

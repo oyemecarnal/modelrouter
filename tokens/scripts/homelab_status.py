@@ -119,8 +119,14 @@ DEFAULT_WEBHOOKS = [
     {"id": "groq_net", "label": "GROQ", "url": "https://api.groq.com"},
     {"id": "openai_net", "label": "OAI", "url": "https://api.openai.com/v1/models"},
     {"id": "anthropic_net", "label": "ANTH", "url": "https://api.anthropic.com"},
-    {"id": "mini_gw", "label": "MINI", "url": "http://Kevins-Mac-mini.local:3000/health/liveliness"},
 ]
+
+
+def _gateway_webhook(root: Path, port: str) -> dict[str, str]:
+    hosts = _load_hosts(root)
+    gw = hosts.get("gateway") or {}
+    base = (gw.get("url") or gw.get("url_local") or f"http://gateway.local:{port}").rstrip("/")
+    return {"id": "mini_gw", "label": "GW", "url": f"{base}/health/liveliness"}
 
 
 def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
@@ -135,13 +141,7 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
     env = _parse_env(root / ".env")
     port = env.get("MODELROUTER_PORT", "3000")
     local_url = gw.get("url_local") or f"http://127.0.0.1:{port}"
-    mini_urls = [
-        gw.get("url"),
-        gw.get("url_tailscale"),
-        f"http://Kevins-Mac-mini.local:{port}",
-        f"http://100.85.245.23:{port}",
-    ]
-    mini_urls = [u for u in mini_urls if u]
+    mini_urls = [u for u in (gw.get("url"), gw.get("url_tailscale"), gw.get("url_ssh_alias")) if u]
 
     master = env.get("MODELROUTER_MASTER_KEY", "")
     salt = env.get("LITELLM_SALT_KEY", "")
@@ -164,10 +164,10 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             mini_up = True
             mini_hit = url
             break
-    infra.append(_led("mini", "MINI", "ok" if mini_up else "down", mini_hit or "kc-mini", "path"))
+    infra.append(_led("mini", "MINI", "ok" if mini_up else "down", mini_hit or "gateway", "path"))
 
     tower_host = None
-    for candidate in ("kc-tower", "kc-tower-lan"):
+    for candidate in ("gateway-tower", "kc-tower", "kc-tower-lan"):
         if _ssh_ok(candidate):
             tower_host = candidate
             break
@@ -175,7 +175,7 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
         _led("tower", "TWR", "ok" if tower_host else "skip", tower_host or "offline", "path")
     )
 
-    tailscale_gw = gw.get("url_tailscale") or f"http://100.85.245.23:{port}"
+    tailscale_gw = gw.get("url_tailscale") or gw.get("url") or f"http://gateway.local:{port}"
     if tower_host:
         link_ok = _tower_to_mini(tower_host, tailscale_gw)
         infra.append(
@@ -255,7 +255,7 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             led["signup"] = conn["signup"]
         connectors.append(led)
 
-    webhooks_cfg = rx.get("webhooks") or DEFAULT_WEBHOOKS
+    webhooks_cfg = rx.get("webhooks") or (DEFAULT_WEBHOOKS + [_gateway_webhook(root, port)])
     webhooks: list[dict[str, str]] = []
     for wh in webhooks_cfg:
         if not isinstance(wh, dict):
@@ -307,7 +307,7 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
             {
                 "id": "mini_gateway",
                 "text": "kc-mini gateway unreachable",
-                "fix": "ssh kc-mini-lan 'cd ~/dev/modelrouter && make restart'",
+                "fix": "ssh $MODELROUTER_REMOTE_HOST 'cd ~/dev/modelrouter && make restart'",
                 "alt": "",
                 "doc": "docs/HOMELAB_GOALS.md",
             }
