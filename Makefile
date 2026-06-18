@@ -1,4 +1,4 @@
-.PHONY: install start stop restart health logs status doctor doctor-fix daemon daemon-enable daemon-disable smoke-hermes-fast smoke-routes dedupe-env
+.PHONY: install start stop restart health logs status doctor doctor-fix daemon daemon-enable daemon-disable smoke-hermes-fast smoke-routes dedupe-env ensure-alt-slots
 .PHONY: docker-up docker-down docker-logs agents deploy-mini bootstrap-mini daemon-enable-mini enable-auto-rotate-mini push-alt-keys-mini check-alt-keys check-alt-keys-mini vault-sync-alts vault-sync-alts-restart vault-bootstrap-alts vault-ingest-alts vault-rotate-drill connect-alt-key keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
 .PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart smoke-hermes-fast smoke-routes usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider connect-alt-key audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal inventory inventory-mini vault-scrape vault-scrape-collect vault-list vault-export vault-export-dry vault-ingest-alts vault-sync-alts vault-sync-alts-restart vault-bootstrap-alts enable-auto-rotate-mini vault-rotate-drill vault-rotate-simulate vault-rotate-export vault-rotate-export-dry vault-rotate-push vault-rotate-push-dry
@@ -109,6 +109,10 @@ dedupe-env:
 dedupe-env-apply:
 	chmod +x scripts/dedupe-env.sh
 	./scripts/dedupe-env.sh --apply
+
+ensure-alt-slots:
+	chmod +x scripts/ensure-alt-slots.sh
+	./scripts/ensure-alt-slots.sh
 
 enable-auto-rotate-mini:
 	chmod +x scripts/enable-auto-rotate-mini.sh

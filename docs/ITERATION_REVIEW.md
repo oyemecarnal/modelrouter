@@ -563,3 +563,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 37.5 | **v3.37.0** |
 
 **Next cycle 38 proposal:** Mistral `__ALT_1`, laptop `daemon-enable`, `smoke-routes` in ship-check optional.
+
+---
+
+## Cycle 38 checkpoint (v3.38.0)
+
+**Theme:** Alt slot helper, laptop daemon hygiene, ship route smoke.
+
+| Iter | Deliverable |
+|------|-------------|
+| 38.1 | `ensure-alt-slots` — empty `__ALT_1` lines for paste |
+| 38.2 | `ensure-gateway` launchd loaded check |
+| 38.3 | `connect-openai --stash-alt` |
+| 38.4 | `ship-check` optional `smoke-routes` |
+| 38.5 | **v3.38.0** |
+
+**Next cycle 39 proposal:** Paste Mistral #2, `vault-bootstrap-alts-restart`, 4/4 shuffle, laptop `daemon-enable`.

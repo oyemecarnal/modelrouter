@@ -49,5 +49,18 @@ else
 fi
 
 echo ""
+echo "── Route smoke (optional)"
+MINI_GW="${MODELROUTER_MINI_URL:-http://Kevins-Mac-mini.local:3000}"
+if curl -sf --max-time 5 "${MINI_GW}/health/liveliness" &>/dev/null; then
+  if make smoke-routes; then
+    ok "kc-mini route smoke"
+  else
+    warn "route smoke failed — check provider keys on mini"
+  fi
+else
+  warn "kc-mini gateway down — skip smoke-routes"
+fi
+
+echo ""
 ok "ship-check passed — ready for /ship v${VER}"
 echo "See docs/SHIP_CHECKLIST.md"

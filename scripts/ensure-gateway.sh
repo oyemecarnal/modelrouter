@@ -15,6 +15,11 @@ echo ""
 
 if MODELROUTER_ROOT="$ROOT" "$ROOT/scripts/healthcheck.sh" &>/dev/null; then
   ok "Gateway already up"
+  if launchctl list 2>/dev/null | grep -q com.modelrouter; then
+    ok "launchd job loaded (com.modelrouter)"
+  else
+    warn "launchd not loaded — run: make daemon-enable"
+  fi
   exit 0
 fi
 
@@ -25,6 +30,11 @@ sleep 2
 
 if MODELROUTER_ROOT="$ROOT" "$ROOT/scripts/healthcheck.sh" &>/dev/null; then
   ok "Gateway up after restart"
+  if launchctl list 2>/dev/null | grep -q com.modelrouter; then
+    ok "launchd job loaded (com.modelrouter)"
+  else
+    warn "launchd not loaded — run: make daemon-enable (docs/LAPTOP_DAEMON.md)"
+  fi
   exit 0
 fi
 

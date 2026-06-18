@@ -1,5 +1,15 @@
 # Changelog
 
+## [3.38.0] — 2026-06-17 (Cycle 38 — alt slots, daemon hint, ship smoke)
+
+### Added
+- **`make ensure-alt-slots`** — add empty `__ALT_1` lines for all alt-routed providers
+
+### Changed
+- **`connect-openai --stash-alt`** — parity with Groq/Anthropic/Mistral
+- **`ensure-gateway`** — warns when launchd `com.modelrouter` not loaded
+- **`ship-check`** — optional `smoke-routes` when kc-mini is up
+
 ## [3.37.0] — 2026-06-17 (Cycle 37 — rotate simulate, connector stash-alt, deploy)
 
 ### Added

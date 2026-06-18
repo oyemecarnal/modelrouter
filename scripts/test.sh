@@ -70,6 +70,20 @@ assert Path(env).read_text().splitlines() == ['B=2', 'A=3']
 print('  ok dedupe-env keeps last key occurrence')
 "
 
+echo "── Ensure alt slots"
+chmod +x scripts/ensure-alt-slots.sh 2>/dev/null || true
+"$PY" -c "
+import tempfile, os, subprocess
+from pathlib import Path
+td = Path(tempfile.mkdtemp())
+env = td / '.env'
+env.write_text('GROQ_API_KEY=gsk_' + 'x' * 48 + '\n')
+subprocess.run(['./scripts/ensure-alt-slots.sh'], cwd='$ROOT', check=True, env={**os.environ, 'MODELROUTER_ENV': str(env)})
+text = env.read_text()
+assert 'GROQ_API_KEY__ALT_1=' in text
+print('  ok ensure-alt-slots')
+"
+
 echo "── Security (snapshot exports)"
 PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 import json, re
