@@ -46,7 +46,7 @@ echo ""
 
 if [[ "$RESTART_MINI" -eq 1 ]]; then
   REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
-  REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-/Users/kevinreed/dev/modelrouter}"
+  REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
   echo "[vault-sync-alts] Restarting mini gateway..."
   ssh -o ConnectTimeout=8 "$REMOTE_HOST" "cd '${REMOTE_DIR}' && make restart"
 fi

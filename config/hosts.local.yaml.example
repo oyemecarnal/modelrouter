@@ -1,0 +1,19 @@
+# Copy to config/hosts.local.yaml (gitignored) and customize for your homelab.
+# Takes precedence over config/hosts.yaml for gateway URLs and host entries.
+#
+#   cp config/hosts.local.yaml.example config/hosts.local.yaml
+
+gateway:
+  url: http://your-mini.local:3000
+  url_ssh_alias: http://your-mini-ssh-alias:3000
+  url_tailscale: http://100.x.x.x:3000  # Tailscale IP of gateway host
+
+hosts:
+  gateway-mini:
+    ssh: your-mini-ssh-alias
+    modelrouter_path: ~/dev/modelrouter
+    modelrouter_url: http://your-mini.local:3000
+
+  gateway-tower:
+    ssh: your-tower-ssh-alias
+    modelrouter_url: http://your-mini.local:3000

@@ -40,4 +40,4 @@ Use gateway aliases: `smart`, `fast`, or policy presets (`cheap`, `code`, `herme
 
 ## LAN note
 
-Production agents on **kc-tower** use `http://Kevins-Mac-mini.local:3000/v1` — see `config/client.env.example`. Laptop Cursor typically uses `127.0.0.1`.
+Production agents on remote runtime hosts use the gateway URL from `config/client.env.example`. Laptop Cursor typically uses `127.0.0.1`.

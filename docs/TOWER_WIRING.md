@@ -1,27 +1,25 @@
-# kc-tower → ModelRouter
+# Remote runtime → ModelRouter gateway
 
-Tower agents call **kc-mini** only. No provider keys on tower.
+Runtime hosts (Linux agents, bots) call the **always-on gateway host** only. No provider keys on remote machines.
 
 ## Gateway URL
 
 | From | URL |
 |------|-----|
-| **kc-tower** (Linux) | `http://100.85.245.23:3000/v1` (mini Tailscale — mDNS does not resolve) |
-| Laptop / macOS LAN | `http://Kevins-Mac-mini.local:3000/v1` |
+| **Linux runtime** (no mDNS) | `gateway.url_tailscale` from `config/hosts.yaml` |
+| **macOS / LAN** | `gateway.url` (mDNS or static hostname) |
 
-SSOT: `config/hosts.yaml` → `gateway.url_tailscale`
+Customize in `config/hosts.local.yaml` — see `docs/HOSTS.md`.
 
 ## Client env
 
 ```bash
-make push-client-env-tower   # writes ~/.config/modelrouter/client.env on tower
-make smoke-tower             # hermes-fast + cheap from tower
+make push-client-env-tower   # writes ~/.config/modelrouter/client.env on runtime host
+make smoke-tower             # hermes-fast + cheap from remote host
 ```
 
-Hermes/Kalshi/coinbot: `source ~/.config/modelrouter/client.env` — presets in `config/projects.yaml`.
+Agents: `source ~/.config/modelrouter/client.env` — presets in `config/projects.yaml`.
 
 ## SSH
 
-Prefer **`ssh kc-tower`** (Tailscale `100.116.94.38`). `kc-tower-lan` uses ProxyJump via mini and is a fallback only.
-
-Tailscale must be running on laptop and tower.
+Set `KC_TOWER_SSH` to your runtime host alias (`gateway-tower`, etc.) in `~/.ssh/config`. Tailscale or LAN must be reachable from the operator laptop.

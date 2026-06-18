@@ -1,27 +1,31 @@
 # ModelRouter
 
-**v3.40.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
+**v3.41.0** — Self-hosted **[LiteLLM](https://docs.litellm.ai/)** gateway with policy presets, key vault, and a homelab ops toolkit.
 
-One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
+[Why ModelRouter?](docs/WHY_MODELROUTER.md) · [Quick start](#quick-start) · [Homelab hosts](docs/HOSTS.md) · [Security](SECURITY.md)
 
-Drop-in replacement for OpenRouter on your LAN (OpenRouter itself is stubbed — optional later).
+OpenAI-compatible endpoint — drop-in for Cursor, Continue, and agent runtimes. Clients request **presets** (`hermes-fast`, `cheap`, `code`, …), not vendor model names.
 
 ```
 Base URL: http://127.0.0.1:3000
 API Key:  <MODELROUTER_MASTER_KEY>
 ```
 
-## Quick start (homelab)
+## Quick start
 
 ```bash
+git clone https://github.com/oyemecarnal/modelrouter.git
+cd modelrouter
 make install          # venv + litellm + config files
 cp .env.example .env  # add your keys (or use secrets.yaml + 1Password)
 make daemon           # start in background
-make homelab-status   # laptop + mini + doctor
+make health           # verify gateway
 make test && make lint
 ```
 
-**Tower / Hermes:** base URL `http://Kevins-Mac-mini.local:3000`, models `hermes-fast` / `hermes-smart` — see `config/hosts.yaml`.
+**Multi-machine homelab:** copy `config/hosts.local.yaml.example` → `config/hosts.local.yaml` and set your gateway hostname. See [docs/HOSTS.md](docs/HOSTS.md).
+
+**Remote agents:** `config/client.env.example` — gateway auth only, no provider keys on runtime hosts.
 
 Test:
 

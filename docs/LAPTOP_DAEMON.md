@@ -53,6 +53,6 @@ See `docs/CURSOR_WIRING.md` — base URL `http://127.0.0.1:3000/v1`, bearer `MOD
 | Host | Daemon | URL |
 |------|--------|-----|
 | Laptop | `make daemon-enable` | `http://127.0.0.1:3000` |
-| kc-mini | `make daemon-enable` on mini | `http://Kevins-Mac-mini.local:3000` |
+| gateway-mini | `make daemon-enable` on gateway host | `gateway.url` from `config/hosts.yaml` |
 
 Provider keys stay on **mini** for production; laptop `.env` is for dev + `make push-env-mini`.

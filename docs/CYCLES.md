@@ -8,7 +8,7 @@ Use these between work bursts. The aim is not perfection — it is a **living ho
 
 ## What you are steering
 
-**ModelRouter** is a self-hosted LiteLLM gateway — OpenAI-compatible at `http://127.0.0.1:3000` (laptop) and `http://Kevins-Mac-mini.local:3000` (LAN). Clients ask for **presets** (`hermes-fast`, `cheap`, `code`, …), not vendor model names.
+**ModelRouter** is a self-hosted LiteLLM gateway — OpenAI-compatible at `http://127.0.0.1:3000` (laptop) and your LAN gateway URL (see `config/hosts.yaml`). Clients ask for **presets** (`hermes-fast`, `cheap`, `code`, …), not vendor model names.
 
 | Host | Role |
 |------|------|

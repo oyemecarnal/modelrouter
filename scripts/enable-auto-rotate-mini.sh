@@ -7,7 +7,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 source "$ROOT/scripts/lib.sh"
 
 REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
-REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-/Users/kevinreed/dev/modelrouter}"
+REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
 ENABLE=0
 for arg in "$@"; do
   case "$arg" in

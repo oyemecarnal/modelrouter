@@ -16,26 +16,20 @@ hosts:
     collect: true
     env_files:
       - ~/dev/modelrouter/.env
-      - ~/dev/smalshi/Codex/.env
 
-  kc-mini:
+  gateway-mini:
     type: ssh
-    ssh: kc-mini-lan
+    ssh: gateway-mini
     collect: true
     env_files:
       - ~/dev/modelrouter/.env
-      - ~/dev/smalshi/.env
-      - ~/dev/coinbot/.env
-      - ~/dev/Kalshi_bot/.env
-      - ~/dev/openclaw/.env
 
-  kc-tower:
+  gateway-tower:
     type: ssh
-    ssh: kc-tower-lan
-    collect: false  # discover only unless you set collect: true
+    ssh: gateway-tower
+    collect: false
     env_files:
-      - /root/dev/coinbot/.env
-      - /root/dev/modelrouter/.env
+      - ~/dev/modelrouter/.env
 
 permissions:
   # Master switch — scrape without --collect stays masked-only (inventory mode)

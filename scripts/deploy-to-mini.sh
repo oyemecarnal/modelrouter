@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
-REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-/Users/kevinreed/dev/modelrouter}"
+REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
 
 echo "[deploy] Syncing ModelRouter → ${REMOTE_HOST}:${REMOTE_DIR}"
 

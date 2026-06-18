@@ -14,9 +14,19 @@ def load_hosts(root: Path) -> dict[str, Any]:
     try:
         import yaml
 
-        path = root / "config" / "hosts.yaml"
-        if path.exists():
-            return yaml.safe_load(path.read_text()) or {}
+        base_path = root / "config" / "hosts.yaml"
+        local_path = root / "config" / "hosts.local.yaml"
+        data: dict[str, Any] = {}
+        if base_path.exists():
+            data = yaml.safe_load(base_path.read_text()) or {}
+        if local_path.exists():
+            overlay = yaml.safe_load(local_path.read_text()) or {}
+            for key, val in overlay.items():
+                if isinstance(val, dict) and isinstance(data.get(key), dict):
+                    data[key] = {**data[key], **val}
+                else:
+                    data[key] = val
+        return data
     except Exception:
         pass
     return {}

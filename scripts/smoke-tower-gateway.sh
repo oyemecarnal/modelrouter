@@ -7,8 +7,7 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 source "$ROOT/scripts/lib.sh"
 modelrouter_load_env
 
-GW="${MODELROUTER_MINI_URL:-$(awk '/^gateway:/{f=1} f && /^  url_tailscale:/{print $2; exit}' "$ROOT/config/hosts.yaml" 2>/dev/null)}"
-GW="${GW:-http://Kevins-Mac-mini.local:${MODELROUTER_PORT:-3000}}"
+GW="${GW:-$(modelrouter_gateway_url)}"
 KEY="${MODELROUTER_KEY_HERMES:-${MODELROUTER_MASTER_KEY:-}}"
 BASE="${GW}/v1"
 

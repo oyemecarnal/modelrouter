@@ -2,14 +2,16 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib.sh"
 VER="$(cat "$ROOT/VERSION" 2>/dev/null || echo dev)"
-GW_URL="$(awk '/^gateway:/{f=1} f && /^  url:/{print $2; exit}' "$ROOT/config/hosts.yaml" 2>/dev/null || echo "http://Kevins-Mac-mini.local:3000")"
+GW_URL="$(modelrouter_gateway_url)"
 
 echo "╔══════════════════════════════════════╗"
 echo "║  ModelRouter homelab  v${VER}        ║"
 echo "╚══════════════════════════════════════╝"
 echo ""
-echo "Gateway (LAN): ${GW_URL}  (SSH: kc-mini-lan)"
+echo "Gateway (LAN): ${GW_URL}  (see docs/HOSTS.md)"
 echo "Docs: docs/HOMELAB_GOALS.md"
 echo ""
 
@@ -29,10 +31,10 @@ echo ""
 echo "── Usage rollup (24h)"
 "$ROOT/scripts/usage-rollup.sh" --hours 24 2>/dev/null | sed -n '1,10p' || true
 echo ""
-echo "── Tower (kc-tower)"
+echo "── Tower (gateway-tower)"
 TOWER_SSH="${KC_TOWER_SSH:-}"
 if [[ -z "$TOWER_SSH" ]]; then
-  for c in kc-tower kc-tower-lan; do
+  for c in gateway-tower kc-tower kc-tower-lan; do
     ssh -o ConnectTimeout=3 -o BatchMode=yes "$c" 'true' 2>/dev/null && TOWER_SSH="$c" && break
   done
 fi
@@ -44,7 +46,7 @@ if [[ -n "$TOWER_SSH" ]]; then
   echo "  wires: make audit-tower-wires  ·  make clean-tower-wires  ·  make guide-tower-strays"
 else
   echo "  skip SSH — set KC_TOWER_SSH when tower is online"
-  echo "  LAN path: make smoke-tower  (hermes-fast / cheap via Kevins-Mac-mini.local)"
+  echo "  LAN path: make smoke-tower  (hermes-fast / cheap via gateway URL in hosts.yaml)"
 fi
 echo ""
 echo "── Private API inventory"

@@ -23,7 +23,7 @@ Self-hosted LLM gateway powered by LiteLLM. OpenAI-compatible API at `http://127
 - Provider keys via env or 1Password `op://` refs — never commit secrets
 - Policy presets: `hermes-fast`, `hermes-smart`, `cheap`, `code`, `review`, `offline` (+ `smart`, `fast`, `local`)
 - Extend via LiteLLM callbacks in `modelrouter/` package
-- Always-on target: `kc-mini` (`/Users/kevinreed/dev/modelrouter`)
+- Always-on gateway host: configure in `config/hosts.local.yaml` (see `docs/HOSTS.md`)
 
 ## Commands
 

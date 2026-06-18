@@ -6,6 +6,7 @@ dist/
 !tokens/.env.local.example
 secrets.yaml
 config/modelrouter.local.yaml
+config/hosts.local.yaml
 __pycache__/
 *.py[cod]
 .venv/

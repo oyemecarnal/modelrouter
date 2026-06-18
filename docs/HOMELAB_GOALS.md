@@ -1,10 +1,10 @@
 # ModelRouter homelab goals
 
-**Role:** Core AI gateway for Kevin's homelab — seed of a **purchase/SaaS product** (`docs/PRODUCT_VISION.md`).
+**Role:** Self-hosted LLM gateway — OpenAI-compatible front door for a multi-machine homelab (`docs/PRODUCT_VISION.md`).
 
 ## North star (homelab)
 
-One **on-LAN front door** for LLM calls: `http://Kevins-Mac-mini.local:3000` on kc-mini (always-on), with laptop for dev and tower for agent/bot **runtime**. Use `kc-mini-lan` for SSH only.
+One **on-LAN front door** for LLM calls on an always-on gateway host, with a laptop for dev and a remote host for agent/bot **runtime**. SSH aliases live in `config/hosts.yaml` / `config/hosts.local.yaml`.
 
 **Before calibration:** untangle all wires (`docs/CLEAN_WIRES.md`) — new ModelRouter API key, no provider keys on clients, one meter.
 
@@ -35,7 +35,7 @@ Versions `1.1` → `1.5` per cycle. See `docs/iterations/`. Agent playbook: `doc
 - [x] Cursor → ModelRouter — verified in Cursor settings (`docs/CURSOR_WIRING.md`)
 - [x] `ANTHROPIC_API_KEY` on kc-mini — `review` / `hermes-smart` Anthropic routes
 - [x] Groq key — rotation waived (key OK)
-- [x] `kc-tower` SSH aliases in `~/.ssh/config` + `config/hosts.yaml`
-- [x] **kc-tower Tailscale** — up (`kc-tower` @ `100.116.94.38`)
-- [x] `make push-client-env-tower` — client.env uses mini Tailscale URL (`100.85.245.23:3000`)
+- [x] `gateway-tower` SSH aliases in `~/.ssh/config` + `config/hosts.yaml`
+- [x] **Tailscale** between operator laptop and runtime host
+- [x] `make push-client-env-tower` — client.env uses gateway Tailscale URL
 - [x] Tower agent `.env` cleanup — coinbot `OPENAI_API_KEY` removed; gateway via `client.env` (`docs/WHY_MODELROUTER.md`)

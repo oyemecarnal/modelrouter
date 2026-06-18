@@ -9,7 +9,7 @@ modelrouter_load_env
 
 TOWER_SSH="${KC_TOWER_SSH:-}"
 if [[ -z "$TOWER_SSH" ]]; then
-  for candidate in kc-tower kc-tower-lan; do
+  for candidate in gateway-tower kc-tower kc-tower-lan; do
     if ssh -o ConnectTimeout=4 -o BatchMode=yes "$candidate" 'true' 2>/dev/null; then
       TOWER_SSH="$candidate"
       break
@@ -28,8 +28,7 @@ if [[ -z "$KEY" ]]; then
   exit 1
 fi
 
-GW_URL="$(awk '/^gateway:/{f=1} f && /^  url_tailscale:/{print $2; exit}' "$ROOT/config/hosts.yaml" 2>/dev/null || true)"
-GW_URL="${GW_URL:-http://100.85.245.23:3000}"
+GW_URL="$(modelrouter_gateway_tailscale_url)"
 GW_BASE="${GW_URL%/}/v1"
 
 REMOTE_ENV='~/.config/modelrouter/client.env'

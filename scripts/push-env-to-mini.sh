@@ -4,7 +4,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 REMOTE_HOST="${MODELROUTER_REMOTE_HOST:-kc-mini-lan}"
-REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-/Users/kevinreed/dev/modelrouter}"
+REMOTE_DIR="${MODELROUTER_REMOTE_DIR:-$HOME/dev/modelrouter}"
 KEY_LIST="${*:-MISTRAL_API_KEY GROQ_API_KEY}"
 
 python3 - "$ROOT/.env" "$KEY_LIST" <<'PY' > /tmp/modelrouter-keys.env

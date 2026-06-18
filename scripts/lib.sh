@@ -85,3 +85,50 @@ modelrouter_install_python_deps() {
   "$venv/bin/pip" install --upgrade pip
   PIP_PROGRESS_BAR=on "$venv/bin/pip" install -r "$MODELROUTER_ROOT/requirements.txt"
 }
+
+# Active hosts config — optional gitignored overlay for operator-specific homelab values.
+modelrouter_hosts_yaml() {
+  local local="${MODELROUTER_ROOT}/config/hosts.local.yaml"
+  if [[ -f "$local" ]]; then
+    echo "$local"
+  else
+    echo "${MODELROUTER_ROOT}/config/hosts.yaml"
+  fi
+}
+
+modelrouter_gateway_url() {
+  if [[ -n "${MODELROUTER_MINI_URL:-}" ]]; then
+    echo "$MODELROUTER_MINI_URL"
+    return 0
+  fi
+  local url
+  url="$(awk '/^gateway:/{f=1} f && /^  url:/{print $2; exit}' "$(modelrouter_hosts_yaml)" 2>/dev/null || true)"
+  echo "${url:-http://gateway.local:3000}"
+}
+
+modelrouter_gateway_tailscale_url() {
+  local url
+  url="$(awk '/^gateway:/{f=1} f && /^  url_tailscale:/{print $2; exit}' "$(modelrouter_hosts_yaml)" 2>/dev/null || true)"
+  echo "${url:-http://100.64.0.1:3000}"
+}
+
+modelrouter_mini_gateway_urls() {
+  local port="${MODELROUTER_PORT:-3000}"
+  if [[ -n "${MODELROUTER_MINI_URL:-}" ]]; then
+    echo "$MODELROUTER_MINI_URL"
+    return 0
+  fi
+  local f url ts alias
+  f="$(modelrouter_hosts_yaml)"
+  url="$(awk '/^gateway:/{f=1} f && /^  url:/{print $2; exit}' "$f" 2>/dev/null || true)"
+  ts="$(awk '/^gateway:/{f=1} f && /^  url_tailscale:/{print $2; exit}' "$f" 2>/dev/null || true)"
+  alias="$(awk '/^gateway:/{f=1} f && /^  url_ssh_alias:/{print $2; exit}' "$f" 2>/dev/null || true)"
+  local -a candidates=()
+  [[ -n "$url" ]] && candidates+=("$url")
+  [[ -n "$ts" ]] && candidates+=("$ts")
+  [[ -n "$alias" ]] && candidates+=("$alias")
+  if [[ ${#candidates[@]} -eq 0 ]]; then
+    candidates=("http://gateway.local:${port}")
+  fi
+  printf '%s\n' "${candidates[@]}"
+}

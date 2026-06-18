@@ -1,10 +1,11 @@
-# Homelab hosts — SSH, paths, and ModelRouter URLs.
-# Client→preset mapping: config/projects.yaml (not duplicated here)
+# Homelab hosts — SSH, paths, and ModelRouter URLs (generic template).
+# Operator overrides: copy config/hosts.local.yaml.example → config/hosts.local.yaml (gitignored).
+# Client→preset mapping: config/projects.yaml
 
 gateway:
-  url: http://Kevins-Mac-mini.local:3000
-  url_ssh_alias: http://kc-mini-lan:3000  # SSH Host alias only — use url for HTTP
-  url_tailscale: http://100.85.245.23:3000  # kc-mini on Tailscale — use for kc-tower (no mDNS)
+  url: http://gateway.local:3000  # mDNS / LAN hostname of always-on gateway host
+  url_ssh_alias: http://gateway-mini:3000  # SSH Host alias only — use url for HTTP clients
+  url_tailscale: http://100.64.0.1:3000  # gateway Tailscale IP — Linux clients without mDNS
   url_local: http://127.0.0.1:3000
   master_key_env: MODELROUTER_MASTER_KEY
 
@@ -12,21 +13,20 @@ hosts:
   laptop:
     description: Dev machine (Cursor, widget, git push)
     ssh: local
-    modelrouter_path: /Users/kevinreed/dev/modelrouter
+    modelrouter_path: ~/dev/modelrouter
     modelrouter_url: http://127.0.0.1:3000
     roles: [dev, cursor, keys-widget]
 
-  kc-mini:
-    description: Always-on gateway, key store, smalshi compose
-    ssh: kc-mini-lan
-    modelrouter_path: /Users/kevinreed/dev/modelrouter
-    modelrouter_url: http://Kevins-Mac-mini.local:3000
+  gateway-mini:
+    description: Always-on gateway and key store
+    ssh: gateway-mini  # ~/.ssh/config Host alias
+    modelrouter_path: ~/dev/modelrouter
+    modelrouter_url: http://gateway.local:3000
     roles: [gateway, deploy-target, keys, tokens]
 
-  kc-tower:
-    description: Agent/bot runtime (Hermes, Kalshi, coinbot)
-    ssh: kc-tower-lan  # Tailscale 100.116.94.38 — start Tailscale on tower + laptop for SSH
-    modelrouter_url: http://Kevins-Mac-mini.local:3000
-    roles: [runtime, hermes, kalshi, coinbot]
-    note: Does not host ModelRouter — calls kc-mini gateway on LAN
-
+  gateway-tower:
+    description: Agent/bot runtime (calls gateway-mini, does not host ModelRouter)
+    ssh: gateway-tower
+    modelrouter_url: http://gateway.local:3000
+    roles: [runtime, agents]
+    note: Remote clients use gateway.url or gateway.url_tailscale from this host

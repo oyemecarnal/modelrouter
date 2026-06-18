@@ -4,6 +4,8 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
+# shellcheck disable=SC1091
+source "$ROOT/scripts/lib.sh"
 
 VER="$(cat VERSION 2>/dev/null || echo dev)"
 ok() { printf "  \033[32m✓\033[0m %s\n" "$1"; }
@@ -55,7 +57,7 @@ fi
 
 echo ""
 echo "── Route smoke (optional)"
-MINI_GW="${MODELROUTER_MINI_URL:-http://Kevins-Mac-mini.local:3000}"
+MINI_GW="$(modelrouter_gateway_url)"
 if curl -sf --max-time 5 "${MINI_GW}/health/liveliness" &>/dev/null; then
   if make smoke-routes; then
     ok "kc-mini route smoke"

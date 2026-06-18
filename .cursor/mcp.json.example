@@ -1,10 +1,10 @@
 {
   "mcpServers": {
     "modelrouter": {
-      "command": "/Users/kevinreed/dev/modelrouter/.venv/bin/python",
+      "command": "${workspaceFolder}/.venv/bin/python",
       "args": ["-m", "modelrouter.mcp_server"],
       "env": {
-        "PYTHONPATH": "/Users/kevinreed/dev/modelrouter",
+        "PYTHONPATH": "${workspaceFolder}",
         "MODELROUTER_HOST": "127.0.0.1",
         "MODELROUTER_PORT": "3000",
         "MODELROUTER_MASTER_KEY": "see-your-.env-MODELROUTER_MASTER_KEY"

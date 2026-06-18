@@ -34,7 +34,8 @@ status:
 	@if [ -f .pids/modelrouter.pid ]; then echo "PID: $$(cat .pids/modelrouter.pid)"; fi
 
 daemon-enable:
-	cp deploy/com.modelrouter.plist ~/Library/LaunchAgents/
+	@ROOT="$$(pwd)"; \
+	sed "s|__MODELROUTER_ROOT__|$$ROOT|g" deploy/com.modelrouter.plist > ~/Library/LaunchAgents/com.modelrouter.plist
 	@MR_UID=$$(id -u); PLIST=$$HOME/Library/LaunchAgents/com.modelrouter.plist; \
 	launchctl bootout gui/$$MR_UID/com.modelrouter 2>/dev/null || launchctl unload "$$PLIST" 2>/dev/null || true; \
 	if launchctl bootstrap gui/$$MR_UID "$$PLIST" 2>/dev/null; then \

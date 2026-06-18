@@ -52,5 +52,6 @@ fi
 echo ""
 echo "==> Done. Next steps:"
 echo "    1. Edit .env and/or secrets.yaml with your API keys"
-echo "    2. ./scripts/start-daemon.sh"
-echo "    3. ./scripts/healthcheck.sh"
+echo "    2. Optional homelab: cp config/hosts.local.yaml.example config/hosts.local.yaml"
+echo "    3. ./scripts/start-daemon.sh"
+echo "    4. ./scripts/healthcheck.sh"

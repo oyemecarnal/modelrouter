@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.41.0] — 2026-06-12 (Public GitHub readiness)
+
+### Added
+- **`SECURITY.md`** — secrets handling and reporting
+- **`docs/HOSTS.md`** — homelab host configuration guide
+- **`config/hosts.local.yaml.example`** — gitignored operator overlay template
+
+### Changed
+- **Sanitized committed config** — generic `config/hosts.yaml`, `client.env.example`, `key_vault.yaml`, `tokens/config.json` (no personal hostnames, IPs, or home paths)
+- **`config/hosts.local.yaml`** — gitignored; overrides gateway URLs and SSH aliases locally
+- **`deploy/com.modelrouter.plist`** — templated with `__MODELROUTER_ROOT__`; `make daemon-enable` substitutes repo path
+- **Scripts** — `lib.sh` hosts helpers; deploy defaults use `$HOME/dev/modelrouter`
+- **README** — public quick-start and clone instructions
+
 ## [3.40.0] — 2026-06-18 (Cycle 40 — gateway SSOT reliability)
 
 ### Changed

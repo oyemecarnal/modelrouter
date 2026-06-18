@@ -11,8 +11,6 @@
     "mistral": true
   },
   "show_configured_keys": true,
-  "dev_root": "/Users/kevinreed/dev",
-  "modelrouter_root": "/Users/kevinreed/dev/modelrouter",
   "widget_on_top": false,
   "widget_size": 500,
   "refresh_interval_seconds": 120,
@@ -20,15 +18,14 @@
   "widget_fetch_in_panel": true,
   "portfolio": {
     "enabled": false,
-    "note": "Equity/wallets belong in project_kc — set equity.enabled true to opt in"
+    "note": "Equity/wallets are optional — set equity.enabled true to opt in"
   },
   "watchdog_enabled": true,
   "edit_file": ".env.local",
   "equity": {
     "enabled": false,
-    "remote_host": "kc-mini-lan",
-    "coinbot_root": "/Users/kevinreed/dev/coinbot",
-    "dev_root": "/Users/kevinreed/dev",
+    "remote_host": "gateway-mini",
+    "coinbot_root": "~/dev/coinbot",
     "brokers": ["kraken", "coinbase", "kalshi"],
     "include_wallets": true,
     "force_live": true,
@@ -41,13 +38,13 @@
       "kraken": {
         "remote": false,
         "host": "local",
-        "coinbot_root": "/Users/kevinreed/dev/coinbot",
+        "coinbot_root": "~/dev/coinbot",
         "instance_id": "paper_kraken_prop_starter_5k"
       },
       "coinbase": {
         "remote": true,
-        "host": "kc-mini-lan",
-        "coinbot_root": "/Users/kevinreed/dev/coinbot"
+        "host": "gateway-mini",
+        "coinbot_root": "~/dev/coinbot"
       },
       "kalshi": {
         "provider": "kalshi",
@@ -77,7 +74,7 @@
       {"id": "groq_net", "label": "GROQ", "url": "https://api.groq.com"},
       {"id": "openai_net", "label": "OAI", "url": "https://api.openai.com/v1/models"},
       {"id": "anthropic_net", "label": "ANTH", "url": "https://api.anthropic.com"},
-      {"id": "mini_gw", "label": "MINI", "url": "http://Kevins-Mac-mini.local:3000/health/liveliness"}
+      {"id": "mini_gw", "label": "GW", "url": "http://gateway.local:3000/health/liveliness"}
     ]
   }
 }
