@@ -12,19 +12,22 @@ mkdir -p "$ROOT/data" "$ROOT/.pids"
 
 PORT="${MODELROUTER_PORT:-3000}"
 
-if modelrouter_reconcile_pidfile && modelrouter_wait_healthy 5; then
-  echo "[modelrouter] Already running (PID $(cat "$PIDFILE"))"
+if modelrouter_gateway_listening && modelrouter_wait_healthy 5; then
+  modelrouter_reconcile_pidfile || true
+  echo "[modelrouter] Already running (PID $(cat "$PIDFILE" 2>/dev/null || modelrouter_port_listener_pid))"
   exit 0
 fi
 
 if [[ -f "$PIDFILE" ]] && kill -0 "$(cat "$PIDFILE")" 2>/dev/null; then
-  if modelrouter_wait_healthy 15; then
+  if modelrouter_gateway_listening && modelrouter_wait_healthy 10; then
     modelrouter_reconcile_pidfile || true
     echo "[modelrouter] Already running (PID $(cat "$PIDFILE"))"
     exit 0
   fi
-  echo "[modelrouter] Stale process on pidfile — stopping"
+  echo "[modelrouter] Stale pidfile (no listener on :${PORT}) — stopping"
   "$ROOT/scripts/stop.sh" || true
+elif [[ -f "$PIDFILE" ]]; then
+  rm -f "$PIDFILE"
 fi
 
 lsof -ti :"${MODELROUTER_PORT:-3000}" 2>/dev/null | xargs kill -9 2>/dev/null || true

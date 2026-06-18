@@ -63,10 +63,8 @@ check_mini_gateway || fail=1
 
 if host="$(tower_ssh_host)"; then
   echo "  ok  gateway-tower  ssh $host"
-  gw="${MINI_GATEWAY_URL:-}"
-  if [[ -z "$gw" ]]; then
-    gw="$(modelrouter_gateway_tailscale_url)"
-  fi
+  # Linux runtime hosts cannot resolve mDNS — always probe via Tailscale URL.
+  gw="$(modelrouter_gateway_tailscale_url)"
   ssh -o ConnectTimeout=5 "$host" \
     "curl -sf --max-time 4 ${gw}/health/liveliness && echo '  ok  tower→mini gateway' || echo '  down tower→mini gateway'" || true
 else

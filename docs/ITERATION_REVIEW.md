@@ -613,3 +613,21 @@ Bugbot        → 7 findings; 4 patched in-cycle
 **Live gaps:** Mistral `__ALT_1` (3/4 shuffle), laptop gateway down between sessions (`make daemon-enable`).
 
 **Next cycle 41 proposal:** Mistral alt paste, laptop daemon-enable runbook, optional widget portfolio opt-in doc.
+
+---
+
+## Cycle 41 checkpoint (v3.42.0)
+
+**Theme:** Operate & trust + repo integration harness.
+
+| Iter | Deliverable |
+|------|-------------|
+| 41.1 | Stale pidfile detection (`lib.sh`, `start-daemon`, `doctor`) |
+| 41.2 | `daemon-enable` laptop; tower→mini Tailscale probe fix |
+| 41.3 | `enable-auto-rotate-mini --enable`; vault-rotate-drill OK |
+| 41.4 | `docs/INTEGRATION.md`, `register-project`, env template |
+| 41.5 | **v3.42.0** + deploy-mini |
+
+**Live gaps:** Mistral `__ALT_1` (3/4 shuffle — human paste).
+
+**Next cycle 42 proposal:** `docs/GETTING_STARTED.md`, `make demo` local-only path, README solo/homelab split.

@@ -267,3 +267,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 40.3 | README + POLICY_ROUTER docs | [40.3.md](40.3.md) |
 | 40.4 | SHIP_CHECKLIST sync | [40.4.md](40.4.md) |
 | 40.5 | Capstone **v3.40.0** | [40.5.md](40.5.md) |
+
+## Cycle 41 (operate + integrate)
+
+| Version | Focus | Doc |
+|---------|--------|-----|
+| 41.1 | Stale pidfile reliability | [41.1.md](41.1.md) |
+| 41.2 | daemon-enable + tower→mini probe | [41.2.md](41.2.md) |
+| 41.3 | Mini auto-rotate armed | [41.3.md](41.3.md) |
+| 41.4 | INTEGRATION.md + register-project | [41.4.md](41.4.md) |
+| 41.5 | Capstone **v3.42.0** | [41.5.md](41.5.md) |

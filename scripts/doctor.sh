@@ -24,19 +24,21 @@ echo "    Root: $ROOT"
 echo ""
 
 echo "── Process"
-LISTEN_PID="$(lsof -ti :"$PORT" 2>/dev/null | head -1 || true)"
-if [[ -f "$ROOT/.pids/modelrouter.pid" ]] && kill -0 "$(cat "$ROOT/.pids/modelrouter.pid")" 2>/dev/null; then
-  ok "Daemon PID $(cat "$ROOT/.pids/modelrouter.pid")"
-elif [[ -n "$LISTEN_PID" ]]; then
-  echo "$LISTEN_PID" > "$ROOT/.pids/modelrouter.pid"
-  warn "Pidfile reconciled from port $PORT (PID $LISTEN_PID)"
-else
-  fail "Daemon not running (stale or missing pidfile)"
+LISTEN_PID="$(modelrouter_port_listener_pid)"
+PIDFILE_PID=""
+if [[ -f "$ROOT/.pids/modelrouter.pid" ]]; then
+  PIDFILE_PID="$(cat "$ROOT/.pids/modelrouter.pid")"
 fi
 if [[ -n "$LISTEN_PID" ]]; then
-  ok "Port $PORT in use (PID $LISTEN_PID)"
+  echo "$LISTEN_PID" > "$ROOT/.pids/modelrouter.pid"
+  ok "Port $PORT listener (PID $LISTEN_PID)"
+elif [[ -n "$PIDFILE_PID" ]] && kill -0 "$PIDFILE_PID" 2>/dev/null; then
+  fail "Stale daemon PID $PIDFILE_PID — wrapper alive but nothing on :$PORT"
+  echo "  fix: make doctor-fix"
+elif [[ -n "$PIDFILE_PID" ]]; then
+  fail "Stale pidfile (PID $PIDFILE_PID not running)"
 else
-  fail "Nothing listening on $PORT"
+  fail "Daemon not running"
 fi
 
 echo ""

@@ -257,6 +257,14 @@ route-hints:
 project-keys:
 	./scripts/issue-project-keys.sh
 
+register-project:
+	chmod +x scripts/register-project.sh
+	@test -n "$(PROJECT)" || (echo "Usage: make register-project PROJECT=my-bot [ROUTINE=cheap] [COMPLEX=smart]" >&2; exit 1)
+	./scripts/register-project.sh "$(PROJECT)" \
+	  --routine "$(or $(ROUTINE),cheap)" \
+	  --complex "$(or $(COMPLEX),smart)" \
+	  $(if $(HOSTS),$(foreach h,$(HOSTS),--host $(h)),)
+
 rotate-master-key:
 	./scripts/rotate-master-key.sh
 

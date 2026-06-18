@@ -1,5 +1,21 @@
 # Changelog
 
+## [3.42.0] — 2026-06-18 (Cycle 41 — operate + integrate)
+
+### Added
+- **`docs/INTEGRATION.md`** — wire any repo to the gateway (solo + homelab)
+- **`scripts/register-project.sh`** + **`make register-project`** — append `config/projects.yaml`
+- **`templates/repo.env.modelrouter`** — copy-paste client env for downstream repos
+
+### Changed
+- **Stale pidfile reliability** — `start-daemon.sh` / `doctor.sh` detect wrapper without port listener
+- **`remote-health.sh`** — tower→mini probe uses Tailscale URL (Linux has no mDNS)
+- **Laptop launchd** — `make daemon-enable` documented in cycle notes
+- **Mini auto-rotate** — `enable-auto-rotate-mini --enable` arms ROTATE+RESTART gates
+
+### Human backlog
+- Paste Mistral `#2` → `MISTRAL_API_KEY__ALT_1` for 4/4 alt shuffle
+
 ## [3.41.1] — 2026-06-12 (Deepclean — public hygiene)
 
 ### Added

@@ -147,3 +147,13 @@ modelrouter_remote_host() {
   ' "$f" 2>/dev/null || true)"
   echo "${host:-gateway-mini}"
 }
+
+# PID listening on gateway port (litellm), not the start.sh wrapper.
+modelrouter_port_listener_pid() {
+  local port="${MODELROUTER_PORT:-3000}"
+  lsof -ti :"$port" 2>/dev/null | head -1 || true
+}
+
+modelrouter_gateway_listening() {
+  [[ -n "$(modelrouter_port_listener_pid)" ]]
+}

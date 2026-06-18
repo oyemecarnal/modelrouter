@@ -39,3 +39,7 @@ Versions `1.1` → `1.5` per cycle. See `docs/iterations/`. Agent playbook: `doc
 - [x] **Tailscale** between operator laptop and runtime host
 - [x] `make push-client-env-tower` — client.env uses gateway Tailscale URL
 - [x] Tower agent `.env` cleanup — coinbot `OPENAI_API_KEY` removed; gateway via `client.env` (`docs/WHY_MODELROUTER.md`)
+- [x] Laptop `make daemon-enable` — launchd auto-start
+- [x] Mini auto-rotate gates — `enable-auto-rotate-mini --enable`
+- [x] Repo integration — `docs/INTEGRATION.md`, `make register-project`
+- [ ] Mistral `MISTRAL_API_KEY__ALT_1` — paste second key for 4/4 shuffle

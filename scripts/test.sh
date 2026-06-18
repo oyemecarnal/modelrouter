@@ -132,6 +132,7 @@ print('  ok env_store key validation (9 provider patterns)')
 
 echo "── Connector registry"
 test -x "$ROOT/scripts/connect-provider.sh" || { echo "  FAIL missing connect-provider.sh" >&2; exit 1; }
+test -x "$ROOT/scripts/register-project.sh" || { echo "  FAIL missing register-project.sh" >&2; exit 1; }
 PYTHONPATH="$ROOT" "$PY" -c "
 import re
 import yaml
