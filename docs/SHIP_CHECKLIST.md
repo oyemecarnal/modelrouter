@@ -5,8 +5,9 @@ Use before **`/ship vX.Y.Z`** or manual commit. Automated gate: **`make ship-che
 ## Automated
 
 ```bash
-make ship-check          # test + lint + VERSION/CHANGELOG + tower audit
+make ship-check          # test + lint + VERSION/CHANGELOG + optional smoke-routes
 make doctor-fix          # laptop gateway up (restart if needed)
+make trim-logs           # if data/modelrouter.log grows large
 make deploy-mini         # after commit — sync scripts to kc-mini
 ```
 
@@ -35,7 +36,14 @@ make daemon-enable       # laptop — stable Cursor gateway
 
 | Command | When |
 |---------|------|
-| `/ship v3.27.0` | Commit + push (human/Cursor command) |
+| `/ship v3.38.0` | Commit + push (human/Cursor command) |
+| `make smoke-routes` | hermes-fast + hermes-smart on kc-mini |
+| `make vault-bootstrap-alts-restart` | After pasting `__ALT_1` keys |
+| `make vault-rotate-simulate-cleanup` | Test 429 rotate path (no API call) |
+| `make enable-auto-rotate-mini-enable` | Auto 429 rotate on kc-mini |
+| `make ensure-alt-slots` | Add empty `__ALT_1` lines in `.env` |
+| `make dedupe-env-apply` | Remove duplicate `.env` keys |
+| `make trim-logs` | Trim large `data/*.log` files |
 | `make vault-scrape-collect` | Network key ingest → `data/key_vault.json` |
 | `make vault-export` | Merge vault → `.env` |
 | `make vault-rotate-export` | Apply last 429 rotate hint → `.env` |

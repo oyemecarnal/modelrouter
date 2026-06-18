@@ -1,6 +1,6 @@
 # ModelRouter
 
-**v3.30.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
+**v3.38.0** — [Why ModelRouter?](docs/WHY_MODELROUTER.md) · [landing](docs/LANDING.md) · [ship checklist](docs/SHIP_CHECKLIST.md)
 
 One vault on **kc-mini**, policy presets, and a receiver-style connectivity console. Homelab LLM gateway powered by **[LiteLLM](https://docs.litellm.ai/)** — OpenAI-compatible endpoint for laptop, tower agents, and Cursor.
 
@@ -115,17 +115,24 @@ make homelab-status   # doctor + remote-health + cost-review
 make deploy-mini      # rsync + restart on kc-mini
 make bootstrap-mini   # deploy + daemon-enable-mini + push alt keys
 make vault-sync-alts  # export vault alts + push to mini
-make vault-bootstrap-alts  # ingest + export + push alts
-make vault-rotate-drill  # dry-run 429 rotate readiness
-make push-env-mini    # sync selected secrets to mini
+make vault-bootstrap-alts-restart  # ingest + export + push + restart mini
+make vault-rotate-drill            # dry-run 429 rotate readiness
+make vault-rotate-simulate-cleanup # synthetic 429 drill (groq, clears hint)
+make enable-auto-rotate-mini-enable  # 429 auto-rotate on kc-mini
+make ensure-alt-slots              # add empty __ALT_1 lines for paste
+make dedupe-env-apply              # drop duplicate .env keys
+make trim-logs                     # trim large data/*.log files
+make push-env-mini                 # sync selected secrets to mini
 make push-client-env-tower  # tower client.env (gateway key only)
 make daemon-enable    # auto-start at login — docs/LAPTOP_DAEMON.md
 make daemon-disable
-make smoke-cursor        # verify Cursor gateway path
-make smoke-tower         # verify tower→mini presets
-make smoke-hermes-smart  # verify hermes-smart / Anthropic route on mini
+make smoke-cursor           # verify Cursor gateway path
+make smoke-tower            # verify tower→mini presets
+make smoke-routes           # hermes-fast + hermes-smart on mini
+make smoke-hermes-fast      # Groq route on mini
+make smoke-hermes-smart     # Anthropic route on mini
 make check-key-hygiene   # salt + provider key hygiene
-make connect-groq        # paste Groq key → .env → mini
+make connect-groq        # paste Groq key → .env → mini (--stash-alt on rotate)
 make connect-anthropic   # paste Anthropic key → mini (hermes-smart / review)
 make connect-openai      # paste OpenAI key → mini (smart / code)
 make connect-mistral     # paste Mistral key → mini (code / fallbacks)
