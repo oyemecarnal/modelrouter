@@ -79,4 +79,12 @@ echo "    make connect-alt-key PROVIDER=groq"
 echo "    make vault-bootstrap-alts"
 echo "    make enable-auto-rotate-mini --enable"
 echo ""
+echo "── 429 simulate (groq, cleanup)"
+if "$ROOT/scripts/vault-rotate-simulate.sh" groq --cleanup 2>/dev/null; then
+  ok "vault-rotate-simulate groq"
+else
+  warn "vault-rotate-simulate skipped (need 2+ keys per provider)"
+fi
+
+echo ""
 ok "rotate drill complete (dry-run only)"

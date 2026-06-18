@@ -547,3 +547,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 **Live state:** Groq/Anthropic/OpenAI `__ALT_1` on mini; vault 3/4 shuffle-ready; smokes green.
 
 **Next cycle 37 proposal:** Mistral alt, live 429 drill with auto-rotate enabled, laptop `daemon-enable`.
+
+---
+
+## Cycle 37 checkpoint (v3.37.0)
+
+**Theme:** 429 simulate drill, connector stash-alt parity, mini deploy.
+
+| Iter | Deliverable |
+|------|-------------|
+| 37.1 | `vault-rotate-simulate` — synthetic 429 without API call |
+| 37.2 | `connect-mistral` / `connect-anthropic` `--stash-alt` |
+| 37.3 | Rotate drill runs groq simulate + cleanup |
+| 37.4 | `deploy-mini` → v3.37 on kc-mini |
+| 37.5 | **v3.37.0** |
+
+**Next cycle 38 proposal:** Mistral `__ALT_1`, laptop `daemon-enable`, `smoke-routes` in ship-check optional.

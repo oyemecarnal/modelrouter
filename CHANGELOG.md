@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.37.0] — 2026-06-17 (Cycle 37 — rotate simulate, connector stash-alt, deploy)
+
+### Added
+- **`make vault-rotate-simulate`** — synthetic 429 → rotate hint + export dry-run (`PROVIDER=groq`, `CLEANUP=1`)
+- **`connect-mistral --stash-alt`** / **`connect-anthropic --stash-alt`** — parity with Groq rotate flow
+
+### Changed
+- Connectors push `__ALT_1` when present (Mistral, Anthropic)
+- `vault-rotate-drill` runs groq simulate with `--cleanup`
+- Mini deployed to **v3.37.0**
+
 ## [3.36.0] — 2026-06-17 (Cycle 36 — alts live, dedupe env, smoke-routes)
 
 ### Added
