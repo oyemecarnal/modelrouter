@@ -254,7 +254,7 @@ Plain-language guide: `docs/POLICY_ROUTER.md`. OpenRouter is **stubbed** (`confi
 
 ## Keys widget
 
-Square desktop panel for live API usage, **portfolio equity** (exchanges + Kalshi + cold wallets), and masked key inventory (`tokens/`):
+Square desktop panel for live API usage, **portfolio equity** (exchanges + Kalshi), and masked key inventory (`tokens/`):
 
 ```bash
 make keys-widget-install   # venv + background refresh

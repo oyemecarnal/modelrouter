@@ -40,7 +40,7 @@ families:
     label: Fast / Cheap LLM
     purpose: High-volume loops, routing fallbacks, Hermes-fast
     weight: 0.95
-    repo_fit: [smalshi-hermes, kalshi-bot, coinbot]
+    repo_fit: [smalshi-hermes, kalshi-bot]
     keys:
       - env: GROQ_API_KEY
         label: Groq
@@ -190,7 +190,7 @@ families:
     label: ModelRouter gateway
     purpose: Client auth to your LiteLLM proxy (not provider keys)
     weight: 1.0
-    repo_fit: [smalshi-hermes, kalshi-bot, coinbot, cursor-dev, modelrouter-agents]
+    repo_fit: [smalshi-hermes, kalshi-bot, cursor-dev, modelrouter-agents]
     keys:
       - env: MODELROUTER_MASTER_KEY
         label: ModelRouter master
@@ -204,9 +204,6 @@ families:
       - env: MODELROUTER_KEY_KALSHI
         label: Project key (Kalshi)
         hidden: true
-      - env: MODELROUTER_KEY_COINBOT
-        label: Project key (coinbot)
-        hidden: true
       - env: MODELROUTER_KEY_CURSOR
         label: Project key (Cursor)
         hidden: true
@@ -218,7 +215,7 @@ families:
     label: Market data
     purpose: Quotes, fundamentals — not LLM
     weight: 0.85
-    repo_fit: [coinbot, kalshi-bot]
+    repo_fit: [kalshi-bot]
     keys:
       - env: POLYGON_API_KEY
         label: Polygon.io
@@ -243,11 +240,11 @@ families:
         label: Polymarket
         signup: https://polymarket.com
 
-  - id: exchange_crypto
-    label: Crypto exchange
-    purpose: Balances, trading — coinbot
+  - id: exchange_equity
+    label: Exchange equity
+    purpose: Account equity tracking — Kraken, Coinbase, Kalshi
     weight: 0.75
-    repo_fit: [coinbot]
+    repo_fit: [kalshi-bot]
     keys:
       - env: KRAKEN_API_KEY
         label: Kraken
@@ -258,33 +255,12 @@ families:
       - env: COINBASE_API_KEY
         label: Coinbase
         signup: https://www.coinbase.com/cloud
-      - env: COINBASE_CDP_KEY_FILE
-        label: Coinbase CDP file
-        notes: Path to CDP JSON
-      - env: BINANCE_API_KEY
-        label: Binance
-        signup: https://www.binance.com
-
-  - id: chain_rpc
-    label: Blockchain RPC
-    purpose: On-chain reads, wallet inventory
-    weight: 0.5
-    keys:
-      - env: ALCHEMY_API_KEY
-        label: Alchemy
-        signup: https://dashboard.alchemy.com
-      - env: INFURA_API_KEY
-        label: Infura
-        signup: https://infura.io
-      - env: ETHERSCAN_API_KEY
-        label: Etherscan
-        signup: https://etherscan.io/apis
 
   - id: messaging
     label: Messaging / alerts
     purpose: Bot notifications
     weight: 0.55
-    repo_fit: [coinbot, kalshi-bot]
+    repo_fit: [kalshi-bot]
     keys:
       - env: TELEGRAM_BOT_TOKEN
         label: Telegram

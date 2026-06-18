@@ -92,10 +92,38 @@ def merge_fallbacks(base_fb: list[Any], preset_fb: list[Any]) -> list[Any]:
     return kept + list(preset_fb)
 
 
+def _resolved_preset_models() -> list[dict[str, Any]]:
+    """
+    Try to generate preset model entries from the semantic intent resolver.
+    Falls back to the static policy_presets.yaml if the resolver errors or
+    produces no output (e.g. no keys configured yet).
+    """
+    try:
+        resolver_path = str(ROOT)
+        if resolver_path not in sys.path:
+            sys.path.insert(0, resolver_path)
+        from modelrouter.preset_resolver import build_model_list
+
+        resolved = build_model_list()
+        if resolved:
+            print(f"  resolver: {len(resolved)} entries from preset_intents.yaml")
+            return resolved
+    except Exception as exc:
+        print(f"  resolver unavailable ({exc}), falling back to static presets", file=sys.stderr)
+    return []
+
+
 def build_config(base_path: Path, out_path: Path, *, check_only: bool) -> bool:
     base = _load(base_path)
     presets_data = _load(PRESETS)
-    preset_models = copy.deepcopy(presets_data.get("preset_models") or [])
+
+    # Use the semantic resolver if it produces output; otherwise fall back to static YAML
+    resolved_models = _resolved_preset_models()
+    if resolved_models:
+        preset_models = resolved_models
+    else:
+        preset_models = copy.deepcopy(presets_data.get("preset_models") or [])
+
     preset_fallbacks = presets_data.get("preset_fallbacks") or []
 
     limits = catalog_limits()

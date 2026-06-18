@@ -1,0 +1,118 @@
+#!/usr/bin/env bash
+# ModelRouter CLI — thin dispatcher for common operations.
+# Usage: ./mr <command> [args]
+#
+# Symlink or alias for convenience:
+#   ln -s "$(pwd)/mr" /usr/local/bin/mr
+#   alias mr="$HOME/Dev/modelrouter/mr"
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+  init)
+    exec "$ROOT/scripts/init.sh" "$@"
+    ;;
+
+  start)
+    (cd "$ROOT" && exec make daemon)
+    ;;
+
+  stop)
+    (cd "$ROOT" && exec make stop)
+    ;;
+
+  restart)
+    (cd "$ROOT" && exec make restart)
+    ;;
+
+  status)
+    (cd "$ROOT" && exec make status)
+    ;;
+
+  health)
+    exec "$ROOT/scripts/healthcheck.sh"
+    ;;
+
+  doctor)
+    (cd "$ROOT" && exec make doctor)
+    ;;
+
+  widget)
+    WIDGET_URL="http://localhost:8765"
+    if curl -sf "$WIDGET_URL" &>/dev/null; then
+      open "$WIDGET_URL"
+    else
+      echo "Widget server not running — starting it..."
+      VENV="$ROOT/tokens/.venv"
+      if [[ ! -f "$VENV/bin/python3" ]]; then
+        echo "Widget not installed. Run: ./mr init" >&2
+        exit 1
+      fi
+      nohup "$VENV/bin/python3" "$ROOT/tokens/widget/desktop_widget.py" &>/dev/null &
+      sleep 1
+      open "$WIDGET_URL"
+    fi
+    ;;
+
+  logs)
+    LOGFILE="${MODELROUTER_LOG:-$ROOT/data/modelrouter.log}"
+    exec tail -f "$LOGFILE"
+    ;;
+
+  key)
+    ENV="$ROOT/.env"
+    if [[ ! -f "$ENV" ]]; then
+      echo "No .env found. Run: ./mr init" >&2
+      exit 1
+    fi
+    grep '^MODELROUTER_MASTER_KEY=' "$ENV" | cut -d= -f2
+    ;;
+
+  help|--help|-h|"")
+    cat <<'HELP'
+
+  mr — ModelRouter gateway CLI
+
+  COMMANDS
+    init       First-run setup wizard (keys, .env, daemons)
+    start      Start the gateway daemon
+    stop       Stop the gateway daemon
+    restart    Restart the gateway daemon
+    status     Show daemon status and uptime
+    health     Live health check against the running gateway
+    doctor     Diagnose configuration and connectivity issues
+    widget     Open the usage/cost dashboard in your browser
+    logs       Tail the gateway log (Ctrl-C to exit)
+    key        Print the current MODELROUTER_MASTER_KEY
+
+  QUICKSTART
+    ./mr init          # first-time setup
+    ./mr start         # start gateway
+    ./mr widget        # open dashboard
+
+  ENDPOINT
+    http://127.0.0.1:3000/v1   (OpenAI-compatible)
+
+  PRESETS
+    cheap · fast · smart · code · review · local · offline
+
+  CURL TEST
+    mr_key=$(./mr key)
+    curl http://127.0.0.1:3000/v1/chat/completions \
+      -H "Authorization: Bearer $mr_key" \
+      -H "Content-Type: application/json" \
+      -d '{"model":"cheap","messages":[{"role":"user","content":"hi"}]}'
+
+HELP
+    ;;
+
+  *)
+    echo "Unknown command: $cmd" >&2
+    echo "Run: ./mr help" >&2
+    exit 1
+    ;;
+esac

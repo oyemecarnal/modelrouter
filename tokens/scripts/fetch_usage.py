@@ -38,8 +38,8 @@ BROWSER_HEADERS = {
 AI_KEY_PATTERN = re.compile(
     r"^(OPENAI|ANTHROPIC|CURSOR|GEMINI|GOOGLE|OPENROUTER|GROQ|MISTRAL|COHERE|"
     r"DEEPSEEK|XAI|PERPLEXITY|TOGETHER|FIREWORKS|REPLICATE|HUGGINGFACE|MODELROUTER|"
-    r"LITELLM|POLYGON|TELEGRAM|GITHUB|GH|KRAKEN|COINBASE|BINANCE|ALCHEMY|INFURA|"
-    r"ETHERSCAN|STRIPE|TWILIO|SENDGRID|DISCORD|SLACK|TAVILY|SERPER|BRAVE_SEARCH|PINECONE|"
+    r"LITELLM|POLYGON|TELEGRAM|GITHUB|GH|KRAKEN|COINBASE|BINANCE|"
+    r"STRIPE|TWILIO|SENDGRID|DISCORD|SLACK|TAVILY|SERPER|BRAVE_SEARCH|PINECONE|"
     r"WEAVIATE|ELEVENLABS|ASSEMBLYAI|ALPHA_VANTAGE|FINNHUB|KALSHI|POLYMARKET|"
     r"REPLICATE)_"
     r"(API_KEY|API_SECRET|TOKEN|ACCESS_KEY|MASTER_KEY|SALT_KEY|BOT_TOKEN|CDP_KEY_FILE|"
@@ -73,13 +73,13 @@ class Snapshot:
     updated_at: int
     providers: list[ProviderSnapshot]
     equity: dict[str, Any] | None = None
-    wallets: dict[str, Any] | None = None
     api_catalog: dict[str, Any] | None = None
     api_compare: dict[str, Any] | None = None
     policy_presets: dict[str, Any] | None = None
     console_grid: dict[str, Any] | None = None
     homelab_status: dict[str, Any] | None = None
     key_vault: dict[str, Any] | None = None
+    cost_rollup: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         out: dict[str, Any] = {
@@ -99,8 +99,6 @@ class Snapshot:
         }
         if self.equity is not None:
             out["equity"] = self.equity
-        if self.wallets is not None:
-            out["wallets"] = self.wallets
         if self.api_catalog is not None:
             out["apiCatalog"] = self.api_catalog
         if self.api_compare is not None:
@@ -113,6 +111,8 @@ class Snapshot:
             out["homelabStatus"] = self.homelab_status
         if self.key_vault is not None:
             out["keyVault"] = self.key_vault
+        if self.cost_rollup is not None:
+            out["costRollup"] = self.cost_rollup
         return out
 
 
@@ -812,8 +812,7 @@ def _portfolio_enabled(cfg: dict[str, Any]) -> bool:
     if "enabled" in pf:
         return bool(pf.get("enabled"))
     equity_on = (cfg.get("equity") or {}).get("enabled", False)
-    wallets_on = (cfg.get("wallets") or {}).get("enabled", False)
-    return bool(equity_on or wallets_on)
+    return bool(equity_on)
 
 
 def _fetch_equity_safe(cfg: dict[str, Any]) -> dict[str, Any] | None:
@@ -887,15 +886,6 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
     if _portfolio_enabled(cfg) and (cfg.get("equity") or {}).get("enabled", False):
         equity = _fetch_equity_safe(cfg)
 
-    wallets: dict[str, Any] | None = None
-    if _portfolio_enabled(cfg) and (cfg.get("wallets") or {}).get("enabled", False):
-        try:
-            from fetch_wallets import fetch_all_wallets
-
-            wallets = fetch_all_wallets(cfg)
-        except Exception as exc:
-            wallets = {"enabled": True, "wallets": [], "error": str(exc)[:200]}
-
     api_catalog: dict[str, Any] | None = None
     api_compare: dict[str, Any] | None = None
     if (cfg.get("api_catalog") or {}).get("enabled", True):
@@ -913,6 +903,18 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
         from preset_catalog import load_preset_catalog
 
         policy_presets = load_preset_catalog(cfg)
+
+        # Augment with live resolver data (which models are actually available right now)
+        try:
+            import sys as _sys2
+            _mr_root2 = Path(cfg.get("modelrouter_root") or Path(__file__).resolve().parents[2])
+            if str(_mr_root2) not in _sys2.path:
+                _sys2.path.insert(0, str(_mr_root2))
+            from modelrouter.preset_resolver import intent_summary as _intent_summary
+
+            policy_presets["intentSummary"] = _intent_summary()
+        except Exception:
+            pass
     except Exception as exc:
         policy_presets = {"error": str(exc)[:200], "presets": [], "projects": []}
 
@@ -940,17 +942,38 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
     except Exception as exc:
         key_vault = {"enabled": True, "error": str(exc)[:200], "entries": [], "count": 0}
 
+    cost_rollup: dict[str, Any] | None = None
+    try:
+        import sys as _sys
+        _mr_root = Path(cfg.get("modelrouter_root") or Path(__file__).resolve().parents[2])
+        if str(_mr_root) not in _sys.path:
+            _sys.path.insert(0, str(_mr_root))
+        from modelrouter.cost_rollup import rollup as _cost_rollup
+
+        cost_rollup = _cost_rollup()
+
+        # Budget threshold notifications — fires macOS alerts when spend crosses limits
+        try:
+            from modelrouter.budget_guard import check_from_config as _budget_check
+            budget_events = _budget_check(cost_rollup, cfg)
+            if budget_events:
+                cost_rollup["budget_events"] = budget_events
+        except Exception:
+            pass
+    except Exception as exc:
+        cost_rollup = {"error": str(exc)[:200], "windows": {}, "by_model": {}}
+
     return Snapshot(
         updated_at=int(time.time() * 1000),
         providers=providers,
         equity=equity,
-        wallets=wallets,
         api_catalog=api_catalog,
         api_compare=api_compare,
         policy_presets=policy_presets,
         console_grid=console_grid,
         homelab_status=homelab_status,
         key_vault=key_vault,
+        cost_rollup=cost_rollup,
     )
 
 

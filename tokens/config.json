@@ -18,7 +18,7 @@
   "widget_fetch_in_panel": true,
   "portfolio": {
     "enabled": false,
-    "note": "Equity/wallets are optional — set equity.enabled true to opt in"
+    "note": "Equity tracking is optional — set equity.enabled true to opt in"
   },
   "watchdog_enabled": true,
   "edit_file": ".env.local",
@@ -27,7 +27,6 @@
     "remote_host": "gateway-mini",
     "coinbot_root": "~/dev/coinbot",
     "brokers": ["kraken", "coinbase", "kalshi"],
-    "include_wallets": true,
     "force_live": true,
     "cache_ttl_seconds": 300,
     "fetch_timeout_seconds": 90,
@@ -52,13 +51,10 @@
       }
     }
   },
-  "wallets": {
-    "enabled": false,
-    "include_in_equity": true,
-    "hot_cache_seconds": 90,
-    "cold_cache_seconds": 600,
-    "tx_limit": 12,
-    "presets": []
+  "budgets": {
+    "daily":   {"warn": 0.50,  "hard": 2.00},
+    "weekly":  {"warn": 3.00,  "hard": 10.00},
+    "monthly": {"warn": 10.00, "hard": 40.00}
   },
   "api_catalog": {
     "enabled": true

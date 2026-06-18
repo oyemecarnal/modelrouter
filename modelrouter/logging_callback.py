@@ -50,6 +50,9 @@ class ModelRouterLogger(CustomLogger):
                     "model": kwargs.get("model"),
                     "duration_ms": duration_ms,
                     "tokens": getattr(usage, "total_tokens", None) if usage else None,
+                    "input_tokens": getattr(usage, "prompt_tokens", None) if usage else None,
+                    "output_tokens": getattr(usage, "completion_tokens", None) if usage else None,
+                    "cost_usd": kwargs.get("response_cost"),
                 }
             ),
             flush=True,

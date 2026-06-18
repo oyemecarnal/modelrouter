@@ -15,7 +15,7 @@
 |-----------|-------|---------|
 | Architecture | **B+** | Layered harness matches `PRODUCT_VISION.md`; preset YAML drift and dual deploy paths weaken coherence |
 | Homelab wiring | **C+** | Topology designed; Phase 0 clean wires ~40% done |
-| Security | **Yellow** | Read-only inventory/wallets good; LAN gateway + unauthenticated widget writes are main risks |
+| Security | **Yellow** | Read-only inventory good; LAN gateway + unauthenticated widget writes are main risks |
 | Code quality | **B** | 8 actionable bugs; none blocking homelab if gateway restarted |
 | Product readiness | **Phase 0** | Do not start Console until clean wires + daemon trust |
 
@@ -27,7 +27,7 @@
 
 ### Security
 1. **LAN gateway = single bearer** — placeholder defaults still allowed at startup; `MODELROUTER_KEY_*` copies master in native mode. → `make rotate-master-key`, fail-closed on placeholders, tower firewall/Tailscale.
-2. **Widget HTTP writes unauthenticated** — `/keys/add`, `/wallets/add`, `/api-assess` on `127.0.0.1:8765` with no session token. → Add local auth token or restrict to editor-only key path.
+2. **Widget HTTP writes unauthenticated** — `/keys/add`, `/api-assess` on `127.0.0.1:8765` with no session token. → Add local auth token or restrict to editor-only key path.
 
 ### Reliability / bugs
 3. **Gateway down** — doctor: daemon not running on laptop & mini; presets missing from `/v1/models`. → `make restart` on mini; `make deploy-mini`.
@@ -49,7 +49,7 @@
 | 2 | API assess presets empty (`preset_models` is list not dict) | `api_assess.py` |
 | 3 | MCP `list_models` crashes when gateway down | `mcp_server.py` |
 | 4 | `client.env.example` shell expansion won't work in dotenv | `client.env.example` |
-| 5 | Snapshot exposes full wallet addresses locally | `fetch_wallets.py` / widget |
+| 5 | ~~Snapshot exposes full wallet addresses locally~~ | Removed |
 | 6 | Preset YAML triplicated (drift) | `modelrouter.yaml`, `.minimal.yaml`, `includes/` |
 | 7 | `push-env-mini` / `sync-keys` blast radius growing | Makefile, sync-keys.sh |
 

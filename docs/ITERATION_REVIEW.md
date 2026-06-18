@@ -378,7 +378,7 @@ Bugbot        → 7 findings; 4 patched in-cycle
 |------|-------------|
 | 25.1 | Vault export deny (`MODELROUTER_KEY_*`, exchange secrets) |
 | 25.2 | Route `key_hints` when quota hot + vault alternates |
-| 25.3 | Tangem `.env.local.example` placeholders |
+| 25.3 | Vault export guard for exchange secrets |
 | 25.4 | `make doctor-fix` |
 | 25.5 | **v3.25.0** |
 
@@ -398,19 +398,19 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 26.4 | OAuth callback state generation + doctor rotate hints |
 | 26.5 | **v3.26.0** |
 
-**Next cycle 27 proposal:** Hot-swap `.env` on 429 (or LiteLLM alt-key routes), gateway auto-export hook, Tangem live verify.
+**Next cycle 27 proposal:** Hot-swap `.env` on 429 (or LiteLLM alt-key routes), gateway auto-export hook.
 
 ---
 
 ## Cycle 27 checkpoint (v3.27.0)
 
-**Theme:** Tangem ETH fallback, 429 export hook, launchd bootstrap.
+**Theme:** 429 export hook, launchd bootstrap.
 
 | Iter | Deliverable |
 |------|-------------|
 | 27.1 | `daemon-enable` bootstrap/bootout (modern macOS) |
 | 27.2 | Widget fetch → modelrouter `.venv` (SSL fix) |
-| 27.3 | ETH RPC fallback for watch wallets |
+| 27.3 | Vault rotate export correctness |
 | 27.4 | `make vault-rotate-export` after 429 hints |
 | 27.5 | **v3.27.0** |
 

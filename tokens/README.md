@@ -54,31 +54,24 @@ The fetcher also reads `modelrouter/.env`, `secrets.yaml` (1Password refs), and 
 - `widget_size`: square dimensions (default 420)
 - `modelrouter_root`: path to modelrouter repo for `.env` scan
 - `show_configured_keys`: per-key inventory cards
-- `equity`: live broker balances via coinbot (see below)
+- `equity`: live broker balances (see below)
 
 ### Live equity (`equity`)
 
-Unified **portfolio** across exchanges (coinbot), Kalshi, and watch-only cold wallets (Tangem):
+Unified **portfolio** across exchanges (Kraken, Coinbase) and Kalshi:
 
 ```json
 "equity": {
   "brokers": ["kraken", "coinbase", "kalshi"],
-  "include_wallets": true,
   "broker_routes": {
-    "kraken": { "remote": false, "host": "local", "coinbot_root": "~/dev/coinbot" },
+    "kraken": { "remote": false, "host": "local" },
     "coinbase": { "remote": true, "host": "kc-mini-lan" },
     "kalshi": { "provider": "kalshi" }
   }
-},
-"wallets": {
-  "include_in_equity": true,
-  "presets": [{ "label": "Tangem BTC", "chain": "bitcoin", "address": "bc1…", "kind": "cold" }]
 }
 ```
 
-Set `TANGEM_BTC_ADDRESS` / `TANGEM_ETH_ADDRESS` / `TANGEM_SOL_ADDRESS` in `modelrouter/.env` (or `tokens/.env.local`) — watch-only public addresses, no keys. ETH balance uses public RPC when `ETHERSCAN_API_KEY` is unset; Etherscan still needed for transaction history. Cold wallets refresh on a slower cache (`cold_cache_seconds`).
-
-Kalshi reads `POLYMARKET_KALSHI_*` from `~/dev/Kalshi_bot/.env`. Kraken on laptop coinbot uses plaintext or encrypted keys (`~/.coinbot/master_{instance_id}.key` on the fetch host).
+Kalshi reads `POLYMARKET_KALSHI_*` from `~/dev/Kalshi_bot/.env`. Kraken uses plaintext or encrypted keys on the fetch host.
 
 ## Files
 

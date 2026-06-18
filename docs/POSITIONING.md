@@ -4,7 +4,7 @@
 
 **Audience today:** Homelab / solo dev / small studio who refuse to spray API keys across `.env` files and want one metered front door.
 
-**Not:** A crypto wallet. Not enterprise Portkey. Not a browser-only key extension.
+**Not:** Enterprise Portkey. Not a browser-only key extension.
 
 ---
 
@@ -54,7 +54,7 @@ Providers + Ollama
 | **Meter** | Logs, widget, `usage-rollup` | Dashboard, alerts |
 | **See** | Receiver LEDs, 5 theme presets | Standalone Console app |
 
-Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI and Web3 adjacent without “crypto wallet” confusion.
+Exchange API keys (Kraken, Coinbase, Kalshi): **inventory only** (locations, masked) — not custody.
 
 ---
 
@@ -92,7 +92,7 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 
 - **Name:** ModelRouter (keep)  
 - **Metaphor:** Hi-fi receiver — connectivity lamps, preset themes (Marantz, McIntosh, Classic R/G)  
-- **Avoid:** “Crypto wallet for APIs” in headline — use “vault” or “connector”  
+- **Avoid:** Framing as a key extension or simple credential store — emphasize routing and metering  
 - **Tagline candidates:**  
   - *Route models. Vault keys. See everything.*  
   - *The control plane for AI on your machines.*
@@ -108,7 +108,7 @@ Crypto keys: **inventory only** (locations, masked) — not custody. Keeps AI an
 - [x] Widget paste modal + receiver hints (`make ensure-gateway`)  
 - [x] Tower wire audit/strip — coinbot Option A (`docs/WHY_MODELROUTER.md`)  
 - [x] `docs/ENV.md`, `docs/LANDING.md`, `make ship-check`  
-- [x] **v3.27.0** on `main` — portfolio equity, key vault, 429 rotate export, Tangem RPC, OAuth exchange stub
+- [x] **v3.27.0** on `main` — portfolio equity (exchanges + Kalshi), key vault, 429 rotate export, OAuth exchange stub
 
 **Next wires (in order)**
 

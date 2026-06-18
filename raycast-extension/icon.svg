@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#0f1117"/>
+  <!-- router node -->
+  <circle cx="256" cy="256" r="44" fill="#6EE7FF" opacity="0.95"/>
+  <!-- spokes: in from left -->
+  <line x1="80" y1="180" x2="220" y2="240" stroke="#6EE7FF" stroke-width="14" stroke-linecap="round" opacity="0.6"/>
+  <line x1="80" y1="256" x2="212" y2="256" stroke="#6EE7FF" stroke-width="14" stroke-linecap="round" opacity="0.6"/>
+  <line x1="80" y1="332" x2="220" y2="272" stroke="#6EE7FF" stroke-width="14" stroke-linecap="round" opacity="0.6"/>
+  <!-- spokes: out to right -->
+  <line x1="292" y1="240" x2="432" y2="180" stroke="#6EE7FF" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+  <line x1="300" y1="256" x2="432" y2="256" stroke="#6EE7FF" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+  <line x1="292" y1="272" x2="432" y2="332" stroke="#6EE7FF" stroke-width="14" stroke-linecap="round" opacity="0.85"/>
+  <!-- center dot highlight -->
+  <circle cx="256" cy="256" r="18" fill="#ffffff" opacity="0.9"/>
+</svg>

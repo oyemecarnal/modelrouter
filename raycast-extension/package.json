@@ -1,0 +1,88 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "modelrouter",
+  "title": "ModelRouter",
+  "description": "Control your local LLM gateway — health status, preset switching, cost tracking, and key access",
+  "icon": "icon.png",
+  "author": "oyemecarnal",
+  "license": "MIT",
+  "version": "1.0.0",
+  "commands": [
+    {
+      "name": "status",
+      "title": "Gateway Status",
+      "description": "Check gateway health, view active models, start or stop the daemon",
+      "mode": "view"
+    },
+    {
+      "name": "presets",
+      "title": "Switch Preset",
+      "description": "List routing presets and copy endpoint config for any tool",
+      "mode": "view"
+    },
+    {
+      "name": "cost",
+      "title": "Cost Dashboard",
+      "description": "LLM spend by time window and model",
+      "mode": "view"
+    },
+    {
+      "name": "copy-key",
+      "title": "Copy Gateway Key",
+      "description": "Copy MODELROUTER_MASTER_KEY to clipboard",
+      "mode": "no-view"
+    }
+  ],
+  "preferences": [
+    {
+      "name": "gatewayUrl",
+      "title": "Gateway URL",
+      "description": "Base URL of your ModelRouter gateway",
+      "type": "textfield",
+      "default": "http://127.0.0.1:3000",
+      "required": false
+    },
+    {
+      "name": "masterKey",
+      "title": "Master Key",
+      "description": "MODELROUTER_MASTER_KEY (from .env or run `./mr key`)",
+      "type": "password",
+      "required": false
+    },
+    {
+      "name": "widgetUrl",
+      "title": "Widget Snapshot URL",
+      "description": "URL serving snapshot.json (cost + usage data)",
+      "type": "textfield",
+      "default": "http://localhost:8765",
+      "required": false
+    },
+    {
+      "name": "rootPath",
+      "title": "ModelRouter Root Path",
+      "description": "Path to modelrouter repo (used to start/stop gateway)",
+      "type": "textfield",
+      "default": "~/Dev/modelrouter",
+      "required": false
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.79.0",
+    "@raycast/utils": "^1.17.0"
+  },
+  "devDependencies": {
+    "@raycast/eslint-config": "^1.0.11",
+    "@types/node": "^20.8.10",
+    "@types/react": "^18.2.79",
+    "eslint": "^8.57.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "fix-lint": "ray lint --fix",
+    "lint": "ray lint",
+    "publish": "npx @raycast/api@latest publish"
+  }
+}

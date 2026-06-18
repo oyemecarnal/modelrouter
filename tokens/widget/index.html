@@ -482,19 +482,22 @@
     }
     .spin { display: inline-block; animation: spin 0.8s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .wallet-card { cursor: pointer; }
-    .wallet-card.open { border-color: rgba(110, 231, 255, 0.25); }
-    .tx-list { margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
-    .tx-row {
-      font-size: 9px;
-      color: #b8bac6;
-      padding: 4px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      font-variant-numeric: tabular-nums;
+    /* spend dashboard */
+    .spend-windows { display: flex; gap: 4px; margin-bottom: 10px; }
+    .spend-win-btn {
+      flex: 1; padding: 4px 0; font-size: 9px; font-weight: 600;
+      border: 1px solid var(--border); border-radius: 6px;
+      background: var(--glass); color: var(--muted); cursor: pointer;
+      letter-spacing: 0.04em; text-align: center;
     }
-    .tx-row:last-child { border-bottom: none; }
-    .tx-in { color: var(--green); }
-    .tx-out { color: var(--orange); }
+    .spend-win-btn.active { border-color: rgba(110,231,255,0.4); color: var(--accent); background: rgba(110,231,255,0.07); }
+    .spend-total { font-size: 22px; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 2px; }
+    .spend-meta { font-size: 10px; color: var(--muted); margin-bottom: 10px; }
+    .spend-bar-row { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+    .spend-bar-label { font-size: 9px; color: var(--muted); width: 110px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-shrink: 0; }
+    .spend-bar-track { flex: 1; height: 6px; background: var(--track); border-radius: 3px; overflow: hidden; }
+    .spend-bar-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.3s; }
+    .spend-bar-val { font-size: 9px; color: var(--text); font-variant-numeric: tabular-nums; width: 42px; text-align: right; flex-shrink: 0; }
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.55);
       display: none; align-items: center; justify-content: center; z-index: 20;
@@ -513,8 +516,6 @@
     }
     .modal-actions { display: flex; gap: 6px; margin-top: 12px; justify-content: flex-end; }
     .btn-danger { border-color: rgba(255,92,92,0.35); color: #ffb0b0; }
-    .wallet-actions { display: flex; gap: 4px; }
-    .wallet-actions button { padding: 4px 6px; font-size: 9px; }
     .vault-card .detail { font-size: 10px; opacity: 0.85; }
     .modal.wide { max-width: 400px; max-height: 85vh; overflow-y: auto; }
     .family-block { margin-bottom: 8px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
@@ -667,7 +668,7 @@
       return `resets in ${Math.floor(hours / 24)}d`;
     }
 
-    const openWalletTx = new Set();
+    let spendWindow = '24h';
     let lastSnapshot = null;
     let themePresetsCache = {};
     const RECEIVER_PRESET_KEY = 'mr-receiver-preset';
@@ -1004,41 +1005,41 @@
       return new Date(ms).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
     }
 
-    function renderWallets(wallets) {
-      if (!wallets || wallets.enabled === false) return '';
-      const rows = wallets.wallets || [];
-      if (!rows.length && !wallets.error) {
-        return '<div class="section-title">Wallets</div><div class="card"><div class="detail">No wallets yet — tap ＋ Wallet to track a public address.</div></div>';
-      }
-      const cards = rows.map(w => {
-        const amt = w.value_usd != null
-          ? `$${Number(w.value_usd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-          : (w.native_amount != null ? `${Number(w.native_amount).toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.native_symbol || ''}` : '—');
-        const nativeLine = w.value_usd != null && w.native_amount != null
-          ? `<div class="detail">${Number(w.native_amount).toLocaleString(undefined, { maximumFractionDigits: 8 })} ${w.native_symbol || ''}</div>`
-          : '';
-        const mode = w.mode === 'live' ? 'live' : 'last seen';
-        const seen = w.fetched_at ? fmtTime(w.fetched_at) : '';
-        const open = openWalletTx.has(w.id);
-        return `
-          <article class="card wallet-card ${open ? 'open' : ''}" data-wallet-id="${w.id}">
-            <div class="card-head">
-              <span class="card-name"><span class="dot ${w.status || 'configured'}"></span>${w.label || w.chain}</span>
-              <span class="badge">${w.kind || 'cold'} · ${mode}</span>
-            </div>
-            <div class="equity-total" style="font-size:15px">${amt}</div>
-            ${nativeLine}
-            <div class="detail">${w.address_masked || ''}${seen ? ' · ' + seen : ''}</div>
-            ${w.error ? `<div class="error">${w.error}</div>` : ''}
-            <div class="wallet-actions" style="margin-top:6px">
-              <button type="button" class="btn-txs" data-id="${w.id}">${open ? 'Hide' : 'Transactions'}</button>
-              <button type="button" class="btn-rm btn-danger" data-id="${w.id}">Remove</button>
-            </div>
-            <div class="tx-list" id="tx-${w.id}" style="display:${open ? 'block' : 'none'}"></div>
-          </article>`;
+    function renderSpend(cr) {
+      if (!cr || cr.no_data) return '';
+      const wins = ['1h', '24h', '7d', '30d'];
+      const labels = { '1h': '1 hr', '24h': '24 hr', '7d': '7 day', '30d': '30 day' };
+      const winBtns = wins.map(w =>
+        `<button type="button" class="spend-win-btn${w === spendWindow ? ' active' : ''}" data-win="${w}">${labels[w]}</button>`
+      ).join('');
+      const summary = (cr.windows || {})[spendWindow] || {};
+      const total = summary.total_usd || 0;
+      const totalFmt = total < 0.01 && total > 0
+        ? `$${total.toFixed(4)}`
+        : `$${total.toFixed(2)}`;
+      const req = summary.requests || 0;
+      const tok = summary.tokens || 0;
+      const tokFmt = tok >= 1e6 ? `${(tok/1e6).toFixed(1)}M` : tok >= 1000 ? `${(tok/1000).toFixed(0)}k` : String(tok);
+      const rows = (cr.by_model || {})[spendWindow] || [];
+      const maxCost = rows.length ? rows[0].cost_usd : 0;
+      const bars = rows.slice(0, 8).map(r => {
+        const pct = maxCost > 0 ? Math.max(2, (r.cost_usd / maxCost) * 100) : 0;
+        const val = r.cost_usd < 0.01 && r.cost_usd > 0 ? `$${r.cost_usd.toFixed(4)}` : `$${r.cost_usd.toFixed(2)}`;
+        const label = r.model.includes('/') ? r.model.split('/').slice(1).join('/') : r.model;
+        return `<div class="spend-bar-row">
+          <span class="spend-bar-label" title="${r.model}">${label}</span>
+          <div class="spend-bar-track"><div class="spend-bar-fill" style="width:${pct}%"></div></div>
+          <span class="spend-bar-val">${val}</span>
+        </div>`;
       }).join('');
-      const err = wallets.error ? `<div class="card"><div class="error">${wallets.error}</div></div>` : '';
-      return `<div class="section-title">Wallets</div>${err}${cards}`;
+      const noData = !rows.length ? '<div class="detail" style="padding:6px 0">No gateway traffic yet in this window</div>' : '';
+      return `<div class="section-title">Spend — ${totalFmt}</div>
+        <div class="card" id="spend-card">
+          <div class="spend-windows">${winBtns}</div>
+          <div class="spend-total">${totalFmt}</div>
+          <div class="spend-meta">${req.toLocaleString()} requests · ${tokFmt} tokens</div>
+          ${bars}${noData}
+        </div>`;
     }
 
     function renderVault(vault) {
@@ -1083,56 +1084,6 @@
             alert('Toggle failed');
           }
         };
-      });
-    }
-
-    async function loadWalletTx(walletId) {
-      const box = document.getElementById('tx-' + walletId);
-      if (!box) return;
-      box.innerHTML = '<div class="detail">Loading transactions…</div>';
-      try {
-        const res = await fetch('/wallet-txs?id=' + encodeURIComponent(walletId));
-        const data = await res.json();
-        const txs = data.transactions || [];
-        if (!txs.length) {
-          box.innerHTML = '<div class="detail">No recent transactions' + (data.error ? ' — ' + data.error : '') + '</div>';
-          return;
-        }
-        box.innerHTML = txs.map(tx => {
-          const dir = tx.direction === 'in' ? 'tx-in' : (tx.direction === 'out' ? 'tx-out' : '');
-          const amt = tx.amount != null ? `${tx.amount} ${tx.symbol || ''}` : (tx.symbol || 'activity');
-          const cp = tx.counterparty_masked ? ` · ${tx.counterparty_masked}` : '';
-          return `<div class="tx-row ${dir}">${fmtTime(tx.time)} · ${tx.direction || 'tx'} · ${amt}${cp}</div>`;
-        }).join('');
-      } catch (e) {
-        box.innerHTML = '<div class="error">Failed to load transactions</div>';
-      }
-    }
-
-    function bindWalletEvents() {
-      document.querySelectorAll('.btn-txs').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const id = btn.getAttribute('data-id');
-          if (!id) return;
-          if (openWalletTx.has(id)) {
-            openWalletTx.delete(id);
-          } else {
-            openWalletTx.add(id);
-            await loadWalletTx(id);
-          }
-          await loadSnapshot();
-        });
-      });
-      document.querySelectorAll('.btn-rm').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          const id = btn.getAttribute('data-id');
-          if (!id || !confirm('Remove this wallet from tracking?')) return;
-          await postJson('/wallets/remove', { id });
-          openWalletTx.delete(id);
-          await loadSnapshot();
-        });
       });
     }
 
@@ -1243,21 +1194,22 @@
       lastSnapshot = snapshot;
       renderReceiverBar(snapshot.homelabStatus);
       root.innerHTML =
+        renderSpend(snapshot.costRollup) +
         renderEquity(equity) +
         renderCompare(snapshot.apiCompare) +
         renderPolicyPresets(snapshot.policyPresets) +
         renderConsole(snapshot.consoleGrid) +
-        renderWallets(snapshot.wallets) +
         (live.length ? '<div class="section-title">Usage</div>' + live.map(renderCard).join('') : '') +
         (keys.length ? '<div class="section-title">API Keys</div>' + keys.map(renderCard).join('') : '') +
         renderVault(snapshot.keyVault) ||
         '<div class="empty">No providers configured</div>';
-      bindWalletEvents();
       bindVaultEvents();
-      for (const id of openWalletTx) {
-        const box = document.getElementById('tx-' + id);
-        if (box && box.style.display !== 'none' && !box.innerHTML.trim()) loadWalletTx(id);
-      }
+      document.querySelectorAll('.spend-win-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          spendWindow = btn.dataset.win;
+          render(lastSnapshot);
+        });
+      });
     }
 
     async function loadSnapshot() {

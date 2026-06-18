@@ -76,6 +76,15 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self) -> None:
         try:
+            if self.path.startswith("/enterprise/state"):
+                status, body = enterprise_state_response()
+                self.send_response(status)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "no-store")
+                self.end_headers()
+                self.wfile.write(json.dumps(body).encode())
+                return
+
             if self.path.startswith("/snapshot.json"):
                 payload = SNAPSHOT.read_text() if SNAPSHOT.exists() else '{"providers":[]}'
                 self.send_response(200)
@@ -98,15 +107,6 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_header("Content-Type", "application/json")
                 self.end_headers()
                 self.wfile.write(meta.encode())
-                return
-
-            if self.path.startswith("/wallet-txs"):
-                payload = wallet_transactions_response(self.path)
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Cache-Control", "no-store")
-                self.end_headers()
-                self.wfile.write(json.dumps(payload).encode())
                 return
 
             path = WIDGET_DIR / "index.html"
@@ -134,20 +134,6 @@ class Handler(BaseHTTPRequestHandler):
             open_edit_file()
             self.send_response(204)
             self.end_headers()
-            return
-        if self.path == "/wallets/add":
-            status, body = wallet_add_response(self)
-            self.send_response(status)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps(body).encode())
-            return
-        if self.path == "/wallets/remove":
-            status, body = wallet_remove_response(self)
-            self.send_response(status)
-            self.send_header("Content-Type", "application/json")
-            self.end_headers()
-            self.wfile.write(json.dumps(body).encode())
             return
         if self.path == "/keys/add":
             status, body = key_add_response(self)
@@ -177,6 +163,27 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(json.dumps(body).encode())
             return
+        if self.path == "/enterprise/mode":
+            status, body = enterprise_mode_response(self)
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(body).encode())
+            return
+        if self.path == "/enterprise/handoff":
+            status, body = enterprise_handoff_response(self)
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(body).encode())
+            return
+        if self.path == "/enterprise/cancel-handoff":
+            status, body = enterprise_cancel_handoff_response()
+            self.send_response(status)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(json.dumps(body).encode())
+            return
         self.send_response(404)
         self.end_headers()
 
@@ -198,43 +205,6 @@ def _read_post_json(handler: BaseHTTPRequestHandler) -> dict:
         return data if isinstance(data, dict) else {}
     except json.JSONDecodeError:
         return {}
-
-
-def wallet_add_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
-    try:
-        from wallet_store import add_wallet
-
-        body = _read_post_json(handler)
-        entry = add_wallet(
-            label=str(body.get("label") or ""),
-            chain=str(body.get("chain") or "ethereum"),
-            address=str(body.get("address") or ""),
-            kind=str(body.get("kind") or "cold"),
-        )
-        run_fetch(reason="wallet_added")
-        return 200, {"ok": True, "wallet": entry}
-    except ValueError as exc:
-        return 400, {"ok": False, "error": str(exc)}
-    except Exception as exc:
-        logger.exception("wallet add failed")
-        return 500, {"ok": False, "error": str(exc)}
-
-
-def wallet_remove_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
-    try:
-        from wallet_store import remove_wallet
-
-        body = _read_post_json(handler)
-        wallet_id = str(body.get("id") or "")
-        if not wallet_id:
-            return 400, {"ok": False, "error": "id required"}
-        if not remove_wallet(wallet_id):
-            return 404, {"ok": False, "error": "not found"}
-        run_fetch(reason="wallet_removed")
-        return 200, {"ok": True}
-    except Exception as exc:
-        logger.exception("wallet remove failed")
-        return 500, {"ok": False, "error": str(exc)}
 
 
 def key_add_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
@@ -309,6 +279,69 @@ def vault_toggle_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
         return 500, {"ok": False, "error": str(exc)}
 
 
+def _load_family_router():
+    import sys
+    from fetch_usage import load_config  # type: ignore
+
+    cfg = load_widget_config()
+    cfg.update(load_config())
+    root = Path(cfg.get("modelrouter_root") or Path(__file__).resolve().parents[2])
+    if str(root) not in sys.path:
+        sys.path.insert(0, str(root))
+    from modelrouter import family_router  # type: ignore
+
+    return family_router
+
+
+def enterprise_state_response() -> tuple[int, dict]:
+    try:
+        fr = _load_family_router()
+        return 200, fr.get_state()
+    except Exception as exc:
+        logger.exception("enterprise state failed")
+        return 500, {"ok": False, "error": str(exc)}
+
+
+def enterprise_mode_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
+    try:
+        fr = _load_family_router()
+        body = _read_post_json(handler)
+        enabled = body.get("enabled")
+        if enabled is None:
+            return 400, {"ok": False, "error": "'enabled' required"}
+        locked_family = body.get("locked_family") or None
+        state = fr.set_enterprise_mode(bool(enabled), locked_family=locked_family)
+        return 200, {"ok": True, **state}
+    except Exception as exc:
+        logger.exception("enterprise mode toggle failed")
+        return 500, {"ok": False, "error": str(exc)}
+
+
+def enterprise_handoff_response(handler: BaseHTTPRequestHandler) -> tuple[int, dict]:
+    try:
+        fr = _load_family_router()
+        body = _read_post_json(handler)
+        target_family = body.get("family") or None
+        ttl = float(body.get("ttl_seconds") or 120)
+        state = fr.allow_handoff(target_family, ttl_seconds=ttl)
+        if "error" in state:
+            return 400, {"ok": False, "error": state["error"]}
+        return 200, {"ok": True, **state}
+    except Exception as exc:
+        logger.exception("enterprise handoff failed")
+        return 500, {"ok": False, "error": str(exc)}
+
+
+def enterprise_cancel_handoff_response() -> tuple[int, dict]:
+    try:
+        fr = _load_family_router()
+        state = fr.cancel_handoff()
+        return 200, {"ok": True, **state}
+    except Exception as exc:
+        logger.exception("enterprise cancel handoff failed")
+        return 500, {"ok": False, "error": str(exc)}
+
+
 def api_assess_response() -> tuple[int, dict]:
     try:
         from api_assess import assess_apis, build_assessment_payload, rule_based_summary
@@ -330,27 +363,6 @@ def api_assess_response() -> tuple[int, dict]:
     except Exception as exc:
         logger.exception("api assess failed")
         return 500, {"ok": False, "error": str(exc)}
-
-
-def wallet_transactions_response(path: str) -> dict:
-    try:
-        from fetch_usage import load_config
-        from fetch_wallets import fetch_wallet_transactions
-
-        query = path.split("?", 1)
-        params: dict[str, str] = {}
-        if len(query) > 1:
-            for part in query[1].split("&"):
-                if "=" in part:
-                    k, v = part.split("=", 1)
-                    params[k] = v
-        wallet_id = params.get("id", "")
-        if not wallet_id:
-            return {"error": "id required", "transactions": []}
-        return fetch_wallet_transactions(wallet_id, load_config())
-    except Exception as exc:
-        logger.exception("wallet txs failed")
-        return {"error": str(exc), "transactions": []}
 
 
 def edit_file_path() -> Path:

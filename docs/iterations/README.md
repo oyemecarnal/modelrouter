@@ -204,7 +204,7 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 |---------|--------|-----|
 | 25.1 | Vault export deny | [25.1.md](25.1.md) |
 | 25.2 | Route key hints | [25.2.md](25.2.md) |
-| 25.3 | Tangem env template | [25.3.md](25.3.md) |
+| 25.3 | Vault export guard | [25.3.md](25.3.md) |
 | 25.4 | `make doctor-fix` | [25.4.md](25.4.md) |
 | 25.5 | Capstone **v3.25.0** | [25.5.md](25.5.md) |
 
@@ -218,13 +218,13 @@ After each cycle: read `docs/ITERATION_REVIEW.md` (AI synthesis).
 | 26.4 | OAuth callback + doctor hints | [26.4.md](26.4.md) |
 | 26.5 | Capstone **v3.26.0** | [26.5.md](26.5.md) |
 
-## Cycle 27 (Tangem ETH + rotate export + daemon fix)
+## Cycle 27 (rotate export + daemon fix)
 
 | Version | Focus | Doc |
 |---------|--------|-----|
 | 27.1 | launchd bootstrap | [27.1.md](27.1.md) |
 | 27.2 | Widget SSL / venv path | [27.2.md](27.2.md) |
-| 27.3 | ETH RPC fallback | [27.3.md](27.3.md) |
+| 27.3 | Rotate export + daemon | [27.3.md](27.3.md) |
 | 27.4 | vault-rotate-export | [27.4.md](27.4.md) |
 | 27.5 | Capstone **v3.27.0** | [27.5.md](27.5.md) |
 

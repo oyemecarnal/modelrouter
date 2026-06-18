@@ -1,0 +1,214 @@
+# Semantic preset intent definitions — the SSOT for what each preset *means*.
+#
+# This is the framework layer above model names. Each intent declares capability
+# requirements, cost constraints, and latency targets. The resolver
+# (modelrouter/preset_resolver.py) maps these to real models based on which
+# keys are currently configured and available.
+#
+# Clients never need to know model names — they just ask for an intent.
+# The gateway config is regenerated from this + available keys via:
+#   python3 scripts/sync_gateway_config.py
+#
+# ── Intent fields ────────────────────────────────────────────────────────────
+# display:       Human label shown in widget / menu bar
+# description:   Plain-English explanation
+# use_cases:     When to reach for this intent
+# quality_floor: Minimum quality tier (1=basic, 3=mid, 5=frontier)
+# max_cost_tier: Maximum cost tier allowed (1=cheapest, 5=most expensive)
+# latency:       "instant" (<1s), "fast" (<3s), "normal" (<10s), "slow" (any)
+# context_window: Minimum context window needed (tokens)
+# requires:
+#   function_calling: true/false
+#   vision:           true/false
+#   code:             true/false
+#   reasoning:        true/false  (o-series / R1-style chain-of-thought)
+# family_preference: preferred provider families in order (from model_families.yaml)
+# allow_local:   Allow Ollama fallback when all cloud providers unavailable
+# enterprise_lock: true = this intent enforces family locking when enterprise mode is on
+
+intents:
+  cheap:
+    display: "Cheap"
+    description: "Lowest cost — short answers, classification, summaries, simple Q&A"
+    use_cases:
+      - Classification and tagging
+      - Short summaries (< 500 words)
+      - Simple factual Q&A
+      - Batch processing where cost matters most
+    quality_floor: 2
+    max_cost_tier: 2
+    latency: fast
+    context_window: 8192
+    requires:
+      function_calling: false
+      vision: false
+      code: false
+      reasoning: false
+    family_preference: [groq, mistral, deepseek]
+    allow_local: true
+    enterprise_lock: false
+
+  fast:
+    display: "Fast"
+    description: "Lowest latency — real-time responses, autocomplete, chat"
+    use_cases:
+      - Real-time chat interfaces
+      - Autocomplete and inline suggestions
+      - Short-turn conversations
+      - Any task where < 1s matters
+    quality_floor: 2
+    max_cost_tier: 3
+    latency: instant
+    context_window: 8192
+    requires:
+      function_calling: false
+      vision: false
+      code: false
+      reasoning: false
+    family_preference: [groq, openai, google]
+    allow_local: false
+    enterprise_lock: false
+
+  smart:
+    display: "Smart"
+    description: "Best general reasoning — complex analysis, writing, decisions"
+    use_cases:
+      - Complex multi-step reasoning
+      - Long-form writing and editing
+      - Data analysis and synthesis
+      - When quality matters more than cost
+    quality_floor: 4
+    max_cost_tier: 4
+    latency: normal
+    context_window: 32768
+    requires:
+      function_calling: true
+      vision: false
+      code: false
+      reasoning: false
+    family_preference: [anthropic, openai]
+    allow_local: false
+    enterprise_lock: true
+
+  code:
+    display: "Code"
+    description: "Code generation, review, and debugging — long context, high accuracy"
+    use_cases:
+      - Code generation from specs
+      - Bug fixing and debugging
+      - Code review
+      - Architecture questions
+      - Refactoring
+    quality_floor: 3
+    max_cost_tier: 4
+    latency: normal
+    context_window: 65536
+    requires:
+      function_calling: true
+      vision: false
+      code: true
+      reasoning: false
+    family_preference: [anthropic, openai, groq]
+    allow_local: true
+    enterprise_lock: true
+
+  review:
+    display: "Review"
+    description: "Deep critical review — frontier models, no cost cap"
+    use_cases:
+      - Final review of important documents
+      - Security audit of code
+      - Legal or compliance drafts
+      - When cost does not matter, only quality does
+    quality_floor: 5
+    max_cost_tier: 5
+    latency: slow
+    context_window: 128000
+    requires:
+      function_calling: true
+      vision: false
+      code: true
+      reasoning: true
+    family_preference: [openai, anthropic]
+    allow_local: false
+    enterprise_lock: true
+
+  local:
+    display: "Local"
+    description: "Fully local via Ollama — private, no API cost, no data leaves machine"
+    use_cases:
+      - Sensitive or private content
+      - Offline use
+      - Cost-free experimentation
+      - Rapid iteration on prompts
+    quality_floor: 1
+    max_cost_tier: 0
+    latency: normal
+    context_window: 8192
+    requires:
+      function_calling: false
+      vision: false
+      code: false
+      reasoning: false
+    family_preference: [local]
+    allow_local: true
+    enterprise_lock: false
+
+  offline:
+    display: "Offline"
+    description: "Alias for local — guaranteed no network calls"
+    use_cases:
+      - Air-gapped environments
+      - Testing without API usage
+    quality_floor: 1
+    max_cost_tier: 0
+    latency: normal
+    context_window: 8192
+    requires:
+      function_calling: false
+      vision: false
+      code: false
+      reasoning: false
+    family_preference: [local]
+    allow_local: true
+    enterprise_lock: false
+
+  hermes-fast:
+    display: "Hermes Fast"
+    description: "Hermes agent — routine work, low cost"
+    use_cases:
+      - Routine agent tasks
+      - Short-turn agent interactions
+      - Batch agent processing
+    quality_floor: 2
+    max_cost_tier: 2
+    latency: fast
+    context_window: 16384
+    requires:
+      function_calling: true
+      vision: false
+      code: false
+      reasoning: false
+    family_preference: [groq, mistral]
+    allow_local: true
+    enterprise_lock: false
+
+  hermes-smart:
+    display: "Hermes Smart"
+    description: "Hermes agent — complex reasoning, higher stakes"
+    use_cases:
+      - Complex agent reasoning chains
+      - Multi-step planning
+      - High-stakes agent decisions
+    quality_floor: 4
+    max_cost_tier: 4
+    latency: normal
+    context_window: 65536
+    requires:
+      function_calling: true
+      vision: false
+      code: true
+      reasoning: false
+    family_preference: [anthropic, openai]
+    allow_local: false
+    enterprise_lock: true

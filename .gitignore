@@ -21,3 +21,7 @@ data/CORE_APIS.md
 tokens/.env.local
 tokens/.venv/
 tokens/config.local.json
+
+# Raycast extension
+raycast-extension/node_modules/
+raycast-extension/dist/

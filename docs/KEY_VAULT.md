@@ -101,10 +101,6 @@ make vault-rotate-push         # export + push rotated keys to kc-mini
 
 **LiteLLM alt routes:** policy presets include `__ALT_1` deployments for Groq, OpenAI, Mistral, and Anthropic when exported from vault (`simple-shuffle` load-balances). You need **two or more enabled keys per provider** in the vault for `__ALT_1` to populate — scrape additional keys with `make vault-scrape-collect`, or set `GROQ_API_KEY__ALT_1=...` in `.env` and re-scrape. Then `make vault-bootstrap-alts` exports and pushes alts to mini. On **kc-mini** enable auto-rotate with `make enable-auto-rotate-mini --enable` (sets ROTATE+RESTART only — not PUSH).
 
-## Tangem / cold wallets
-
-Not part of the key vault (watch-only addresses). Set `TANGEM_BTC_ADDRESS`, `TANGEM_ETH_ADDRESS`, `TANGEM_SOL_ADDRESS` in `.env` — wallet presets pick them up automatically.
-
 ## Security
 
 - Never commit `data/key_vault.json`

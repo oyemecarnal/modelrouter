@@ -60,7 +60,7 @@ Homelab today: **Keys widget** is the seed; Console replaces/extends it when rea
 |---------|------|----------------|
 | **Gateway harness** | Start, health, deploy, doctor | `scripts/`, Makefile |
 | **Policy harness** | Presets, route hints, fallbacks | `route_policy.py`, YAML |
-| **Inventory harness** | Allowed-folder API + crypto surface scan (masked) | `make inventory`, `machine_inventory.py` |
+| **Inventory harness** | Allowed-folder API surface scan (masked) | `make inventory`, `machine_inventory.py` |
 | **Connector harness** | Provider login → vault | *Future* — start with manual `.env` + 1Password |
 | **Meter harness** | Tokens, spend, context audit | Logs + widget; → Postgres later |
 
@@ -167,7 +167,7 @@ Run `make cost-review`. If the answer is “use grep not GPT,” the product sho
 - `docs/CONSOLE_SPEC.md` — wireframes + API for model grid (Phase 1) ✓
 - `docs/CONTEXT_GUIDE.md` — preset selection by context window (Phase 1) ✓
 - `docs/CONNECTOR_SPEC.md` — OAuth scopes + vault layout (Phase 2) ✓ MVP
-- `docs/POSITIONING.md` — market wedge vs LiteLLM / Portkey / key wallets ✓
+- `docs/POSITIONING.md` — market wedge vs LiteLLM / Portkey ✓
 - `docs/LANDING.md` — Personal tier landing stub ✓
 
-Phase 0/1 complete at **v3.7.0**. Phase 2 through **v3.27.0**: paste-key connectors, widget paste modal, tower audit/strip, ship gate, portfolio equity, network key vault, 429 rotate export, Tangem watch wallets (RPC fallback), OAuth exchange stub behind `OAUTH_EXCHANGE=1`.
+Phase 0/1 complete at **v3.7.0**. Phase 2 through **v3.27.0**: paste-key connectors, widget paste modal, tower audit/strip, ship gate, portfolio equity (exchanges + Kalshi), network key vault, 429 rotate export, OAuth exchange stub behind `OAUTH_EXCHANGE=1`.

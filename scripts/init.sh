@@ -1,0 +1,277 @@
+#!/usr/bin/env bash
+# ModelRouter first-run setup wizard.
+# Usage: ./scripts/init.sh [--non-interactive]
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+ENV_FILE="$ROOT/.env"
+VENV="$ROOT/.venv"
+NON_INTERACTIVE="${NON_INTERACTIVE:-}"
+[[ "${1:-}" == "--non-interactive" ]] && NON_INTERACTIVE=1
+
+# ── helpers ─────────────────────────────────────────────────────────────────
+
+bold()  { printf '\033[1m%s\033[0m' "$*"; }
+green() { printf '\033[32m%s\033[0m' "$*"; }
+cyan()  { printf '\033[36m%s\033[0m' "$*"; }
+dim()   { printf '\033[2m%s\033[0m' "$*"; }
+warn()  { printf '\033[33m⚠  %s\033[0m\n' "$*"; }
+die()   { printf '\033[31m✗  %s\033[0m\n' "$*" >&2; exit 1; }
+ok()    { printf '\033[32m✓\033[0m  %s\n' "$*"; }
+step()  { echo; printf '\033[1m→\033[0m  \033[1m%s\033[0m\n' "$*"; }
+
+hr() { printf '%0.s─' {1..60}; echo; }
+
+prompt_yn() {
+  local msg="$1" default="${2:-y}"
+  [[ -n "$NON_INTERACTIVE" ]] && { echo "$default"; return; }
+  local prompt; [[ "$default" == "y" ]] && prompt="[Y/n]" || prompt="[y/N]"
+  read -r -p "$(cyan "  $msg") $prompt " ans
+  ans="${ans:-$default}"
+  echo "${ans,,}"
+}
+
+prompt() {
+  local msg="$1" default="${2:-}"
+  [[ -n "$NON_INTERACTIVE" ]] && { echo "$default"; return; }
+  local suffix; [[ -n "$default" ]] && suffix=" $(dim "(default: $default)")" || suffix=""
+  read -r -p "$(cyan "  $msg")$suffix: " ans
+  echo "${ans:-$default}"
+}
+
+gen_key() {
+  # 32 random hex bytes → sk-<64 hex chars>
+  printf 'sk-%s' "$(LC_ALL=C tr -dc 'a-f0-9' </dev/urandom 2>/dev/null | head -c 64)"
+}
+
+# ── banner ───────────────────────────────────────────────────────────────────
+
+echo
+hr
+echo "  $(bold 'ModelRouter') — one-command setup"
+echo "  Root: $(dim "$ROOT")"
+hr
+
+# ── prereqs ──────────────────────────────────────────────────────────────────
+
+step "Checking prerequisites"
+
+if ! command -v python3 &>/dev/null; then
+  die "python3 not found. Install via: brew install python"
+fi
+
+PYVER=$(python3 -c 'import sys; print("%d%02d" % sys.version_info[:2])')
+if [[ "$PYVER" -lt 311 ]]; then
+  PY_ACTUAL=$(python3 -c 'import sys; print(".".join(str(x) for x in sys.version_info[:3]))')
+  warn "Python 3.11+ recommended (found $PY_ACTUAL). Things may still work."
+else
+  ok "Python $(python3 --version | cut -d' ' -f2)"
+fi
+
+if ! command -v make &>/dev/null; then
+  warn "make not found — gateway daemon commands unavailable. Install Xcode Command Line Tools."
+fi
+
+# ── already installed? ────────────────────────────────────────────────────────
+
+if [[ -f "$ENV_FILE" ]]; then
+  echo
+  warn ".env already exists at $ENV_FILE"
+  ans=$(prompt_yn "Re-run setup and overwrite .env?" "n")
+  if [[ "$ans" != "y" ]]; then
+    echo
+    ok "Skipping .env generation. Running gateway + widget install anyway."
+    echo
+    goto_gateway=1
+  else
+    goto_gateway=0
+  fi
+else
+  goto_gateway=0
+fi
+
+# ── generate keys + write .env ───────────────────────────────────────────────
+
+if [[ "${goto_gateway:-0}" == "0" ]]; then
+  step "Generating secrets"
+
+  MASTER_KEY=$(gen_key)
+  SALT_KEY=$(gen_key)
+
+  ok "MODELROUTER_MASTER_KEY generated ($(echo "$MASTER_KEY" | wc -c | tr -d ' ') chars)"
+  ok "LITELLM_SALT_KEY generated"
+
+  # ── provider keys ─────────────────────────────────────────────────────────
+
+  echo
+  echo "  $(bold 'Provider API keys')"
+  echo "  $(dim 'At least one is needed. Press Enter to skip any.')"
+  echo "  $(dim 'Groq is free: https://console.groq.com')"
+  echo
+
+  declare -A PROVIDER_KEYS
+  declare -a PROVIDER_ORDER=(
+    "GROQ_API_KEY:Groq (free — llama-3.3, mixtral)"
+    "OPENAI_API_KEY:OpenAI (gpt-4o, o3)"
+    "ANTHROPIC_API_KEY:Anthropic (claude-3.5-sonnet, claude-opus-4)"
+    "GOOGLE_API_KEY:Google (gemini-2.0-flash)"
+    "OPENROUTER_API_KEY:OpenRouter (aggregates many providers)"
+    "DEEPSEEK_API_KEY:DeepSeek (very cheap)"
+    "XAI_API_KEY:xAI (grok)"
+    "TOGETHER_API_KEY:Together AI"
+    "MISTRAL_API_KEY:Mistral"
+    "FIREWORKS_API_KEY:Fireworks AI"
+    "COHERE_API_KEY:Cohere"
+    "PERPLEXITY_API_KEY:Perplexity"
+    "HUGGINGFACE_API_KEY:HuggingFace"
+  )
+
+  if [[ -z "$NON_INTERACTIVE" ]]; then
+    for pair in "${PROVIDER_ORDER[@]}"; do
+      var="${pair%%:*}"
+      label="${pair#*:}"
+      read -r -p "$(cyan "  $label"): " val
+      PROVIDER_KEYS["$var"]="${val:-}"
+    done
+  fi
+
+  # Check at least one key was entered
+  has_key=0
+  for val in "${PROVIDER_KEYS[@]+"${PROVIDER_KEYS[@]}"}"; do
+    [[ -n "$val" ]] && has_key=1 && break
+  done
+  if [[ $has_key -eq 0 ]] && [[ -z "$NON_INTERACTIVE" ]]; then
+    warn "No provider keys entered. Gateway will start but cannot route requests."
+    warn "Add keys to .env later and restart: make restart"
+  fi
+
+  # Optional: Polygon (market data)
+  echo
+  read -r -p "$(cyan "  Polygon.io API key") $(dim "(optional — market data)"): " POLYGON_KEY
+
+  step "Writing .env"
+
+  cat >"$ENV_FILE" <<ENVEOF
+# ModelRouter environment — generated by scripts/init.sh
+# Edit freely; restart gateway with: make restart
+
+MODELROUTER_HOST=127.0.0.1
+MODELROUTER_PORT=3000
+MODELROUTER_WORKERS=2
+
+# Gateway master key — used by all clients (keep secret)
+MODELROUTER_MASTER_KEY=${MASTER_KEY}
+
+# Required for encrypting stored keys
+LITELLM_SALT_KEY=${SALT_KEY}
+
+# ── Provider API keys ────────────────────────────────────────────────────────
+OPENAI_API_KEY=${PROVIDER_KEYS[OPENAI_API_KEY]:-}
+ANTHROPIC_API_KEY=${PROVIDER_KEYS[ANTHROPIC_API_KEY]:-}
+GOOGLE_API_KEY=${PROVIDER_KEYS[GOOGLE_API_KEY]:-}
+GEMINI_API_KEY=${PROVIDER_KEYS[GOOGLE_API_KEY]:-}
+OPENROUTER_API_KEY=${PROVIDER_KEYS[OPENROUTER_API_KEY]:-}
+GROQ_API_KEY=${PROVIDER_KEYS[GROQ_API_KEY]:-}
+TOGETHER_API_KEY=${PROVIDER_KEYS[TOGETHER_API_KEY]:-}
+MISTRAL_API_KEY=${PROVIDER_KEYS[MISTRAL_API_KEY]:-}
+DEEPSEEK_API_KEY=${PROVIDER_KEYS[DEEPSEEK_API_KEY]:-}
+COHERE_API_KEY=${PROVIDER_KEYS[COHERE_API_KEY]:-}
+PERPLEXITY_API_KEY=${PROVIDER_KEYS[PERPLEXITY_API_KEY]:-}
+HUGGINGFACE_API_KEY=${PROVIDER_KEYS[HUGGINGFACE_API_KEY]:-}
+FIREWORKS_API_KEY=${PROVIDER_KEYS[FIREWORKS_API_KEY]:-}
+XAI_API_KEY=${PROVIDER_KEYS[XAI_API_KEY]:-}
+
+# ── Non-LLM APIs ─────────────────────────────────────────────────────────────
+CURSOR_API_KEY=
+POLYGON_API_KEY=${POLYGON_KEY:-}
+
+# ── Local Ollama ──────────────────────────────────────────────────────────────
+OLLAMA_API_BASE=http://127.0.0.1:11434
+
+# ── Redis (optional) ─────────────────────────────────────────────────────────
+REDIS_HOST=127.0.0.1
+REDIS_PORT=6379
+REDIS_PASSWORD=
+
+# ── Postgres (optional — Docker stack only) ───────────────────────────────────
+POSTGRES_PASSWORD=modelrouter
+
+# ── 1Password (optional) ─────────────────────────────────────────────────────
+OP_ACCOUNT=
+ENVEOF
+
+  ok ".env written to $ENV_FILE"
+fi
+
+# ── venv + deps ───────────────────────────────────────────────────────────────
+
+step "Installing gateway dependencies"
+
+# Delegate to the existing gateway installer (handles uv/pip/venv automatically)
+bash "$ROOT/scripts/install.sh"
+ok "Gateway installed"
+
+# ── gateway daemon ────────────────────────────────────────────────────────────
+
+step "Starting ModelRouter gateway"
+
+if command -v make &>/dev/null; then
+  (cd "$ROOT" && make daemon) && ok "Gateway daemon started" || warn "Gateway failed to start — run: make doctor"
+else
+  bash "$ROOT/scripts/start-daemon.sh" && ok "Gateway daemon started" || warn "Gateway failed — check: ./scripts/healthcheck.sh"
+fi
+
+# ── widget ────────────────────────────────────────────────────────────────────
+
+step "Installing widget daemon"
+
+WIDGET_ROOT="$ROOT/tokens"
+if [[ -f "$WIDGET_ROOT/scripts/install.sh" ]]; then
+  bash "$WIDGET_ROOT/scripts/install.sh"
+  ok "Widget installed"
+else
+  warn "Widget installer not found at $WIDGET_ROOT/scripts/install.sh — skipping"
+fi
+
+# ── health check ─────────────────────────────────────────────────────────────
+
+step "Verifying gateway health"
+sleep 2
+
+PORT=$(grep '^MODELROUTER_PORT=' "$ENV_FILE" 2>/dev/null | cut -d= -f2)
+PORT="${PORT:-3000}"
+
+if curl -sf "http://127.0.0.1:${PORT}/health" &>/dev/null; then
+  ok "Gateway is healthy at http://127.0.0.1:${PORT}"
+else
+  warn "Gateway not yet responding — it may take a few more seconds. Check: make status"
+fi
+
+# ── print client config ───────────────────────────────────────────────────────
+
+MASTER_KEY_DISPLAY=$(grep '^MODELROUTER_MASTER_KEY=' "$ENV_FILE" 2>/dev/null | cut -d= -f2 || echo "see .env")
+
+echo
+hr
+echo "  $(green '✓ Setup complete!')"
+hr
+echo
+echo "  $(bold 'Gateway')  http://127.0.0.1:${PORT}/v1"
+echo "  $(bold 'Key')      $MASTER_KEY_DISPLAY"
+echo "  $(bold 'Widget')   http://localhost:8765  (double-click Desktop shortcut)"
+echo
+echo "  $(bold 'Quick test'):"
+printf '  \033[2mcurl http://127.0.0.1:%s/v1/chat/completions \\\033[0m\n' "$PORT"
+printf '  \033[2m  -H "Authorization: Bearer %s" \\\033[0m\n' "$MASTER_KEY_DISPLAY"
+printf '  \033[2m  -H "Content-Type: application/json" \\\033[0m\n'
+printf '  \033[2m  -d '"'"'{"model":"cheap","messages":[{"role":"user","content":"hi"}]}'"'"'\033[0m\n'
+echo
+echo "  $(bold 'Client shortcuts'):"
+printf '  \033[2m# Cursor / VS Code — paste into settings.json\033[0m\n'
+printf '  \033[2m{"openai.apiBaseUrl": "http://127.0.0.1:%s/v1"}\033[0m\n' "$PORT"
+printf '  \033[2m{"openai.apiKey": "%s"}\033[0m\n' "$MASTER_KEY_DISPLAY"
+echo
+echo "  $(dim 'Manage:  ./mr start | stop | status | widget')"
+echo "  $(dim 'Docs:    cat README.md')"
+echo
+hr

@@ -64,7 +64,7 @@
 - **`make keys-audit`** → `machine_inventory --keys-audit` (SSOT with `make inventory`)
 - **`doctor.sh` slimmed** — points to `make homelab-status` for full dashboard
 - **`hosts.yaml`** — dropped duplicate `clients:` block (`projects.yaml` is SSOT)
-- **Widget portfolio off by default** — equity/wallets opt-in via `tokens/config.json`
+- **Widget portfolio off by default** — equity opt-in via `tokens/config.json`
 
 ### Removed
 - Per-provider connect shell scripts (groq, anthropic, openai, mistral, google, deepseek, together, fireworks, cohere)
@@ -195,17 +195,15 @@
 - `logging_callback` — optional `rotate_export` event when auto-rotate enabled
 - Tests: `maybe_auto_rotate_export` gate
 
-## [3.27.0] — 2026-06-12 (Cycle 27 — Tangem ETH + rotate export + daemon fix)
+## [3.27.0] — 2026-06-12 (Cycle 27 — rotate export + daemon fix)
 
 ### Added
-- **ETH balance RPC fallback** — public JSON-RPC when `ETHERSCAN_API_KEY` missing (Tangem watch wallets)
 - **`make vault-rotate-export`** — apply last 429 rotate hint → `.env` merge
 - Widget fetch uses **modelrouter `.venv`** (fixes SSL cert errors on laptop)
 - `daemon-enable` / `daemon-disable` — `launchctl bootstrap` / `bootout` for modern macOS
 
 ### Changed
-- `fetch_ethereum_balance` — Etherscan first, Cloudflare RPC fallback
-- Tests: Ethereum RPC, vault rotate export, Tangem preset sync when env set
+- Tests: vault rotate export
 
 ## [3.26.0] — 2026-06-12 (Cycle 26 — 429 rotate + vault widget + OAuth exchange)
 
@@ -226,7 +224,6 @@
 - **Vault export deny** — `export_deny_vars` / `export_deny_prefixes` block sensitive vars from `.env` merge
 - **Route key hints** — `route_policy` writes `key_hints` (vault fingerprint) when quota pressure is high and alternates exist
 - `make doctor-fix` — one-shot gateway restart companion to `make doctor`
-- Tangem watch-wallet placeholders in `tokens/.env.local.example`
 
 ### Changed
 - `export_env` — skips blocked vars; tests for export deny + route hints
@@ -247,15 +244,13 @@
 ### Added
 - **Network key vault** — `modelrouter/key_vault.py`, `config/key_vault.yaml`, `make vault-scrape` / `vault-scrape-collect` / `vault-export`
 - `docs/KEY_VAULT.md` — permissions, multi-key per service, routing-aware select
-- **Portfolio equity** — Kraken/Coinbase broker routes, Kalshi live balance (`equity_kalshi.py`), cold-wallet USD (`price_oracle.py`)
+- **Portfolio equity** — Kraken/Coinbase broker routes, Kalshi live balance (`equity_kalshi.py`)
 - **Widget themes** — 11 receiver presets, discreet header Theme dropdown; `docs/THEME_DESIGN.md`
-- Tangem wallet presets via `TANGEM_*` env or `wallets.presets` in config
 
 ### Changed
 - `fetch_equity` — per-broker SSH routes, unified portfolio total + breakdown
 - `equity_remote_runner` — Fernet-only encrypted-key detect; full multi-asset USD pricing
-- `fetch_wallets` — CoinGecko USD valuation; `include_in_equity` rolls into portfolio
-- Widget — Portfolio section (exchange + prediction + cold wallet cards)
+- Widget — Portfolio section (exchange + prediction cards)
 
 ## [3.22.0] — 2026-06-16 (Cycle 22 — ship gate + ensure-gateway + OAuth stub)
 
@@ -393,7 +388,7 @@
 - `config/connectors.yaml` — paste-key connector registry (groq, anthropic)
 - `make connect-provider PROVIDER=<id>` — generic dispatch via `scripts/connect-provider.sh`
 - `make smoke-hermes-smart` — prove `hermes-smart` / Anthropic route on kc-mini
-- `docs/POSITIONING.md` — control-plane wedge vs LiteLLM / key wallets
+- `docs/POSITIONING.md` — control-plane wedge vs LiteLLM / Portkey
 
 ### Changed
 - `test.sh` — `connectors.yaml` registry validation (no secret-like values, script mapping)
@@ -543,7 +538,6 @@
 - `equity_remote_runner` — equity total includes more than 6 assets
 - `api_assess` — preset context from YAML list; offline summary IndexError
 - MCP `list_models` — error JSON when gateway down
-- Wallet snapshot redacts full on-chain addresses
 - `client.env.example` — dotenv-safe tower template
 
 ### Changed

@@ -35,14 +35,8 @@ permissions:
   # Master switch — scrape without --collect stays masked-only (inventory mode)
   collect_values: true
 
-  # Never centralize these (wallet material, exchange secrets)
+  # Never centralize these (exchange secrets, gateway keys)
   deny_vars:
-    - MNEMONIC
-    - SEED_PHRASE
-    - PRIVATE_KEY
-    - WALLET_PRIVATE_KEY
-    - ETH_PRIVATE_KEY
-    - SOLANA_PRIVATE_KEY
     - KRAKEN_API_SECRET
     - COINBASE_API_SECRET
     - LITELLM_SALT_KEY

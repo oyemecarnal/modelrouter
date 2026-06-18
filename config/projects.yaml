@@ -27,14 +27,6 @@ projects:
       review: review
     virtual_key_env: MODELROUTER_KEY_KALSHI
 
-  coinbot:
-    description: Coinbot / Telegram trading
-    hosts: [kc-tower, kc-mini]
-    presets:
-      routine: cheap
-      analysis: code
-    virtual_key_env: MODELROUTER_KEY_COINBOT
-
   cursor-dev:
     description: Cursor IDE on laptop
     hosts: [laptop]
@@ -53,3 +45,12 @@ projects:
 
 # Native (venv) mode: all virtual_key_env values default to MODELROUTER_MASTER_KEY.
 # Docker + Postgres: run `make project-keys` after `make docker-up` for real isolation.
+
+  parser-poster:
+    description: Call Processor NPOC summarization
+    hosts:
+      - laptop
+    presets:
+      routine: cheap
+      complex: offline
+    virtual_key_env: MODELROUTER_KEY_PARSER_POSTER

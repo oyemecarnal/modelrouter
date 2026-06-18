@@ -1,4 +1,4 @@
-"""Fetch portfolio equity: exchanges (coinbot), Kalshi, and watch-only wallets."""
+"""Fetch portfolio equity: exchanges (Kraken, Coinbase) and Kalshi."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ from typing import Any
 SCRIPTS = Path(__file__).resolve().parent
 EQUITY_CACHE = Path.home() / "Library/Application Support/TokenWidget/equity_cache.json"
 
-COINBOT_BROKERS = frozenset({"kraken", "coinbase", "alpaca"})
+EXCHANGE_BROKERS = frozenset({"kraken", "coinbase", "alpaca"})
 
 
 def _gateway_ssh_host() -> str:
@@ -31,7 +31,7 @@ def _default_cfg() -> dict[str, Any]:
     return {
         "enabled": True,
         "remote_host": _gateway_ssh_host(),
-        "coinbot_root": str(Path.home() / "dev" / "coinbot"),
+        "exchange_root": str(Path.home() / "dev" / "coinbot"),
         "brokers": ["kraken", "coinbase", "kalshi"],
         "prefer_remote": True,
         "force_live": True,
@@ -44,7 +44,7 @@ def _default_cfg() -> dict[str, Any]:
 
 
 def _broker_route(broker: str, base: dict[str, Any]) -> dict[str, Any]:
-    """Resolve host, coinbot root, and options for one broker."""
+    """Resolve host, exchange root, and options for one broker."""
     broker = broker.lower()
     routes = base.get("broker_routes") or {}
     route = dict(routes.get(broker) or {})
@@ -60,7 +60,7 @@ def _broker_route(broker: str, base: dict[str, Any]) -> dict[str, Any]:
     else:
         route.setdefault("host", "local")
 
-    route.setdefault("coinbot_root", base.get("coinbot_root"))
+    route.setdefault("exchange_root", base.get("exchange_root"))
     route.setdefault(
         "instance_id",
         base.get("kraken_instance_id") if broker == "kraken" else base.get("instance_id"),
@@ -69,14 +69,14 @@ def _broker_route(broker: str, base: dict[str, Any]) -> dict[str, Any]:
     route.setdefault("timeout_seconds", timeouts.get(broker) or base.get("timeout_seconds") or 90)
     if broker == "kraken":
         route.setdefault("market_symbols", base.get("kraken_market_symbols"))
-    route.setdefault("provider", "kalshi" if broker == "kalshi" else "coinbot")
+    route.setdefault("provider", "kalshi" if broker == "kalshi" else "exchange")
     return route
 
 
 def _provider_for(broker: str, base: dict[str, Any]) -> str:
     routes = base.get("broker_routes") or {}
     route = routes.get(broker.lower()) or {}
-    return str(route.get("provider") or ("kalshi" if broker == "kalshi" else "coinbot"))
+    return str(route.get("provider") or ("kalshi" if broker == "kalshi" else "exchange"))
 
 
 def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
@@ -130,7 +130,7 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
 
         route = _broker_route(broker, base)
         host = route.get("host") or "local"
-        coinbot_root = Path(route.get("coinbot_root") or base["coinbot_root"])
+        exchange_root = Path(route.get("exchange_root") or base["exchange_root"])
         timeout_sec = float(route.get("timeout_seconds") or 90)
         inst = route.get("instance_id") or instance_id
         market_symbols = route.get("market_symbols")
@@ -140,7 +140,7 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
                 _sync_master_key(host, inst, route)
                 payload = _fetch_remote(
                     host,
-                    coinbot_root,
+                    exchange_root,
                     broker,
                     force_live,
                     timeout_sec,
@@ -148,9 +148,9 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
                     market_symbols=market_symbols,
                 )
                 hosts_used.append(host)
-            elif coinbot_root.is_dir():
+            elif exchange_root.is_dir():
                 payload = _fetch_local(
-                    coinbot_root,
+                    exchange_root,
                     broker,
                     force_live,
                     timeout_sec,
@@ -159,7 +159,7 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
                 )
                 hosts_used.append("local")
             else:
-                errors.append(f"{broker}: coinbot not found at {coinbot_root}")
+                errors.append(f"{broker}: exchange runner not found at {exchange_root}")
                 continue
 
             for row in payload.get("brokers") or []:
@@ -173,25 +173,10 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
         except Exception as exc:
             errors.append(f"{broker}: {exc}")
 
-    if base.get("include_wallets", True):
-        try:
-            from fetch_wallets import wallet_equity_rows
-
-            wallet_cfg = {
-                "dev_root": base.get("dev_root") or (cfg or {}).get("dev_root"),
-                "wallets": (cfg or {}).get("wallets") or {},
-                "equity": base,
-            }
-            for row in wallet_equity_rows(wallet_cfg):
-                broker_rows.append(row)
-                hosts_used.append("on-chain")
-        except Exception as exc:
-            errors.append(f"wallets: {exc}")
-
     if not broker_rows:
         payload = {
             "updated_at": int(time.time() * 1000),
-            "source": "coinbot",
+            "source": "exchange",
             "host": hosts_used[0] if hosts_used else None,
             "total_equity_usd": None,
             "brokers": [],
@@ -229,7 +214,7 @@ def fetch_equity(cfg: dict[str, Any] | None = None) -> dict[str, Any] | None:
 
 
 def _sync_master_key(host: str, instance_id: str | None, route: dict[str, Any]) -> None:
-    """Optional: rsync coinbot master key to remote host before encrypted-key decrypt."""
+    """Optional: rsync exchange master key to remote host before encrypted-key decrypt."""
     if not instance_id:
         return
     src_host = route.get("master_key_from")
@@ -280,7 +265,7 @@ def read_stale_equity() -> dict[str, Any] | None:
 
 def _status_to_equity(status: dict[str, Any], host: str) -> dict[str, Any]:
     equity = status.get("total_equity_usd") or status.get("equity_usd")
-    broker = (status.get("broker") or status.get("exchange") or "coinbot").lower()
+    broker = (status.get("broker") or status.get("exchange") or "exchange").lower()
     assets = []
     for asset, bal in (status.get("balances") or {}).items():
         if isinstance(bal, dict):
@@ -292,7 +277,7 @@ def _status_to_equity(status: dict[str, Any], host: str) -> dict[str, Any]:
         assets.append({"asset": asset, "amount": total, "value_usd": None})
     return {
         "updated_at": int(time.time() * 1000),
-        "source": "coinbot-status",
+        "source": "exchange-status",
         "host": host,
         "total_equity_usd": round(float(equity), 2) if equity is not None else None,
         "brokers": [
@@ -336,20 +321,20 @@ def _parse_json(stdout: str) -> dict[str, Any]:
     return json.loads(text)
 
 
-def _coinbot_python(coinbot_root: Path) -> str:
+def _exchange_python(exchange_root: Path) -> str:
     for rel in (".venv/bin/python3", "venv/bin/python3"):
-        candidate = coinbot_root / rel
+        candidate = exchange_root / rel
         if candidate.is_file():
             return str(candidate)
     return sys.executable
 
 
 def _runner_env(
-    coinbot_root: Path,
+    exchange_root: Path,
     instance_id: str | None,
     market_symbols: str | None,
 ) -> dict[str, str]:
-    env = {**os.environ, "COINBOT_ROOT": str(coinbot_root)}
+    env = {**os.environ, "COINBOT_ROOT": str(exchange_root)}
     if instance_id:
         env["INSTANCE_ID"] = instance_id
     if market_symbols:
@@ -378,7 +363,7 @@ def _runner_cmd(
 
 
 def _fetch_local(
-    coinbot_root: Path,
+    exchange_root: Path,
     broker: str,
     force_live: bool,
     timeout_sec: float,
@@ -387,8 +372,8 @@ def _fetch_local(
     market_symbols: str | None = None,
 ) -> dict[str, Any]:
     runner = SCRIPTS / "equity_remote_runner.py"
-    env = _runner_env(coinbot_root, instance_id, market_symbols)
-    py = _coinbot_python(coinbot_root)
+    env = _runner_env(exchange_root, instance_id, market_symbols)
+    py = _exchange_python(exchange_root)
     cmd = _runner_cmd(py, runner, broker, force_live, timeout_sec, instance_id, market_symbols)
     proc = subprocess.run(
         cmd,
@@ -396,12 +381,12 @@ def _fetch_local(
         text=True,
         env=env,
         timeout=int(timeout_sec) + 45,
-        cwd=coinbot_root,
+        cwd=exchange_root,
     )
     if proc.returncode != 0 and not proc.stdout.strip():
         return {
             "updated_at": None,
-            "source": "coinbot",
+            "source": "exchange",
             "host": "local",
             "total_equity_usd": None,
             "brokers": [],
@@ -410,15 +395,15 @@ def _fetch_local(
     return _parse_json(proc.stdout)
 
 
-def _remote_modelrouter_dir(host: str, coinbot_root: Path) -> Path:
-    if str(coinbot_root).startswith("/root/"):
+def _remote_modelrouter_dir(host: str, exchange_root: Path) -> Path:
+    if str(exchange_root).startswith("/root/"):
         return Path("/root/dev/modelrouter")
     return Path(os.environ.get("MODELROUTER_REMOTE_DIR", str(Path.home() / "dev" / "modelrouter")))
 
 
 def _fetch_remote(
     host: str,
-    coinbot_root: Path,
+    exchange_root: Path,
     broker: str,
     force_live: bool,
     timeout_sec: float,
@@ -426,9 +411,9 @@ def _fetch_remote(
     instance_id: str | None = None,
     market_symbols: str | None = None,
 ) -> dict[str, Any]:
-    remote_mr = _remote_modelrouter_dir(host, coinbot_root)
+    remote_mr = _remote_modelrouter_dir(host, exchange_root)
     remote_runner = remote_mr / "tokens/scripts/equity_remote_runner.py"
-    fallback_runner = Path(str(coinbot_root)) / "equity_remote_runner_mr.py"
+    fallback_runner = Path(str(exchange_root)) / "equity_remote_runner_mr.py"
 
     rsync_cmd = [
         "rsync",
@@ -443,15 +428,15 @@ def _fetch_remote(
         subprocess.run(rsync_cmd, capture_output=True, text=True, timeout=30)
         runner_path = fallback_runner
 
-    py_venv = f"{coinbot_root}/.venv/bin/python3"
-    py_alt = f"{coinbot_root}/venv/bin/python3"
+    py_venv = f"{exchange_root}/.venv/bin/python3"
+    py_alt = f"{exchange_root}/venv/bin/python3"
     inst = instance_id or ""
     markets = market_symbols or ""
     live = " --force-live" if force_live else ""
     inst_arg = f' --instance-id "{inst}"' if inst else ""
     mkt_arg = f' --market-symbols "{markets}"' if markets else ""
     remote_cmd = (
-        f"COINBOT_ROOT='{coinbot_root}' "
+        f"COINBOT_ROOT='{exchange_root}' "
         f"{f'INSTANCE_ID={inst} ' if inst else ''}"
         f"{f'MARKET_SYMBOLS={markets} ' if markets else ''}"
         f"bash -lc '"
@@ -471,7 +456,7 @@ def _fetch_remote(
         err = (proc.stderr or proc.stdout or "remote equity failed").strip()
         return {
             "updated_at": None,
-            "source": "coinbot",
+            "source": "exchange",
             "host": host,
             "total_equity_usd": None,
             "brokers": [],
@@ -482,7 +467,7 @@ def _fetch_remote(
     except Exception as exc:
         return {
             "updated_at": None,
-            "source": "coinbot",
+            "source": "exchange",
             "host": host,
             "total_equity_usd": None,
             "brokers": [],
