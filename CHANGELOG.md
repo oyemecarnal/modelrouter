@@ -1,5 +1,19 @@
 # Changelog
 
+## [3.36.0] — 2026-06-17 (Cycle 36 — alts live, dedupe env, smoke-routes)
+
+### Added
+- **`make dedupe-env`** / **`dedupe-env-apply`** — drop duplicate `.env` keys (keeps last; no value print)
+- **`make smoke-routes`** — hermes-fast + hermes-smart smoke in one pass
+- **`make vault-bootstrap-alts-restart`** — bootstrap alts + restart mini
+
+### Changed
+- Homelab **alt_keys** hint — partial shuffle messaging (e.g. 3/4)
+- **`make enable-auto-rotate-mini-enable`** — write ROTATE+RESTART gates on kc-mini
+
+### Ops (human)
+- 3/4 providers alt-shuffle live (Groq, Anthropic, OpenAI); Mistral pending
+
 ## [3.35.0] — 2026-06-17 (Groq cycle — stash-alt + smoke-hermes-fast)
 
 ### Added

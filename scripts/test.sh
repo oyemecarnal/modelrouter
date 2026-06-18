@@ -56,6 +56,20 @@ assert 'data/CORE_APIS.md' in gi, 'CORE_APIS.md must stay gitignored'
 print('  ok data/CORE_APIS.md gitignored')
 "
 
+echo "── Env dedupe helper"
+chmod +x scripts/dedupe-env.sh 2>/dev/null || true
+"$PY" -c "
+import tempfile, os, subprocess
+from pathlib import Path
+td = Path(tempfile.mkdtemp())
+env = td / '.env'
+env.write_text('A=1\nB=2\nA=3\n')
+env = str(env)
+subprocess.run(['./scripts/dedupe-env.sh', '--apply'], cwd='$ROOT', check=True, env={**os.environ, 'MODELROUTER_ENV': env})
+assert Path(env).read_text().splitlines() == ['B=2', 'A=3']
+print('  ok dedupe-env keeps last key occurrence')
+"
+
 echo "── Security (snapshot exports)"
 PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
 import json, re

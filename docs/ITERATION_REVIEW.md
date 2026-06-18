@@ -529,3 +529,21 @@ Bugbot        → 7 findings; 4 patched in-cycle
 | 34.5 | **v3.34.0** |
 
 **Next cycle 35 proposal:** Paste one real alt key → `vault-bootstrap-alts --restart-mini` → `enable-auto-rotate-mini --enable` → live smoke + synthetic 429 drill.
+
+---
+
+## Cycle 35–36 checkpoint (v3.36.0)
+
+**Theme:** Alt keys live (3/4), env hygiene, route smoke, mini auto-rotate.
+
+| Iter | Deliverable |
+|------|-------------|
+| 36.1 | `dedupe-env` — duplicate `.env` key cleanup |
+| 36.2 | `enable-auto-rotate-mini --enable` on kc-mini |
+| 36.3 | `smoke-routes` — fast + smart preset smoke |
+| 36.4 | Partial alt hint + `vault-bootstrap-alts-restart` |
+| 36.5 | **v3.36.0** |
+
+**Live state:** Groq/Anthropic/OpenAI `__ALT_1` on mini; vault 3/4 shuffle-ready; smokes green.
+
+**Next cycle 37 proposal:** Mistral alt, live 429 drill with auto-rotate enabled, laptop `daemon-enable`.

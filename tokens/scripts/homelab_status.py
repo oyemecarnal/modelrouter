@@ -424,12 +424,19 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
 
     alt_missing = alt_ready.get("missing") or []
     if alt_missing:
+        n_ready = sum(1 for v in alt_ready.get("ready", {}).values() if v)
+        n_total = len(alt_ready.get("ready") or {})
+        partial = n_ready > 0 and n_ready < n_total
         hints.append(
             {
                 "id": "alt_keys",
-                "text": f"Alt shuffle inactive — need 2+ keys: {', '.join(alt_missing)}",
-                "fix": "make connect-alt-key PROVIDER=groq",
-                "alt": "make vault-sync-alts",
+                "text": (
+                    f"Alt shuffle partial ({n_ready}/{n_total}) — still need: {', '.join(alt_missing)}"
+                    if partial
+                    else f"Alt shuffle inactive — need 2+ keys: {', '.join(alt_missing)}"
+                ),
+                "fix": "make connect-alt-key PROVIDER=mistral",
+                "alt": "make vault-bootstrap-alts",
                 "doc": "docs/KEY_VAULT.md",
             }
         )

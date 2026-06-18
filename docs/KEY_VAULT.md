@@ -19,7 +19,9 @@ make vault-rotate-drill        # dry-run 429 rotate pipeline readiness
 make vault-ingest-alts         # merge .env __ALT_N lines into vault
 make vault-bootstrap-alts      # ingest + export + push alts
 make enable-auto-rotate-mini   # status; --enable for kc-mini ROTATE+RESTART
-make bootstrap-mini            # deploy + daemon-enable + push alts
+make vault-bootstrap-alts-restart  # ingest + export + push + restart mini
+make dedupe-env-apply              # drop duplicate .env keys (keeps last)
+make smoke-routes                  # hermes-fast + hermes-smart smoke
 ```
 
 ## Architecture
