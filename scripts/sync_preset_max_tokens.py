@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -11,11 +12,7 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "config" / "models_catalog.yaml"
-TARGETS = [
-    ROOT / "config" / "includes" / "policy_presets.yaml",
-    ROOT / "config" / "modelrouter.minimal.yaml",
-    ROOT / "config" / "modelrouter.yaml",
-]
+PRESETS = ROOT / "config" / "includes" / "policy_presets.yaml"
 POLICY_IDS = {"cheap", "code", "review", "hermes-fast", "hermes-smart", "offline"}
 
 
@@ -84,20 +81,24 @@ def main() -> int:
     if not CATALOG.exists():
         print(f"missing {CATALOG}", file=sys.stderr)
         return 1
+    if not PRESETS.exists():
+        print(f"missing {PRESETS}", file=sys.stderr)
+        return 1
+
     limits = catalog_limits()
-    total = 0
-    for path in TARGETS:
-        if not path.exists():
-            print(f"  skip missing {path.name}")
-            continue
-        n = patch_file(path, limits)
-        if n:
-            print(f"  patched {path.name}: {n} max_tokens")
-            total += n
-        else:
-            print(f"  ok {path.name}")
-    if total:
-        print(f"[sync-preset-tokens] updated {total} entries")
+    n = patch_file(PRESETS, limits)
+    if n:
+        print(f"  patched {PRESETS.name}: {n} max_tokens")
+
+    proc = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "sync_gateway_config.py")],
+        cwd=ROOT,
+    )
+    if proc.returncode != 0:
+        return proc.returncode
+
+    if n:
+        print(f"[sync-preset-tokens] updated {n} entries + regenerated gateway YAML")
     else:
         print("[sync-preset-tokens] already in sync")
     return 0

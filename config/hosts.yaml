@@ -1,5 +1,5 @@
-# Homelab hosts — single source for SSH, paths, and ModelRouter URLs.
-# Override via env: MODELROUTER_REMOTE_HOST, KC_TOWER_SSH
+# Homelab hosts — SSH, paths, and ModelRouter URLs.
+# Client→preset mapping: config/projects.yaml (not duplicated here)
 
 gateway:
   url: http://Kevins-Mac-mini.local:3000
@@ -30,17 +30,3 @@ hosts:
     roles: [runtime, hermes, kalshi, coinbot]
     note: Does not host ModelRouter — calls kc-mini gateway on LAN
 
-clients:
-  smalshi-hermes:
-    host: kc-tower
-    gateway: kc-mini
-    preset_routine: hermes-fast
-    preset_complex: hermes-smart
-  kalshi-bot:
-    host: kc-tower
-    gateway: kc-mini
-    preset_routine: cheap
-  coinbot:
-    host: kc-tower
-    gateway: kc-mini
-    preset_routine: cheap

@@ -1,0 +1,132 @@
+<mxfile host="app.diagrams.net" modified="2026-06-18T15:00:00.000Z" agent="ModelRouter ponytail-audit" version="24.7.17">
+  <diagram id="current-bloat" name="1 — Current (audit)">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="t1" value="ModelRouter TODAY — request path is thin; bloat is config + ops duplication" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="900" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="req-label" value="REQUEST PATH (keep hot)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#006600" vertex="1" parent="1">
+          <mxGeometry x="40" y="55" width="200" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="c-clients" value="Clients&#xa;Cursor · Hermes · coinbot · tower&#xa;client.env · projects.yaml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="85" width="200" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="c-gateway" value="Gateway (kc-mini)&#xa;LiteLLM /v1 · start.sh · launchd&#xa;logging_callback · usage_rollup" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="300" y="85" width="220" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="c-providers" value="Providers&#xa;OpenAI · Groq · Anthropic · Ollama…&#xa;keys from mini .env only" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="560" y="85" width="200" height="75" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e-c1" style="endArrow=block;html=1;" edge="1" parent="1" source="c-clients" target="c-gateway"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e-c2" style="endArrow=block;html=1;" edge="1" parent="1" source="c-gateway" target="c-providers"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="off-label" value="OFF REQUEST PATH (cut / merge)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=12;fontStyle=1;fontColor=#CC0000" vertex="1" parent="1">
+          <mxGeometry x="40" y="185" width="260" height="20" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="b-config" value="#1 CONFIG DRIFT (4 sources)&#xa;policy_presets.yaml (SSOT on paper)&#xa;modelrouter.yaml + minimal.yaml (COPIES)&#xa;models_catalog.yaml (UI only)&#xa;→ generate gateway YAML at make start" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;dashed=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="60" y="215" width="320" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="b-keys" value="#2 KEY INVENTORY (4 scanners)&#xa;discover-keys.sh · machine_inventory&#xa;key_inventory.py · vault scrape&#xa;→ one Python module + inventory.yaml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;dashed=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="400" y="215" width="300" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="b-connect" value="#3 CONNECT SCRIPTS (10 clones)&#xa;connect-groq … connect-openai (~938 LOC)&#xa;connect-provider.sh already dispatches&#xa;→ one connect-key.sh + connectors.yaml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;dashed=1;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="720" y="215" width="320" height="110" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="b-ops" value="#6 OPS PROBES (5 deep)&#xa;healthcheck · doctor · homelab-status&#xa;remote-health · widget homelab_status.py&#xa;→ homelab-status owns dashboard; shared probes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="350" width="320" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="b-vault" value="#7 VAULT TARGETS (15+)&#xa;vault-export · rotate-drill · simulate…&#xa;→ 3 commands: discover · sync · rotate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="350" width="300" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="b-tokens" value="#8 tokens/ SCOPE CREEP&#xa;fetch_usage.py god-module (~990 LOC)&#xa;equity · Kalshi · wallets in gateway repo&#xa;→ thin widget; portfolio → project_kc" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="720" y="350" width="320" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="b-yaml" value="#4 projects.yaml ↔ hosts.yaml clients (dup)&#xa;#5 api_catalog ↔ connectors.yaml (dup)&#xa;#9 docs/iterations/ 127 files (archive)&#xa;#10 OAuth stub · #11 core_api_list (delete)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=8;verticalAlign=top;spacingTop=6;" vertex="1" parent="1">
+          <mxGeometry x="60" y="475" width="980" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="net" value="net: ~2000–3500 LOC · ~10–15 scripts · 127 doc files cuttable without touching /v1&#xa;Already lean: LiteLLM gateway · lib.sh · CLEAN_WIRES · homelab-status pattern" style="shape=note;whiteSpace=wrap;html=1;fillColor=#ffffcc;strokeColor=#36393d;align=left;spacingLeft=10;size=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="60" y="570" width="980" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="legend" value="Solid green row = only runtime that must stay hot&#xa;Dashed yellow/purple = merge, generate, or delete" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#333333" vertex="1" parent="1">
+          <mxGeometry x="60" y="640" width="500" height="40" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+
+  <diagram id="target-four-boxes" name="2 — Target (4 boxes)">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="t2" value="ModelRouter TARGET — four runtime boxes + build scripts (not architecture)" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=16;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="40" y="20" width="800" height="30" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="box-clients" value="1 · CLIENTS&#xa;&#xa;preset name + gateway URL + project key&#xa;projects.yaml (SSOT) · client.env" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;verticalAlign=top;spacingTop=10;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="240" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="box-gateway" value="2 · GATEWAY (kc-mini)&#xa;&#xa;LiteLLM /v1 · logging_callback&#xa;usage_rollup · generated modelrouter.yaml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;verticalAlign=top;spacingTop=10;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="380" y="80" width="280" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="box-vault" value="3 · VAULT (mini only)&#xa;&#xa;.env provider keys · key_vault.py&#xa;connect-key.sh · 3 ops: discover/sync/rotate" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1;verticalAlign=top;spacingTop=10;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="720" y="80" width="260" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="box-providers" value="Providers + Ollama" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="240" width="200" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="box-console" value="4 · CONSOLE (read-only)&#xa;&#xa;tokens/ widget · homelab_probes.py (shared)&#xa;snapshot ← fetch_usage (slim) · receiver LEDs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;verticalAlign=top;spacingTop=10;fontSize=13;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="320" width="900" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="box-ssot" value="CONFIG SSOT (build-time, not runtime boxes)&#xa;policy_presets.yaml → generates gateway YAML · models_catalog.yaml (UI) · connectors.yaml · hosts.yaml (topology only)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;align=left;spacingLeft=10;verticalAlign=middle;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="80" y="450" width="900" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=block;html=1;strokeWidth=2;" edge="1" parent="1" source="box-clients" target="box-gateway"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e1l" value="/v1 + preset" style="edgeLabel;html=1;fontStyle=1" vertex="1" connectable="0" parent="e1"><mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint y="-10" as="offset"/></mxGeometry></mxCell>
+
+        <mxCell id="e2" style="endArrow=block;html=1;strokeWidth=2;" edge="1" parent="1" source="box-gateway" target="box-providers"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="endArrow=open;dashed=1;html=1;" edge="1" parent="1" source="box-vault" target="box-gateway"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3l" value="env keys" style="edgeLabel;html=1;" vertex="1" connectable="0" parent="e3"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="e4" style="endArrow=open;dashed=1;html=1;" edge="1" parent="1" source="box-console" target="box-gateway"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="endArrow=open;dashed=1;html=1;" edge="1" parent="1" source="box-console" target="box-vault"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4l" value="read-only probes" style="edgeLabel;html=1;" vertex="1" connectable="0" parent="e4"><mxGeometry relative="1" as="geometry"><mxPoint x="20" y="-10" as="offset"/></mxGeometry></mxCell>
+
+        <mxCell id="e6" style="endArrow=open;dashed=1;html=1;" edge="1" parent="1" source="box-ssot" target="box-gateway"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6l" value="make sync-gateway-config" style="edgeLabel;html=1;" vertex="1" connectable="0" parent="e6"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="cuts" value="Priority cuts (ranked)&#xa;1 generate gateway YAML from policy_presets (stop triple-copy)&#xa;2 merge 10 connect-*.sh → connect-key.sh&#xa;3 one inventory scanner (machine_inventory + vault)&#xa;4 homelab-status owns ops; slim doctor to 40 lines&#xa;5 split portfolio/equity out of tokens/" style="shape=note;whiteSpace=wrap;html=1;fillColor=#ffffcc;strokeColor=#36393d;align=left;spacingLeft=10;size=14;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="80" y="530" width="420" height="130" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="keep" value="Do not touch (request path)&#xa;start.sh · load_secrets.py · LiteLLM&#xa;logging_callback · deploy-mini · tower wire scripts&#xa;route_policy.py (hints only, no intercept)" style="shape=note;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;align=left;spacingLeft=10;size=14;verticalAlign=top;spacingTop=8;" vertex="1" parent="1">
+          <mxGeometry x="520" y="530" width="460" height="110" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

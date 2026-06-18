@@ -1,5 +1,24 @@
 # Changelog
 
+## [3.39.0] — 2026-06-18 (Cycle 39 — ponytail architecture simplify)
+
+### Added
+- **`make sync-gateway-config`** — generate `modelrouter.yaml` from `policy_presets.yaml` SSOT + alt routes
+- **`scripts/connect-key.sh`** / **`modelrouter/connect_key.py`** — unified paste-key connector for all providers
+- **`tokens/scripts/homelab_probes.py`** — shared connectivity probes for widget + ops
+- **`config/gateway/*.base.yaml`** — alias routes + settings (presets merged at build)
+- **`docs/architecture-layers.drawio`** — current vs target layer diagram (ponytail audit)
+
+### Changed
+- **Removed 9 duplicate `connect-*.sh` scripts** (~938 LOC) — `make connect-groq` etc. call `connect-key.sh`
+- **`make keys-audit`** → `machine_inventory --keys-audit` (SSOT with `make inventory`)
+- **`doctor.sh` slimmed** — points to `make homelab-status` for full dashboard
+- **`hosts.yaml`** — dropped duplicate `clients:` block (`projects.yaml` is SSOT)
+- **Widget portfolio off by default** — equity/wallets opt-in via `tokens/config.json`
+
+### Removed
+- Per-provider connect shell scripts (groq, anthropic, openai, mistral, google, deepseek, together, fireworks, cohere)
+
 ## [3.38.0] — 2026-06-17 (Cycle 38 — alt slots, daemon hint, ship smoke)
 
 ### Added

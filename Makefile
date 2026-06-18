@@ -1,7 +1,7 @@
 .PHONY: install start stop restart health logs status doctor doctor-fix daemon daemon-enable daemon-disable smoke-hermes-fast smoke-routes dedupe-env ensure-alt-slots trim-logs
 .PHONY: docker-up docker-down docker-logs agents deploy-mini bootstrap-mini daemon-enable-mini enable-auto-rotate-mini push-alt-keys-mini check-alt-keys check-alt-keys-mini vault-sync-alts vault-sync-alts-restart vault-bootstrap-alts vault-ingest-alts vault-rotate-drill connect-alt-key keys-audit keys-sync keys-sync-mini
 .PHONY: keys-sync-remote groq-setup push-env-mini push-client-env-tower keys-widget-install keys-widget keys-widget-fetch
-.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart smoke-hermes-fast smoke-routes usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider connect-alt-key audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal inventory inventory-mini vault-scrape vault-scrape-collect vault-list vault-export vault-export-dry vault-ingest-alts vault-sync-alts vault-sync-alts-restart vault-bootstrap-alts enable-auto-rotate-mini vault-rotate-drill vault-rotate-simulate vault-rotate-export vault-rotate-export-dry vault-rotate-push vault-rotate-push-dry
+.PHONY: route-hints project-keys rotate-master-key mcp-install smoke smoke-cursor smoke-tower smoke-hermes-smart smoke-hermes-fast smoke-routes usage-rollup test lint cost-review homelab-status connect-groq connect-anthropic connect-openai connect-mistral connect-google connect-deepseek connect-together connect-fireworks connect-cohere connect-provider connect-key connect-alt-key audit-tower-wires clean-tower-wires guide-tower-strays strip-tower-llm-keys ensure-gateway ship-check oauth-start check-presets sync-gateway-config consolidate-keys check-catalog core-apis sync-preset-tokens check-key-hygiene package-personal inventory inventory-mini vault-scrape vault-scrape-collect vault-list vault-export vault-export-dry vault-ingest-alts vault-sync-alts vault-sync-alts-restart vault-bootstrap-alts enable-auto-rotate-mini vault-rotate-drill vault-rotate-simulate vault-rotate-export vault-rotate-export-dry vault-rotate-push vault-rotate-push-dry
 
 install:
 	./scripts/install.sh
@@ -200,31 +200,34 @@ groq-setup:
 	./scripts/setup-groq.sh
 
 connect-groq:
-	./scripts/connect-groq.sh
+	./scripts/connect-key.sh groq
 
 connect-anthropic:
-	./scripts/connect-anthropic.sh
+	./scripts/connect-key.sh anthropic
 
 connect-openai:
-	./scripts/connect-openai.sh
+	./scripts/connect-key.sh openai
 
 connect-mistral:
-	./scripts/connect-mistral.sh
+	./scripts/connect-key.sh mistral
 
 connect-google:
-	./scripts/connect-google.sh
+	./scripts/connect-key.sh google
 
 connect-deepseek:
-	./scripts/connect-deepseek.sh
+	./scripts/connect-key.sh deepseek
 
 connect-together:
-	./scripts/connect-together.sh
+	./scripts/connect-key.sh together
 
 connect-fireworks:
-	./scripts/connect-fireworks.sh
+	./scripts/connect-key.sh fireworks
 
 connect-cohere:
-	./scripts/connect-cohere.sh
+	./scripts/connect-key.sh cohere
+
+connect-key:
+	./scripts/connect-key.sh $(or $(PROVIDER),)
 
 connect-provider:
 	./scripts/connect-provider.sh $(or $(PROVIDER),)
@@ -303,6 +306,9 @@ cost-review:
 
 check-presets:
 	.venv/bin/python scripts/check_presets.py
+
+sync-gateway-config:
+	.venv/bin/python scripts/sync_gateway_config.py
 
 check-catalog:
 	.venv/bin/python scripts/check_catalog.py

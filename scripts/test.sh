@@ -28,7 +28,7 @@ echo "── Models catalog SSOT"
 "$PY" scripts/check_catalog.py
 
 echo "── Preset max_tokens sync"
-"$PY" scripts/sync_preset_max_tokens.py | grep -qE 'in sync|Updated'
+"$PY" scripts/sync_preset_max_tokens.py | grep -qE 'in sync|updated'
 
 echo "── Preset catalog (widget snapshot)"
 PYTHONPATH="$ROOT/tokens/scripts" "$PY" -c "
@@ -150,8 +150,8 @@ for cid, c in connectors.items():
     assert not secret_re.search(blob), f'{cid} registry may contain secret-like value'
     script = root / 'scripts' / c['script']
     assert script.is_file(), f'{cid} script missing: {script}'
-    assert (root / 'scripts' / f\"connect-{cid}.sh\").is_file(), f'connect-{cid}.sh missing'
-print('  ok connectors.yaml', len(connectors), 'entries + connect-provider')
+assert (root / 'scripts' / 'connect-key.sh').is_file(), 'connect-key.sh missing'
+print('  ok connectors.yaml', len(connectors), 'entries + connect-key')
 "
 
 echo "── Homelab status (widget)"

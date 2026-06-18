@@ -18,6 +18,7 @@ modelrouter_install_python_deps
 
 chmod +x scripts/*.sh
 mkdir -p data .pids
+"$VENV/bin/python" scripts/sync_gateway_config.py
 
 if "$VENV/bin/litellm" --version &>/dev/null; then
   echo "==> LiteLLM: $("$VENV/bin/litellm" --version 2>&1 | head -1)"

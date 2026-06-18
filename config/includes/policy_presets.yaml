@@ -1,4 +1,4 @@
-# Policy presets — copy into modelrouter.yaml / modelrouter.minimal.yaml model_list + fallbacks.
+# Policy presets SSOT — merged into gateway YAML by make sync-gateway-config
 # See docs/POLICY_ROUTER.md for plain-language guide.
 #
 # Presets (what clients request):

@@ -26,6 +26,7 @@ set +a
 [[ -z "${DIRECT_URL:-}" ]] && unset DIRECT_URL
 
 # ── Pick config based on infrastructure ────────────────────────────────
+"$ROOT/.venv/bin/python" "$ROOT/scripts/sync_gateway_config.py" 2>/dev/null || true
 CONFIG="$ROOT/config/modelrouter.minimal.yaml"
 
 if command -v redis-cli &>/dev/null && \

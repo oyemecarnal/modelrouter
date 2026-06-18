@@ -1,0 +1,119 @@
+# Base gateway config — alias routes + settings (no policy presets).
+# Presets merged by scripts/sync_gateway_config.py from policy_presets.yaml
+
+model_list:
+- model_name: smart
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+  model_info:
+    mode: chat
+- model_name: smart
+  litellm_params:
+    model: anthropic/claude-sonnet-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY
+  model_info:
+    mode: chat
+- model_name: fast
+  litellm_params:
+    model: openai/gpt-4o-mini
+    api_key: os.environ/OPENAI_API_KEY
+  model_info:
+    mode: chat
+- model_name: fast
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY
+  model_info:
+    mode: chat
+- model_name: fast
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+  model_info:
+    mode: chat
+- model_name: local
+  litellm_params:
+    model: ollama/llama3.2
+    api_base: os.environ/OLLAMA_API_BASE
+  model_info:
+    mode: chat
+- model_name: gpt-4o
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+- model_name: gpt-4o-mini
+  litellm_params:
+    model: openai/gpt-4o-mini
+    api_key: os.environ/OPENAI_API_KEY
+- model_name: claude-sonnet
+  litellm_params:
+    model: anthropic/claude-sonnet-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY
+- model_name: groq-llama
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY
+- model_name: groq-fast
+  litellm_params:
+    model: groq/llama-3.1-8b-instant
+    api_key: os.environ/GROQ_API_KEY
+- model_name: mistral-small
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: mistral-large
+  litellm_params:
+    model: mistral/mistral-large-latest
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: groq/*
+  litellm_params:
+    model: groq/*
+    api_key: os.environ/GROQ_API_KEY
+- model_name: ministral-3-3b-2512
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: mistral/*
+  litellm_params:
+    model: mistral/*
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: embedding
+  litellm_params:
+    model: openai/text-embedding-3-small
+    api_key: os.environ/OPENAI_API_KEY
+  model_info:
+    mode: embedding
+router_settings:
+  routing_strategy: simple-shuffle
+  num_retries: 2
+  timeout: 120
+  allowed_fails: 3
+  cooldown_time: 60
+litellm_settings:
+  drop_params: true
+  set_verbose: false
+  json_logs: true
+  num_retries: 2
+  request_timeout: 120
+  telemetry: false
+  fallbacks:
+  - smart:
+    - fast
+    - groq-llama
+    - mistral-small
+    - local
+  - fast:
+    - groq-fast
+    - mistral-small
+    - local
+  success_callback:
+  - modelrouter.logging_callback.logging_callback
+  failure_callback:
+  - modelrouter.logging_callback.logging_callback
+general_settings:
+  master_key: os.environ/MODELROUTER_MASTER_KEY
+  background_health_checks: true
+  health_check_interval: 300
+environment_variables:
+  OLLAMA_API_BASE: http://127.0.0.1:11434

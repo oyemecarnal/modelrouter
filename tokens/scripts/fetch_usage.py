@@ -807,10 +807,21 @@ LIVE_FETCHERS: dict[str, Callable[[], ProviderSnapshot]] = {
 }
 
 
+def _portfolio_enabled(cfg: dict[str, Any]) -> bool:
+    pf = cfg.get("portfolio") or {}
+    if "enabled" in pf:
+        return bool(pf.get("enabled"))
+    equity_on = (cfg.get("equity") or {}).get("enabled", False)
+    wallets_on = (cfg.get("wallets") or {}).get("enabled", False)
+    return bool(equity_on or wallets_on)
+
+
 def _fetch_equity_safe(cfg: dict[str, Any]) -> dict[str, Any] | None:
     """Bounded equity fetch — avoids blocking widget refresh on slow Kraken."""
+    if not _portfolio_enabled(cfg):
+        return None
     equity_cfg = cfg.get("equity") or {}
-    if not equity_cfg.get("enabled", True):
+    if not equity_cfg.get("enabled", False):
         return None
     timeout = int(equity_cfg.get("fetch_timeout_seconds") or 90)
     try:
@@ -873,11 +884,11 @@ def fetch_all(config: dict[str, Any] | None = None) -> Snapshot:
             providers.append(card)
 
     equity: dict[str, Any] | None = None
-    if (cfg.get("equity") or {}).get("enabled", True):
+    if _portfolio_enabled(cfg) and (cfg.get("equity") or {}).get("enabled", False):
         equity = _fetch_equity_safe(cfg)
 
     wallets: dict[str, Any] | None = None
-    if (cfg.get("wallets") or {}).get("enabled", True):
+    if _portfolio_enabled(cfg) and (cfg.get("wallets") or {}).get("enabled", False):
         try:
             from fetch_wallets import fetch_all_wallets
 

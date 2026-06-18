@@ -18,10 +18,14 @@
   "refresh_interval_seconds": 120,
   "session_cache_days": 30,
   "widget_fetch_in_panel": true,
+  "portfolio": {
+    "enabled": false,
+    "note": "Equity/wallets belong in project_kc — set equity.enabled true to opt in"
+  },
   "watchdog_enabled": true,
   "edit_file": ".env.local",
   "equity": {
-    "enabled": true,
+    "enabled": false,
     "remote_host": "kc-mini-lan",
     "coinbot_root": "/Users/kevinreed/dev/coinbot",
     "dev_root": "/Users/kevinreed/dev",
@@ -52,7 +56,7 @@
     }
   },
   "wallets": {
-    "enabled": true,
+    "enabled": false,
     "include_in_equity": true,
     "hot_cache_seconds": 90,
     "cold_cache_seconds": 600,

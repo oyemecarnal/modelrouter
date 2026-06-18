@@ -1,5 +1,5 @@
 # Connector registry — paste-key flows (Phase 2.5 SSOT)
-# Scripts: scripts/connect-provider.sh → connect-{id}.sh
+# Scripts: scripts/connect-key.sh <id>
 # Signup/pricing detail: config/api_catalog.yaml
 
 version: 1
@@ -10,7 +10,7 @@ connectors:
     env: GROQ_API_KEY
     mode: paste_key
     validate: groq
-    script: connect-groq.sh
+    script: connect-key.sh
     signup: https://console.groq.com/keys
     presets: [cheap, hermes-fast]
     make_target: connect-groq
@@ -20,7 +20,7 @@ connectors:
     env: ANTHROPIC_API_KEY
     mode: paste_key
     validate: anthropic
-    script: connect-anthropic.sh
+    script: connect-key.sh
     signup: https://console.anthropic.com/settings/keys
     presets: [hermes-smart, review]
     make_target: connect-anthropic
@@ -30,7 +30,7 @@ connectors:
     env: OPENAI_API_KEY
     mode: paste_key
     validate: openai
-    script: connect-openai.sh
+    script: connect-key.sh
     signup: https://platform.openai.com/api-keys
     presets: [smart, code]
     make_target: connect-openai
@@ -40,7 +40,7 @@ connectors:
     env: MISTRAL_API_KEY
     mode: paste_key
     validate: mistral
-    script: connect-mistral.sh
+    script: connect-key.sh
     signup: https://console.mistral.ai
     presets: [code, mistral-small]
     make_target: connect-mistral
@@ -50,7 +50,7 @@ connectors:
     env: GOOGLE_API_KEY
     mode: paste_key
     validate: google
-    script: connect-google.sh
+    script: connect-key.sh
     signup: https://aistudio.google.com/apikey
     presets: [smart, cheap]
     make_target: connect-google
@@ -60,7 +60,7 @@ connectors:
     env: DEEPSEEK_API_KEY
     mode: paste_key
     validate: deepseek
-    script: connect-deepseek.sh
+    script: connect-key.sh
     signup: https://platform.deepseek.com
     presets: [cheap, fast]
     make_target: connect-deepseek
@@ -70,7 +70,7 @@ connectors:
     env: TOGETHER_API_KEY
     mode: paste_key
     validate: together
-    script: connect-together.sh
+    script: connect-key.sh
     signup: https://api.together.xyz
     presets: [cheap, fast]
     make_target: connect-together
@@ -80,7 +80,7 @@ connectors:
     env: FIREWORKS_API_KEY
     mode: paste_key
     validate: fireworks
-    script: connect-fireworks.sh
+    script: connect-key.sh
     signup: https://fireworks.ai
     presets: [cheap, fast]
     make_target: connect-fireworks
@@ -90,7 +90,7 @@ connectors:
     env: COHERE_API_KEY
     mode: paste_key
     validate: cohere
-    script: connect-cohere.sh
+    script: connect-key.sh
     signup: https://dashboard.cohere.com
     presets: [cheap, code]
     make_target: connect-cohere

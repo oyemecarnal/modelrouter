@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
-# Masked API key audit — delegates to machine_inventory (SSOT).
+# Unified paste-key connector — all providers in config/connectors.yaml
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$ROOT"
 # shellcheck disable=SC1091
 source "$ROOT/scripts/lib.sh"
 modelrouter_activate
 
-PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -m modelrouter.machine_inventory --keys-audit
+exec "$ROOT/.venv/bin/python" -m modelrouter.connect_key "$@"

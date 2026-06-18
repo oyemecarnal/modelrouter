@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# ModelRouter health + config + keys diagnostic (no secret values printed).
+# ModelRouter health + config diagnostic (no secret values printed).
+# Full dashboard: make homelab-status
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -46,135 +47,46 @@ if MODELROUTER_ROOT="$ROOT" "$ROOT/scripts/healthcheck.sh" &>/dev/null; then
   ok "Healthcheck passed"
 else
   fail "Healthcheck failed — gateway not responding"
-  echo ""
-  echo "── Fix gateway (Cursor + widget need this)"
-  echo "  make ensure-gateway       # restart if down"
-  echo "  make daemon-enable        # auto-start at login — docs/LAPTOP_DAEMON.md"
-  echo ""
+  echo "  fix: make doctor-fix   (or make daemon-enable for login auto-start)"
 fi
 
 echo ""
-echo "── Security (human action if flagged)"
+echo "── Security"
 if [[ -z "$KEY" || "$KEY" == *change-me* || "$KEY" == *local-dev* ]]; then
-  warn "MODELROUTER_MASTER_KEY is placeholder — run: make rotate-master-key (then update Cursor)"
+  warn "MODELROUTER_MASTER_KEY is placeholder — run: make rotate-master-key"
 else
   ok "MODELROUTER_MASTER_KEY is set (custom)"
 fi
 if [[ "${LITELLM_SALT_KEY:-}" == "${MODELROUTER_MASTER_KEY:-}" ]]; then
-  warn "LITELLM_SALT_KEY equals master key — use a distinct salt for Docker/Postgres"
+  warn "LITELLM_SALT_KEY equals master key — use a distinct salt"
 elif [[ -z "${LITELLM_SALT_KEY:-}" || "${LITELLM_SALT_KEY}" == *change-me* ]]; then
   warn "LITELLM_SALT_KEY is placeholder — required before Docker/Postgres deploy"
 fi
 
 echo ""
 echo "── Provider keys in .env"
-for k in OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GROQ_API_KEY MISTRAL_API_KEY OPENROUTER_API_KEY; do
+for k in OPENAI_API_KEY ANTHROPIC_API_KEY GOOGLE_API_KEY GROQ_API_KEY MISTRAL_API_KEY; do
   v="${!k:-}"
   if [[ -n "$v" ]]; then ok "$k set"
   else warn "$k empty"
   fi
 done
-if [[ -n "${OPENROUTER_API_KEY:-}" ]]; then
-  warn "OPENROUTER_API_KEY set but OpenRouter is stubbed (not routed) — optional paid backup"
+
+if [[ "$GATEWAY_UP" -eq 1 ]]; then
+  echo ""
+  echo "── Policy presets"
+  MODELS_JSON="$(curl -sf "http://${CURL_HOST}:${PORT}/v1/models" -H "Authorization: Bearer ${KEY}" 2>/dev/null || true)"
+  if [[ -n "$MODELS_JSON" ]] && echo "$MODELS_JSON" | \
+     python3 -c "import sys,json; d=json.load(sys.stdin); ids=[m['id'] for m in d.get('data',[])]; need=['hermes-fast','hermes-smart','cheap','code','offline']; missing=[n for n in need if n not in ids]; print('missing:'+','.join(missing) if missing else 'ok')" 2>/dev/null | grep -q ok; then
+    ok "Presets registered on /v1/models"
+  else
+    warn "Policy presets not verified — run: make sync-gateway-config && make restart"
+  fi
 fi
 
 echo ""
-echo "── Policy presets"
-MODELS_JSON="$(curl -sf "http://${CURL_HOST}:${PORT}/v1/models" -H "Authorization: Bearer ${KEY}" 2>/dev/null || true)"
-if [[ -n "$MODELS_JSON" ]] && echo "$MODELS_JSON" | \
-   python3 -c "import sys,json; d=json.load(sys.stdin); ids=[m['id'] for m in d.get('data',[])]; need=['hermes-fast','hermes-smart','cheap','code','offline']; missing=[n for n in need if n not in ids]; print('missing:'+','.join(missing) if missing else 'ok')" 2>/dev/null | grep -q ok; then
-  ok "Presets registered (hermes-fast, hermes-smart, cheap, code, offline)"
-else
-  warn "Policy presets not verified (gateway down or missing from /v1/models)"
-fi
-
-echo ""
-echo "── Route hints (widget loop)"
-if [[ -x "$ROOT/.venv/bin/python" ]]; then
-  PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -m modelrouter.route_policy --project smalshi-hermes 2>/dev/null | \
-    python3 -c "import sys,json; d=json.load(sys.stdin); print(d['preset']+': '+d['reason'])" && \
-    ok "Route policy wrote data/route_hints.json"
-else
-  warn "venv missing — run make install"
-fi
-
-echo ""
-echo "── Remote (kc-mini)"
-if ssh -o ConnectTimeout=4 kc-mini-lan 'test -d ~/dev/modelrouter' 2>/dev/null; then
-  ok "kc-mini-lan reachable, modelrouter dir exists"
-  ssh -o ConnectTimeout=4 kc-mini-lan 'cd ~/dev/modelrouter && ./scripts/healthcheck.sh' 2>/dev/null | tail -1 || warn "mini healthcheck failed"
-else
-  warn "kc-mini-lan unreachable"
-fi
-
-echo ""
-echo "── Key vault"
-if [[ -x "$ROOT/.venv/bin/python" ]]; then
-  PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
-from modelrouter.key_vault import list_entries, vault_path, load_vault_config
-cfg = load_vault_config()
-n = len(list_entries(cfg))
-p = vault_path(cfg)
-print(f'{n} entries in {p.name}' if p.exists() else 'not collected yet')
-" 2>/dev/null | while read -r line; do
-    if [[ "$line" == *"not collected"* ]]; then warn "$line — make vault-scrape-collect"
-    else ok "Key vault: $line"
-    fi
-  done
-fi
-
-echo ""
-echo "── Rate-limit rotate hints"
-if [[ -f "$ROOT/data/key_rotate_hints.json" ]]; then
-  PYTHONPATH="$ROOT" "$ROOT/.venv/bin/python" -c "
-import json
-from pathlib import Path
-p = Path('$ROOT/data/key_rotate_hints.json')
-rows = json.loads(p.read_text())
-last = rows[-1] if rows else {}
-if last.get('ok'):
-    print(f\"last: {last.get('env_var')} → {last.get('next_fingerprint')} ({last.get('ts','')[:19]})\")
-else:
-    print('hints file present (empty or no successful rotate)')
-" 2>/dev/null | while read -r line; do
-    warn "Rotate hint: $line — run make vault-rotate-export"
-  done
-else
-  ok "No rate-limit rotate hints yet"
-fi
-
-echo ""
-echo "── Next steps"
-echo "  make restart              # if unhealthy"
-echo "  make route-hints          # refresh widget → routing hints"
-echo "  make push-client-env-tower  # when tower SSH is up"
-echo "  make rotate-master-key    # if master key placeholder"
-echo "  make ensure-gateway       # restart gateway if down"
-echo "  make doctor-fix           # same as ensure-gateway (doctor companion)"
-echo "  make daemon-enable        # laptop launchd — docs/LAPTOP_DAEMON.md"
-echo "  make vault-scrape-collect # network key ingest"
-echo "  make vault-export         # merge vault → .env"
-echo "  make vault-rotate-export  # after 429 rotate hint"
-echo "  make vault-rotate-drill     # dry-run 429 rotate readiness"
-echo "  make vault-bootstrap-alts   # ingest alts + export + push"
-echo "  make enable-auto-rotate-mini-enable  # 429 auto-rotate on kc-mini"
-echo "  make ensure-alt-slots       # add empty __ALT_1 lines for paste"
-echo "  make trim-logs              # trim large data/*.log files"
-echo "  make smoke-routes             # hermes-fast + hermes-smart smoke"
-echo "  make connect-alt-key PROVIDER=groq  # paste VAR__ALT_1"
-echo "  make deploy-mini          # sync this tree to kc-mini"
-echo "  make core-apis            # refresh gitignored data/CORE_APIS.md (masked)"
-echo "  make check-key-hygiene    # salt distinct, provider keys, Groq rotate reminder"
-echo "  make usage-rollup         # log-based metering by model/preset (24h default)"
-echo "  make homelab-status       # doctor + remote-health + cost + usage header"
-echo "  make connect-groq         # paste Groq key → .env → push-env-mini"
-echo "  make connect-anthropic    # paste Anthropic key → mini (hermes-smart / review)"
-echo "  make connect-openai       # paste OpenAI key → mini (smart / code)"
-echo "  make connect-mistral      # paste Mistral key → mini (code / fallbacks)"
-echo "  make connect-google       # paste Google AI key → mini (Gemini routes)"
-echo "  make connect-deepseek     # paste DeepSeek key → mini"
-echo "  make connect-together     # paste Together key → mini"
-echo "  make connect-provider PROVIDER=anthropic  # registry dispatch (config/connectors.yaml)"
-echo "  make audit-tower-wires    # scan kc-tower for stray provider keys"
-echo "  make clean-tower-wires    # push client.env + re-audit"
-echo "  make smoke-hermes-smart   # hermes-smart chat via mini gateway"
+echo "── Dashboard"
+echo "  make homelab-status     # paths, keys, remote health, usage header"
+echo "  make doctor-fix         # restart gateway if down"
+echo "  make keys-audit         # masked key inventory"
+echo "  make connect-key PROVIDER=groq   # paste provider key"

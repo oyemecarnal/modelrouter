@@ -319,13 +319,92 @@ def print_report(report: InventoryReport) -> None:
     print("Inventory only — not a wallet. Never stores or moves secrets.")
 
 
+def print_keys_audit(root: Path | None = None, remote_host: str = "kc-mini-lan") -> None:
+    """Masked key audit — replaces scripts/discover-keys.sh."""
+    import socket
+    import subprocess
+
+    root = root or ROOT
+    cfg = load_config()
+    explicit = [expand(p) for p in (cfg.get("explicit_files") or [])]
+    extra = [
+        root / ".env",
+        root / "secrets.yaml",
+        Path.home() / "dev" / "smalshi" / ".env",
+        Path.home() / "dev" / "coinbot" / ".env",
+        Path.home() / "dev" / "Kalshi_bot" / ".env",
+    ]
+    paths = []
+    seen: set[str] = set()
+    for p in explicit + extra:
+        rp = str(p.resolve()) if p.exists() else str(p)
+        if rp not in seen:
+            seen.add(rp)
+            paths.append(p)
+
+    print("==> ModelRouter API key audit")
+    print(f"    Host: {socket.gethostname()}")
+    key_re = re.compile(r"(KEY|TOKEN|SECRET|PASSWORD|API_)")
+
+    for path in paths:
+        if not path.is_file():
+            continue
+        print(f"\n── {path}")
+        hits = False
+        for i, line in enumerate(path.read_text().splitlines(), 1):
+            raw = line.strip()
+            if raw.startswith("#"):
+                continue
+            raw = raw.removeprefix("export ").strip()
+            if "=" not in raw:
+                continue
+            k, _, v = raw.partition("=")
+            if not key_re.search(k):
+                continue
+            hits = True
+            print(f"  {k:32} {mask_value(v)}")
+        if not hits:
+            print("  (no key lines)")
+
+    try:
+        proc = subprocess.run(
+            ["ssh", "-o", "ConnectTimeout=5", remote_host, "true"],
+            capture_output=True,
+            timeout=6,
+        )
+        if proc.returncode == 0:
+            print(f"\n── {remote_host} (always-on)")
+            remote_cmd = (
+                'for f in ~/dev/modelrouter/.env ~/dev/smalshi/.env ~/dev/coinbot/.env; do '
+                '[ -f "$f" ] || continue; echo "── $f"; '
+                'grep -E "^[A-Z_]*(KEY|TOKEN|SECRET|PASSWORD)=" "$f" 2>/dev/null | sed -E "s/=(.*)/=***MASKED***/"; done'
+            )
+            subprocess.run(["ssh", remote_host, remote_cmd], check=False)
+        else:
+            print(f"\n── {remote_host}: unreachable (skip remote audit)")
+    except (subprocess.TimeoutExpired, OSError):
+        print(f"\n── {remote_host}: unreachable (skip remote audit)")
+
+    print("\nFull scan: make inventory")
+    print("Vault:     make vault-scrape")
+
+
 def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(description="Masked machine inventory scraper")
     parser.add_argument("--json", type=Path, help="Write JSON snapshot path")
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
+    parser.add_argument(
+        "--keys-audit",
+        action="store_true",
+        help="Quick masked key audit (legacy discover-keys)",
+    )
     args = parser.parse_args()
+
+    if args.keys_audit:
+        print_keys_audit()
+        return 0
 
     cfg = load_config(args.config)
     report = scrape(cfg)

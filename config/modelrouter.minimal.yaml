@@ -1,208 +1,248 @@
-# Minimal config — no Redis/Postgres required (local dev / first boot)
+# GENERATED — do not edit preset routes here.
+# SSOT: config/includes/policy_presets.yaml
+# Regenerate: make sync-gateway-config
 
 model_list:
-  - model_name: smart
-    litellm_params:
-      model: openai/gpt-4o
-      api_key: os.environ/OPENAI_API_KEY
-    model_info:
-      mode: chat
-
-  - model_name: smart
-    litellm_params:
-      model: anthropic/claude-sonnet-4-20250514
-      api_key: os.environ/ANTHROPIC_API_KEY
-    model_info:
-      mode: chat
-
-  - model_name: fast
-    litellm_params:
-      model: openai/gpt-4o-mini
-      api_key: os.environ/OPENAI_API_KEY
-    model_info:
-      mode: chat
-
-  - model_name: fast
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY
-    model_info:
-      mode: chat
-
-  - model_name: fast
-    litellm_params:
-      model: mistral/mistral-small-latest
-      api_key: os.environ/MISTRAL_API_KEY
-    model_info:
-      mode: chat
-
-  - model_name: local
-    litellm_params:
-      model: ollama/llama3.2
-      api_base: os.environ/OLLAMA_API_BASE
-    model_info:
-      mode: chat
-
-  - model_name: gpt-4o
-    litellm_params:
-      model: openai/gpt-4o
-      api_key: os.environ/OPENAI_API_KEY
-
-  - model_name: gpt-4o-mini
-    litellm_params:
-      model: openai/gpt-4o-mini
-      api_key: os.environ/OPENAI_API_KEY
-
-  - model_name: claude-sonnet
-    litellm_params:
-      model: anthropic/claude-sonnet-4-20250514
-      api_key: os.environ/ANTHROPIC_API_KEY
-
-  - model_name: groq-llama
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY
-
-  - model_name: groq-fast
-    litellm_params:
-      model: groq/llama-3.1-8b-instant
-      api_key: os.environ/GROQ_API_KEY
-
-  - model_name: mistral-small
-    litellm_params:
-      model: mistral/mistral-small-latest
-      api_key: os.environ/MISTRAL_API_KEY
-
-  - model_name: mistral-large
-    litellm_params:
-      model: mistral/mistral-large-latest
-      api_key: os.environ/MISTRAL_API_KEY
-
-  - model_name: groq/*
-    litellm_params:
-      model: groq/*
-      api_key: os.environ/GROQ_API_KEY
-
-  # Clients (e.g. Cursor) may request Azure-style ministral IDs — map to supported Mistral small
-  - model_name: ministral-3-3b-2512
-    litellm_params:
-      model: mistral/mistral-small-latest
-      api_key: os.environ/MISTRAL_API_KEY
-
-  - model_name: mistral/*
-    litellm_params:
-      model: mistral/*
-      api_key: os.environ/MISTRAL_API_KEY
-
-  - model_name: embedding
-    litellm_params:
-      model: openai/text-embedding-3-small
-      api_key: os.environ/OPENAI_API_KEY
-    model_info:
-      mode: embedding
-
-  # ── Policy presets (see docs/POLICY_ROUTER.md) ─────────────────────
-  - model_name: cheap
-    litellm_params:
-      model: groq/llama-3.1-8b-instant
-      api_key: os.environ/GROQ_API_KEY
-      max_tokens: 4096
-  - model_name: cheap
-    litellm_params:
-      model: groq/llama-3.1-8b-instant
-      api_key: os.environ/GROQ_API_KEY__ALT_1
-      max_tokens: 4096
-  - model_name: cheap
-    litellm_params:
-      model: mistral/mistral-small-latest
-      api_key: os.environ/MISTRAL_API_KEY
-  - model_name: cheap
-    litellm_params:
-      model: mistral/mistral-small-latest
-      api_key: os.environ/MISTRAL_API_KEY__ALT_1
-  - model_name: code
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY
-      max_tokens: 8192
-  - model_name: code
-    litellm_params:
-      model: openai/gpt-4o-mini
-      api_key: os.environ/OPENAI_API_KEY
-  - model_name: code
-    litellm_params:
-      model: openai/gpt-4o-mini
-      api_key: os.environ/OPENAI_API_KEY__ALT_1
-  - model_name: review
-    litellm_params:
-      model: openai/gpt-4o
-      api_key: os.environ/OPENAI_API_KEY
-      max_tokens: 8192
-  - model_name: review
-    litellm_params:
-      model: anthropic/claude-sonnet-4-20250514
-      api_key: os.environ/ANTHROPIC_API_KEY
-      max_tokens: 8192
-  - model_name: review
-    litellm_params:
-      model: anthropic/claude-sonnet-4-20250514
-      api_key: os.environ/ANTHROPIC_API_KEY__ALT_1
-      max_tokens: 8192
-  - model_name: hermes-fast
-    litellm_params:
-      model: groq/llama-3.1-8b-instant
-      api_key: os.environ/GROQ_API_KEY
-      max_tokens: 4096
-  - model_name: hermes-fast
-    litellm_params:
-      model: groq/llama-3.1-8b-instant
-      api_key: os.environ/GROQ_API_KEY__ALT_1
-      max_tokens: 4096
-  - model_name: hermes-fast
-    litellm_params:
-      model: mistral/mistral-small-latest
-      api_key: os.environ/MISTRAL_API_KEY
-  - model_name: hermes-fast
-    litellm_params:
-      model: mistral/mistral-small-latest
-      api_key: os.environ/MISTRAL_API_KEY__ALT_1
-  - model_name: hermes-smart
-    litellm_params:
-      model: openai/gpt-4o
-      api_key: os.environ/OPENAI_API_KEY
-      max_tokens: 16384
-  - model_name: hermes-smart
-    litellm_params:
-      model: openai/gpt-4o
-      api_key: os.environ/OPENAI_API_KEY__ALT_1
-      max_tokens: 16384
-  - model_name: hermes-smart
-    litellm_params:
-      model: groq/llama-3.3-70b-versatile
-      api_key: os.environ/GROQ_API_KEY
-  - model_name: hermes-smart
-    litellm_params:
-      model: anthropic/claude-sonnet-4-20250514
-      api_key: os.environ/ANTHROPIC_API_KEY
-      max_tokens: 16384
-  - model_name: hermes-smart
-    litellm_params:
-      model: anthropic/claude-sonnet-4-20250514
-      api_key: os.environ/ANTHROPIC_API_KEY__ALT_1
-      max_tokens: 16384
-  - model_name: offline
-    litellm_params:
-      model: ollama/llama3.2
-      api_base: os.environ/OLLAMA_API_BASE
-      max_tokens: 4096
-
+- model_name: smart
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+  model_info:
+    mode: chat
+- model_name: smart
+  litellm_params:
+    model: anthropic/claude-sonnet-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY
+  model_info:
+    mode: chat
+- model_name: fast
+  litellm_params:
+    model: openai/gpt-4o-mini
+    api_key: os.environ/OPENAI_API_KEY
+  model_info:
+    mode: chat
+- model_name: fast
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY
+  model_info:
+    mode: chat
+- model_name: fast
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+  model_info:
+    mode: chat
+- model_name: local
+  litellm_params:
+    model: ollama/llama3.2
+    api_base: os.environ/OLLAMA_API_BASE
+  model_info:
+    mode: chat
+- model_name: gpt-4o
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+- model_name: gpt-4o-mini
+  litellm_params:
+    model: openai/gpt-4o-mini
+    api_key: os.environ/OPENAI_API_KEY
+- model_name: claude-sonnet
+  litellm_params:
+    model: anthropic/claude-sonnet-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY
+- model_name: groq-llama
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY
+- model_name: groq-fast
+  litellm_params:
+    model: groq/llama-3.1-8b-instant
+    api_key: os.environ/GROQ_API_KEY
+- model_name: mistral-small
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: mistral-large
+  litellm_params:
+    model: mistral/mistral-large-latest
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: groq/*
+  litellm_params:
+    model: groq/*
+    api_key: os.environ/GROQ_API_KEY
+- model_name: ministral-3-3b-2512
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: mistral/*
+  litellm_params:
+    model: mistral/*
+    api_key: os.environ/MISTRAL_API_KEY
+- model_name: embedding
+  litellm_params:
+    model: openai/text-embedding-3-small
+    api_key: os.environ/OPENAI_API_KEY
+  model_info:
+    mode: embedding
+- model_name: cheap
+  litellm_params:
+    model: groq/llama-3.1-8b-instant
+    api_key: os.environ/GROQ_API_KEY
+    max_tokens: 4096
+  model_info:
+    mode: chat
+    description: Low-cost preset — Groq 8B
+- model_name: cheap
+  litellm_params:
+    model: groq/llama-3.1-8b-instant
+    api_key: os.environ/GROQ_API_KEY__ALT_1
+    max_tokens: 4096
+  model_info:
+    mode: chat
+    description: Low-cost preset — Groq 8B
+- model_name: cheap
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+  model_info:
+    mode: chat
+    description: Low-cost preset — Mistral small
+- model_name: cheap
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY__ALT_1
+  model_info:
+    mode: chat
+    description: Low-cost preset — Mistral small
+- model_name: code
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY
+    max_tokens: 8192
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: code
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY__ALT_1
+    max_tokens: 8192
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: code
+  litellm_params:
+    model: openai/gpt-4o-mini
+    api_key: os.environ/OPENAI_API_KEY
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: code
+  litellm_params:
+    model: openai/gpt-4o-mini
+    api_key: os.environ/OPENAI_API_KEY__ALT_1
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: review
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+    max_tokens: 8192
+  model_info:
+    mode: chat
+- model_name: review
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY__ALT_1
+    max_tokens: 8192
+  model_info:
+    mode: chat
+- model_name: review
+  litellm_params:
+    model: anthropic/claude-sonnet-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY
+  model_info:
+    mode: chat
+- model_name: review
+  litellm_params:
+    model: anthropic/claude-sonnet-4-20250514
+    api_key: os.environ/ANTHROPIC_API_KEY__ALT_1
+  model_info:
+    mode: chat
+- model_name: hermes-fast
+  litellm_params:
+    model: groq/llama-3.1-8b-instant
+    api_key: os.environ/GROQ_API_KEY
+    max_tokens: 4096
+  model_info:
+    mode: chat
+    description: Hermes routine — cheap, fast
+- model_name: hermes-fast
+  litellm_params:
+    model: groq/llama-3.1-8b-instant
+    api_key: os.environ/GROQ_API_KEY__ALT_1
+    max_tokens: 4096
+  model_info:
+    mode: chat
+    description: Hermes routine — cheap, fast
+- model_name: hermes-fast
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY
+  model_info:
+    mode: chat
+- model_name: hermes-fast
+  litellm_params:
+    model: mistral/mistral-small-latest
+    api_key: os.environ/MISTRAL_API_KEY__ALT_1
+  model_info:
+    mode: chat
+- model_name: hermes-smart
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+    max_tokens: 16384
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: hermes-smart
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY__ALT_1
+    max_tokens: 16384
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: hermes-smart
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: hermes-smart
+  litellm_params:
+    model: groq/llama-3.3-70b-versatile
+    api_key: os.environ/GROQ_API_KEY__ALT_1
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: offline
+  litellm_params:
+    model: ollama/llama3.2
+    api_base: os.environ/OLLAMA_API_BASE
+    max_tokens: 4096
+  model_info:
+    mode: chat
+    description: Air-gapped / no-cloud — local Ollama
 router_settings:
   routing_strategy: simple-shuffle
   num_retries: 2
   timeout: 120
   allowed_fails: 3
   cooldown_time: 60
-
 litellm_settings:
   drop_params: true
   set_verbose: false
@@ -211,21 +251,49 @@ litellm_settings:
   request_timeout: 120
   telemetry: false
   fallbacks:
-    - smart: [fast, groq-llama, mistral-small, local]
-    - fast: [groq-fast, mistral-small, local]
-    - cheap: [groq-fast, mistral-small, local]
-    - code: [fast, groq-llama, mistral-small, local]
-    - review: [smart, fast, groq-llama]
-    - hermes-fast: [cheap, groq-fast, mistral-small, local]
-    - hermes-smart: [smart, code, fast, groq-llama, mistral-small, local]
-    - offline: [groq-fast]
-  success_callback: ["modelrouter.logging_callback.logging_callback"]
-  failure_callback: ["modelrouter.logging_callback.logging_callback"]
-
+  - smart:
+    - fast
+    - groq-llama
+    - mistral-small
+    - local
+  - fast:
+    - groq-fast
+    - mistral-small
+    - local
+  - cheap:
+    - mistral-small
+    - groq-fast
+    - local
+  - code:
+    - fast
+    - groq-llama
+    - mistral-small
+    - local
+  - review:
+    - smart
+    - fast
+    - groq-llama
+  - hermes-fast:
+    - cheap
+    - groq-fast
+    - mistral-small
+    - local
+  - hermes-smart:
+    - smart
+    - code
+    - fast
+    - groq-llama
+    - mistral-small
+    - local
+  - offline:
+    - groq-fast
+  success_callback:
+  - modelrouter.logging_callback.logging_callback
+  failure_callback:
+  - modelrouter.logging_callback.logging_callback
 general_settings:
   master_key: os.environ/MODELROUTER_MASTER_KEY
   background_health_checks: true
   health_check_interval: 300
-
 environment_variables:
   OLLAMA_API_BASE: http://127.0.0.1:11434
