@@ -103,6 +103,30 @@ preset_models:
       mode: chat
       description: "Air-gapped / no-cloud — local Ollama"
 
+  # ── BasisEdge presets ──────────────────────────────────────────────────────
+  # be-manager: VS Code agent mode for BasisEdge Manager persona.
+  # Routes to claude-sonnet (Sonnet 4.6) — loaded with Manager system prompt
+  # via Continue config. Logs separately for spend tracking.
+  - model_name: be-manager
+    litellm_params:
+      model: anthropic/claude-sonnet-4-6
+      api_key: os.environ/ANTHROPIC_API_KEY
+      max_tokens: 8192
+    model_info:
+      mode: chat
+      supports_function_calling: true
+      description: "BasisEdge Manager persona — Sonnet 4.6, VS Code agent mode"
+
+  - model_name: be-manager
+    litellm_params:
+      model: openai/gpt-4o
+      api_key: os.environ/OPENAI_API_KEY
+      max_tokens: 8192
+    model_info:
+      mode: chat
+      supports_function_calling: true
+      description: "BasisEdge Manager fallback — GPT-4o"
+
 preset_fallbacks:
   - cheap: [mistral-small, groq-fast, local]
   - code: [fast, groq-llama, mistral-small, local]
@@ -110,3 +134,4 @@ preset_fallbacks:
   - hermes-fast: [cheap, groq-fast, mistral-small, local]
   - hermes-smart: [smart, code, fast, groq-llama, mistral-small, local]
   - offline: [groq-fast]
+  - be-manager: [smart, code, fast]

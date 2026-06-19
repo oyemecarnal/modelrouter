@@ -21,7 +21,7 @@ OUTPUTS = {
         ROOT / "config" / "modelrouter.minimal.yaml",
     ),
 }
-POLICY_IDS = frozenset({"cheap", "code", "review", "hermes-fast", "hermes-smart", "offline"})
+POLICY_IDS = frozenset({"cheap", "code", "review", "hermes-fast", "hermes-smart", "offline", "be-manager"})
 GENERATED_HEADER = (
     "# GENERATED — do not edit preset routes here.\n"
     "# SSOT: config/includes/policy_presets.yaml\n"

@@ -175,14 +175,15 @@ def load_homelab_status(cfg: dict[str, Any]) -> dict[str, Any]:
         _led("tower", "TWR", "ok" if tower_host else "skip", tower_host or "offline", "path")
     )
 
-    tailscale_gw = gw.get("url_tailscale") or gw.get("url") or f"http://gateway.local:{port}"
-    if tower_host:
-        link_ok = _tower_to_mini(tower_host, tailscale_gw)
+    # LINK = can this laptop reach the tower gateway? Only uses explicitly configured url_tower.
+    tower_url = gw.get("url_tower")
+    if tower_url:
+        link_ok = _probe_url(tower_url)
         infra.append(
-            _led("link", "LINK", "ok" if link_ok else "warn", "tower→mini", "path")
+            _led("link", "LINK", "ok" if link_ok else "warn", f"laptop→tower ({tower_url})", "path")
         )
     else:
-        infra.append(_led("link", "LINK", "skip", "tower offline", "path"))
+        infra.append(_led("link", "LINK", "skip", "set url_tower in hosts config", "path"))
 
     master_ok = bool(master) and "change-me" not in master and "local-dev" not in master
     infra.append(_led("mrkey", "MRKEY", "ok" if master_ok else "warn", "master key", "path"))

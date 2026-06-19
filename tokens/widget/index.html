@@ -559,7 +559,6 @@
       </div>
       <button id="btn-assess" type="button" class="btn-accent" title="AI cost comparison via ModelRouter">◎ Assess</button>
       <button id="btn-key" type="button" title="Add API key from catalog">＋ Key</button>
-      <button id="btn-wallet" type="button" title="Add watch-only wallet">＋ Wallet</button>
       <button id="btn-refresh" type="button" title="Fetch latest usage">↻ Refresh</button>
       <button id="btn-edit" type="button" title="Open keys file">✎ Edit</button>
     </div>
@@ -605,32 +604,7 @@
       </div>
     </div>
   </div>
-  <div id="wallet-modal" class="modal-backdrop" aria-hidden="true">
-    <div class="modal">
-      <h2>Add watch-only wallet</h2>
-      <p class="detail">Public address only — no private keys stored. Persists until you remove it.</p>
-      <label for="w-label">Label</label>
-      <input id="w-label" type="text" placeholder="Ledger ETH" maxlength="64" />
-      <label for="w-chain">Chain</label>
-      <select id="w-chain">
-        <option value="ethereum">Ethereum</option>
-        <option value="bitcoin">Bitcoin</option>
-        <option value="solana">Solana</option>
-      </select>
-      <label for="w-kind">Type</label>
-      <select id="w-kind">
-        <option value="cold">Cold — last seen on-chain</option>
-        <option value="hot">Hot — live on-chain balance</option>
-      </select>
-      <label for="w-address">Address</label>
-      <input id="w-address" type="text" placeholder="0x… / bc1… / Solana pubkey" spellcheck="false" />
-      <div class="modal-actions">
-        <button id="w-cancel" type="button">Cancel</button>
-        <button id="w-save" type="button">Save</button>
-      </div>
-      <div id="w-error" class="error" style="margin-top:8px;display:none"></div>
-    </div>
-  </div>
+
   <div id="provider-modal" class="modal-backdrop" aria-hidden="true">
     <div class="modal wide">
       <h2 id="p-title">Connect provider</h2>
@@ -1241,44 +1215,6 @@
       }
     }
 
-    const modal = document.getElementById('wallet-modal');
-    const wError = document.getElementById('w-error');
-
-    function openWalletModal() {
-      wError.style.display = 'none';
-      modal.classList.add('show');
-      modal.setAttribute('aria-hidden', 'false');
-    }
-    function closeWalletModal() {
-      modal.classList.remove('show');
-      modal.setAttribute('aria-hidden', 'true');
-    }
-
-    async function saveWallet() {
-      wError.style.display = 'none';
-      const body = {
-        label: document.getElementById('w-label').value,
-        chain: document.getElementById('w-chain').value,
-        kind: document.getElementById('w-kind').value,
-        address: document.getElementById('w-address').value.trim(),
-      };
-      try {
-        const res = await postJson('/wallets/add', body);
-        const data = await res.json();
-        if (!data.ok) {
-          wError.textContent = data.error || 'Save failed';
-          wError.style.display = 'block';
-          return;
-        }
-        document.getElementById('w-label').value = '';
-        document.getElementById('w-address').value = '';
-        closeWalletModal();
-        await refreshAll();
-      } catch (e) {
-        wError.textContent = 'Save failed';
-        wError.style.display = 'block';
-      }
-    }
 
     const keyModal = document.getElementById('key-modal');
     const kError = document.getElementById('k-error');
@@ -1407,10 +1343,6 @@
     document.getElementById('a-close').addEventListener('click', () => assessModal.classList.remove('show'));
     assessModal.addEventListener('click', (e) => { if (e.target === assessModal) assessModal.classList.remove('show'); });
 
-    document.getElementById('btn-wallet').addEventListener('click', openWalletModal);
-    document.getElementById('w-cancel').addEventListener('click', closeWalletModal);
-    document.getElementById('w-save').addEventListener('click', saveWallet);
-    modal.addEventListener('click', (e) => { if (e.target === modal) closeWalletModal(); });
 
     document.getElementById('btn-refresh').addEventListener('click', refreshAll);
     document.getElementById('btn-edit').addEventListener('click', openEdit);

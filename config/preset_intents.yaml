@@ -212,3 +212,22 @@ intents:
     family_preference: [anthropic, openai]
     allow_local: false
     enterprise_lock: true
+
+be-manager:
+  description: BasisEdge Manager persona — Sonnet 4.6 primary, GPT-4o fallback
+  use_cases:
+    - BasisEdge Manager VS Code agent mode
+    - Commodity terminal planning and oversight
+    - Agent routing and daily briefings
+  quality_floor: 4
+  max_cost_tier: 4
+  latency: normal
+  context_window: 128000
+  requires:
+    function_calling: true
+    vision: false
+    code: true
+    reasoning: false
+  family_preference: [anthropic, openai]
+  allow_local: false
+  enterprise_lock: false

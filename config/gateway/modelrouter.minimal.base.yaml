@@ -2,6 +2,38 @@
 # Presets merged by scripts/sync_gateway_config.py from policy_presets.yaml
 
 model_list:
+- model_name: hermes-smart
+  litellm_params:
+    model: anthropic/claude-sonnet-4-6
+    api_key: os.environ/ANTHROPIC_API_KEY
+    max_tokens: 8192
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: hermes-smart
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+    max_tokens: 8192
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: be-manager
+  litellm_params:
+    model: anthropic/claude-sonnet-4-6
+    api_key: os.environ/ANTHROPIC_API_KEY
+    max_tokens: 8192
+  model_info:
+    mode: chat
+    supports_function_calling: true
+- model_name: be-manager
+  litellm_params:
+    model: openai/gpt-4o
+    api_key: os.environ/OPENAI_API_KEY
+    max_tokens: 8192
+  model_info:
+    mode: chat
+    supports_function_calling: true
 - model_name: smart
   litellm_params:
     model: openai/gpt-4o

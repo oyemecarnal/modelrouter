@@ -54,3 +54,31 @@ projects:
       routine: cheap
       complex: offline
     virtual_key_env: MODELROUTER_KEY_PARSER_POSTER
+
+  basisedge:
+    description: BasisEdge commodity intelligence platform — agents, scrapers, newsletter AI, terminal
+    hosts: [laptop, kc-tower]
+    presets:
+      # Planning, decisions, oversight — frontier only
+      planning:   smart
+      # Research synthesis, newsletter writing, model disagreement
+      analysis:   smart
+      # Code generation, executor tasks, scraper fixes
+      code:       code
+      # Bulk scraping, classification, tagging, translation polish
+      scrape:     cheap
+      # Accountant ROI math, HR task routing, admin
+      admin:      cheap
+      # Risk review, model anomaly flagging — never cheap
+      risk:       review
+      # Offline / local fallback
+      local:      local
+    routing_hint: |
+      BasisEdge agents map to presets by cost tier:
+        FRONTIER (smart/review): Manager, Researcher, Quant, Writer, Risk Manager
+        CODE: Executor agent — all code tasks route here
+        CHEAP: Scraper, Translator, Accountant, HR/Admin — bulk/batch work
+      Never route risk or planning decisions through cheap.
+      Never route bulk scraping through smart — it is wasteful.
+      If ModelRouter is unreachable, agents fall back to platform/agents/fallback.py.
+    virtual_key_env: MODELROUTER_KEY_BASISEDGE
